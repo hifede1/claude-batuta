@@ -385,13 +385,12 @@
    ========================================================================== */
 
 const LAST_AUDIT = '2026-07-19';
-const CLOSED_COUNT = 4;              // pendientes cerrados y verificados históricamente (S01)
+const CLOSED_COUNT = 8;              // pendientes cerrados y verificados (S01 + S02)
 const REPO = 'hifede1/claude-batuta';
 
 /* Estimación ratificada: talle S / M / L por pendiente. */
 const EST = {
-  /* S01 cerrada y verificada 2026-07-19 — sus pendientes salieron de DATA */
-  's02-plugin':'M','s02-cadena':'M','s02-idlink':'S','s02-d011':'S',
+  /* S01 y S02 cerradas y verificadas 2026-07-19 — sus pendientes salieron de DATA */
   's03-lee':'M','s03-compuerta':'S','s03-frena':'M','s03-eslabon':'S',
   's04-grafo':'L','s04-gated':'L','s04-adver':'M','s04-cotak':'S','s04-d014':'S',
   's05-manif':'L','s05-bloquea':'M','s05-carril':'S','s05-honesto':'M','s05-d010':'S',
@@ -425,22 +424,19 @@ const DATA = [
     zona: 'Núcleo del loop — leer, entender, planificar',
     bloques: [
       {
-        id:'b02', titulo:'S02 · Andamio + trazabilidad', estado:'pend',
+        id:'b02', titulo:'S02 · Andamio + trazabilidad', estado:'hecho',
         sesion:'S02', talle:'M', issue:6, trat:'directo',
-        planteamiento:'El registro de trazabilidad <b>es el norte del producto</b>, no un detalle de reporte. Si se deja para la fase <code>cerrar</code>, se va a descubrir que las fases intermedias nunca guardaron lo que hacía falta y hay que volver a tocarlas todas.',
+        planteamiento:'✅ <b>Cerrada el 2026-07-19.</b> El registro de trazabilidad <b>es el norte del producto</b>: se definió ANTES que las fases que lo escriben, justamente para que ninguna llegue a <code>cerrar</code> sin haber guardado lo que hacía falta. <b>Existe la primera línea de producto: <code>plugins/batuta/</code>.</b>',
+        hallazgo:'⚠️ <b>Drift abierto:</b> el comando se invoca <code>/batuta:batuta</code>, no <code>/batuta</code> — el namespacing de Claude Code es <code>plugin:comando</code> y acá ambos se llaman igual. <code>FICHA.md</code> §2 declara «comando <code>/batuta</code>». <b>Requiere decisión humana</b>: renombrar el comando o corregir la ficha. Toca el nombre público del producto.',
         metodo:[
-          'Crear la estructura de plugin y el comando <code>/batuta</code> (markdown puro, sin build).',
-          'Definir el <b>registro de cadena</b>: campos de cada eslabón (<code>idea → plano → encargos → obra</code>), identificador que conecta encargo con requisito, y dónde se persiste entre fases.',
-          'Escribir el contrato interno: cada fase declara qué eslabón agrega y qué recibe de la anterior.',
-          'Resolver <code>decisiones/011</code> — sin ratificación, el contrato no obliga.'
+          '<b>Cómo protegerlo al tocarlo:</b> el contrato interno son las 4 declaraciones de eslabón (<code>idea · plano · encargos · obra</code>) en <code>commands/batuta.md</code>. Si tocás una fase, verificá que siga declarando <b>qué eslabón agrega, qué recibe y en qué delegado se apoya</b>.',
+          'El identificador de requisito <code>&lt;SESIÓN&gt;/&lt;slug&gt;</code> es <b>estable por contrato</b>: si un criterio se reformula conserva su ID, y si se elimina su ID <b>no se reutiliza</b>. Renumerar rompe la auditabilidad de corridas viejas.',
+          'La spec normativa vive en <code>docs/registro-de-cadena.md</code>. El comando la implementa; no la duplica.',
+          '⚠️ <b>Límite conocido:</b> el registro es local a la máquina (<code>${CLAUDE_PLUGIN_DATA}</code>). Una corrida no se continúa en otra. Aceptable en v0 por <code>decisiones/001</code>.'
         ],
-        pend:[
-          {id:'s02-plugin', t:'El comando <code>/batuta</code> existe y arranca', v:'/batuta en un repo de prueba responde sin error'},
-          {id:'s02-cadena', t:'Las 4 fases declaran qué eslabón agregan', v:'inspección — 4 declaraciones, cero fases mudas'},
-          {id:'s02-idlink', t:'El registro define el identificador encargo ↔ requisito', v:'inspección — el campo existe y es único por requisito'},
-          {id:'s02-d011', t:'El acto de ratificación del plano está escrito', v:'decisiones/011 en estado aceptada con fecha'}
-        ],
-        refs:['plugins-claude-code'], prereq:['S01 (#5)','🔒 decisión 011']
+        code: 'claude --plugin-dir ./plugins/batuta -p "/batuta:batuta <objetivo>"',
+        pend:[],
+        refs:['plugins-claude-code'], prereq:[]
       },
       {
         id:'b03', titulo:'S03 · Fase analizar', estado:'pend',
@@ -597,6 +593,8 @@ const DATA = [
 ];
 
 const DEBT = [
+  {t:'El comando se llama /batuta:batuta, no /batuta', d:'<code>FICHA.md</code> §2 declara «Plugin de Claude Code, comando <code>/batuta</code>». La realidad verificada en S02 es <code>/batuta:batuta</code>: el namespacing de Claude Code es <code>plugin:comando</code> y acá ambos se llaman igual. <b>Drift doc↔código, y toca el nombre público del producto.</b> Dos salidas: renombrar el comando (p. ej. <code>commands/correr.md</code> → <code>/batuta:correr</code>) o corregir la ficha. <b>Requiere decisión humana</b> — no se resuelve por omisión.', sev:'warn'},
+  {t:'¿Un plano con decisiones pendientes puede estar VIGENTE?', d:'La pregunta la hizo visible la decisión <code>011</code> al volver evaluable el estado del plano. Hoy quedan <b>6 decisiones ⏳ sin firmar</b> y 6 de 7 sesiones restantes bloqueadas por ellas. Dos lecturas: «VIGENTE = lo escrito obliga, las pendientes bloquean sus sesiones» (coherente con <i>bloqueá, nunca reimplementes</i>) o «VIGENTE exige plano completo». Registrada como pendiente explícita en el ADR — <b>no resuelta por omisión</b>.', sev:'warn'},
   {t:'Deuda de verificación total', d:'0 de 9 sesiones tienen escenario sembrado construido. Al ser markdown puro no hay tests unitarios: la única forma de clavar un flujo es la corrida sembrada. S09 existe para saldar esta deuda — hasta que corra, <b>ningún</b> criterio del proyecto está protegido contra regresión.', sev:'stop'},
   {t:'gitleaks delegado a un delegado sin capacidad', d:'<code>decisiones/010</code> difiere el escaneo de secretos a <code>publicador</code>. Verificado 2026-07-19: <code>claude-publicador</code> tiene la decisión firmada en su ficha y cero código (2 commits, sin comando instalable). El bloqueo no tiene fecha de resolución.', sev:'stop'},
   {t:'«Los workflows ya existen» sin artefacto verificable', d:'<code>FICHA.md</code> §0 apoya un tercio del alcance de v0 en los workflows, pero la auditoría no pudo identificar cuál es el artefacto que respalda esa afirmación. <b>Requiere confirmación humana antes de S04.</b>', sev:'warn'},
@@ -606,8 +604,7 @@ const DEBT = [
 ];
 
 const PLAN = [
-  {s:'S02', o:'Andamio del comando + registro de trazabilidad', b:'b02', issue:6, talle:'M', trat:'directo', pre:'✅ S01 cerrada · 🔒 decisión 011'},
-  {s:'S03', o:'Fase analizar', b:'b03', issue:7, talle:'M', trat:'directo', pre:'S02 (#6)'},
+  {s:'S03', o:'Fase analizar', b:'b03', issue:7, talle:'M', trat:'directo', pre:'✅ S02 cerrada — sin decisión pendiente, ejecutable ya'},
   {s:'S04', o:'Fase planificar (director-de-obra plegado)', b:'b04', issue:8, talle:'L', trat:'sdd', pre:'S03 (#7) · 🔒 decisión 014 · 🔒 cota K'},
   {s:'S05', o:'Externos y ruteo mínimos (best-effort)', b:'b05', issue:9, talle:'L', trat:'sdd', pre:'S04 (#8) · 🔒 decisión 010'},
   {s:'S06', o:'Compuerta Cero', b:'b06', issue:10, talle:'L', trat:'sdd', pre:'S05 (#9) · 🔒 decisión 009 (bloqueante duro)'},
@@ -658,13 +655,13 @@ const DECISIONS = [
   {id:'d005', n:'005', t:'Clase «micro» de cambio: no existe', estado:'aceptada', fecha:'2026-07-19', ctx:'La tentación de saltear <code>/orquestar</code> «para un cambio chiquito» es constante.', dec:'Todo cambio rutea a <code>/orquestar</code>, sin excepción por tamaño.', cons:'Más ceremonia en cambios triviales, a cambio de que no exista una puerta lateral sin firma.', link:'docs/decisiones/005-clase-micro.md'},
   {id:'d006', n:'006', t:'Sustrato: markdown puro', estado:'aceptada', fecha:'2026-07-19', ctx:'¿Plugin con build y runtime, o markdown interpretado?', dec:'Markdown puro, sin build.', cons:'Cero toolchain que mantener. A cambio: no hay tests unitarios posibles — la verificación es por corrida sembrada, lo que hace de S09 una sesión estructural, no un extra.', link:'docs/decisiones/006-sustrato-markdown-puro.md'},
   {id:'d007', n:'007', t:'Corte de versiones v0 / v1 / v2', estado:'aceptada', fecha:'2026-07-19', ctx:'Sin corte explícito, v0 se expande hasta no terminar nunca.', dec:'v0 bootstrap (loop de 4 fases sobre 2 cimientos) · v1 las 6 fases formales · v2 portafolio.', cons:'Fija qué NO se construye ahora y lo deja firmado ítem por ítem en <code>ALCANCE.md</code>.', link:'docs/decisiones/007-corte-de-versiones.md'},
-  {id:'d008', n:'008', t:'Absorción de director-de-obra como fase 2', estado:'aceptada', fecha:'2026-07-18', ctx:'<code>director-de-obra</code> planificaba; <code>batuta</code> también necesita planificar. Dos herramientas con la misma capacidad se pisan.', dec:'Se absorbe como la fase <code>planificar</code>, acatando sus 4 invariantes D1-D4 como PISO.', cons:'Una herramienta menos que mantener. Obliga a que el índice del taller marque la absorción — hoy sin confirmar cuál es el índice.', link:'docs/decisiones/008-absorcion-director-de-obra.md'}
+  {id:'d008', n:'008', t:'Absorción de director-de-obra como fase 2', estado:'aceptada', fecha:'2026-07-18', ctx:'<code>director-de-obra</code> planificaba; <code>batuta</code> también necesita planificar. Dos herramientas con la misma capacidad se pisan.', dec:'Se absorbe como la fase <code>planificar</code>, acatando sus 4 invariantes D1-D4 como PISO.', cons:'Una herramienta menos que mantener. Obliga a que el índice del taller marque la absorción — hoy sin confirmar cuál es el índice.', link:'docs/decisiones/008-absorcion-director-de-obra.md'},
+  {id:'d011', n:'011', t:'Acto de ratificación del plano', estado:'aceptada', fecha:'2026-07-19', ctx:'El plano nunca definía su propio estado normativo ni cómo cambia: <code>README</code> lo llamaba «contrato» pero <code>FICHA</code> se autodeclaraba «⚪ En diseño» con criterios «(borrador)». <b>Un contrato que no declara cuándo está vigente no obliga a nada.</b> La restricción decisiva —que no estaba en el planteo original— es que <code>batuta</code> tiene que poder <b>evaluar</b> el estado del plano en cada corrida, así que el acto tiene que ser barato de chequear.', dec:'<b>El acto:</b> línea de firma explícita en la cabecera (<code>Estado: VIGENTE · Firmado: FECHA por QUIÉN</code>). Sin ella el plano es borrador y se trata como plano ausente. <b>Versionado:</b> la fecha de firma ES la versión; git guarda el resto (tags semver diferidos a v1). <b>Corridas vivas:</b> snapshot al arrancar; si el plano cambia a mitad se reporta como hallazgo y no se cambia de contrato en el aire.', cons:'Los criterios del plano pasan a ser exigibles. Se descartó «<code>/auditar-docs</code> limpio == firmado» <b>no por costo sino por incompatibilidad</b>: obligaría a re-auditar en cada corrida, justo lo que prohíbe el criterio de S03. Costo asumido: la firma se puede olvidar de actualizar. <b>Deja planteada una pregunta abierta:</b> ¿un plano con decisiones pendientes puede estar VIGENTE? Hoy quedan 6 sin firmar.', link:'docs/decisiones/011-ratificacion-del-plano.md'}
 ];
 
 /* Pendientes que YA son un `pend` de DATA: se derivan en vivo, no se copian.
    Si el pend se cierra en re-auditoría, la ficha desaparece sola. */
 const DECISION_PENDS = [
-  {pendId:'s02-d011', n:'011', t:'Acto de ratificación del plano', note:'El plano nunca define su propio estado normativo ni cómo cambia. <code>README</code> lo llama «contrato», <code>FICHA</code> §8 declara criterios «verificables», pero <code>FICHA</code> se autodeclara «⚪ En diseño» con criterios «(borrador)». <b>Un contrato que no declara cuándo está vigente no obliga a nada.</b>'},
   {pendId:'s04-d014', n:'014', t:'Rúbrica de confidence', note:'Debe firmarse ANTES de S04: si se difiere, la implementación la fija de hecho y después nadie la discute.'},
   {pendId:'s04-cotak', n:'—', t:'Cota K de la banda angosta', note:'No tiene ADR: es un <b>número</b> que hay que fijar. Sin él, el criterio «ninguna corrida supera K iteraciones» no es evaluable y la fase planificar puede irse a re-análisis infinito.'},
   {pendId:'s05-d010', n:'010', t:'Escaneo de secretos en v0', note:'Delega <code>gitleaks</code> a <code>publicador</code>, que tiene la decisión firmada y cero capacidad de ejecutarla. <b>El bloqueo no tiene fecha de resolución.</b>'},
@@ -688,7 +685,7 @@ const TESTS = {
   flows: FLOWS.map(f => ({id:f.id, t:f.t, pill:'rojo', test:'Sin test. Se clava en S09 (#13) o en la corrida sembrada de su propia sesión.'})),
   contrato: [
     {b:'b01', bt:'S01 · Precondición ✅', total:4, clavados:0, nota:'<b>Cerrada, pero sin test que la proteja.</b> 3 criterios se verificaron por máquina y 1 por atestación humana (<code>/auditar-docs</code> no persiste informe). Si el <code>marketplace.json</code> volviera al shorthand <code>owner/repo</code>, el install rompería en máquinas limpias y <b>nadie se enteraría hasta la próxima auditoría</b>. Candidato claro a pendiente: un check de CI que valide que la url del <code>git-subdir</code> es HTTPS.'},
-    {b:'b02', bt:'S02 · Andamio', total:4, clavados:0, nota:'3 de 4 son inspección del <code>.md</code>. La inspección no es regresiva: protege el día que se escribe, no después.'},
+    {b:'b02', bt:'S02 · Andamio ✅', total:4, clavados:1, nota:'<b>1 clavado de verdad:</b> «<code>/batuta</code> arranca» se verificó con corrida real (<code>claude --plugin-dir</code>, <code>EXIT 0</code>) y es <b>reproducible</b>. Los otros 3 son inspección: protegen el día que se escriben, no después. <b>Deuda concreta:</b> si alguien borra una declaración de eslabón, nada lo detecta. Candidato claro: un check de CI que cuente las 4 declaraciones y falle si falta alguna.'},
     {b:'b03', bt:'S03 · Analizar', total:4, clavados:0, nota:'Los 4 exigen corrida sembrada. El de «git status limpio» es el más valioso del proyecto y no tiene escenario construido.'},
     {b:'b04', bt:'S04 · Planificar', total:5, clavados:0, nota:'El criterio de la cota K no es evaluable hasta que se fije K.'},
     {b:'b05', bt:'S05 · Externos', total:5, clavados:0, nota:'El criterio «ningún secreto queda versionado» <b>no es ejecutable hoy</b>: depende de <code>publicador</code>.'},
@@ -708,6 +705,7 @@ const REFS = [
 ];
 
 const CHANGELOG = [
+  {f:'2026-07-19', t:'✅ S02 cerrada: existe la primera línea de producto', d:'Re-auditoría tras el encargo #6 (PR #18). <b><code>plugins/batuta/</code> existe</b>: manifiesto v0.1.0 (<code>validate</code> OK) y el comando con las 4 fases. El <b>registro de cadena</b> quedó definido en <code>docs/registro-de-cadena.md</code> — 4 eslabones (<code>idea · plano · encargos · obra</code>), identificador <code>&lt;SESIÓN&gt;/&lt;slug&gt;</code> con reglas de unicidad y estabilidad, persistencia en <code>${CLAUDE_PLUGIN_DATA}</code>, y los criterios de eslabón ROTO. <b>La corrida de prueba no solo no falló:</b> sobre una carpeta vacía detectó ausencia de plano, ruteó a <code>/documentar</code>, <b>frenó</b> en la compuerta de lectura y dejó <code>git status</code> limpio — cero contrato fabricado. También se firmó la decisión <b>011</b> (acto de ratificación). <b>Drift abierto:</b> el comando se invoca <code>/batuta:batuta</code>, no <code>/batuta</code> como declara <code>FICHA.md</code> §2 — requiere decisión humana.'},
   {f:'2026-07-19', t:'⛔→✅ S01 cerrada: la compuerta de precondición está ABIERTA', d:'Re-auditoría tras el encargo #5. <b>Los 4 pendientes de S01 se verificaron y salieron del tablero.</b> El install limpio se probó en un perfil virgen (<code>CLAUDE_CONFIG_DIR</code>, <code>EXIT 0</code>); <code>/documentar</code> generó el árbol completo sobre una carpeta vacía y se midió contra el contrato (4 sesiones con las 5 marcas, 12 criterios con su verificación, 4/4 ADRs con <code>Estado</code> y <code>superaA</code>); <code>/auditar-docs</code> emitió las 6 dimensiones —<b>atestación humana</b>, porque ese comando no persiste informe—. Se generaron 2 de las 5 referencias 🔴. <b>Hallazgos:</b> la ficha traía mal la sintaxis de <code>uninstall</code> (falta <code>@fede-tools</code>), y el perfil real tenía <code>doc-arquitecto</code> <i>cacheado, no instalado</i> — la premisa registrada era imprecisa. <b>v0 se puede construir: las 8 sesiones restantes ya no están detrás de la compuerta, solo detrás de sus firmas.</b>'},
   {f:'2026-07-19', t:'Auditoría inicial y despacho de la cola', d:'Estado: plano firmado, obra no iniciada (22 markdowns, cero código). Se verificó el estado real de los 4 delegados. <b>Hallazgo principal:</b> la compuerta de precondición estaba desactualizada — el fix <code>fede-tools</code> ya estaba mergeado y las incógnitas (<code>fede-tools</code> = marketplace, <code>#29</code>/<code>#21</code> = PRs de <code>claude-doc-arquitecto</code>) quedaron resueltas. <code>ALCANCE.md</code> corregido al momento. Se publicaron los 9 encargos como issues #5–#13 en modo orquestado.'}
 ];
