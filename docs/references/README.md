@@ -14,7 +14,7 @@ Las dos primeras se generaron en **S01** (issue #5, 2026-07-19).
 | Tema | Qué resuelve | Fecha | `triggers` | Quién la usa | Frescura | Path |
 |---|---|---|---|---|---|---|
 | **doc-arquitecto** | El contrato de entrada/salida de `/documentar` y `/auditar-docs`: qué consume, qué árbol produce, qué formato tienen fichas y ADRs | 2026-07-19 | `documentar`, `auditar-docs`, `plano`, `contrato`, `cimiento`, `ADR`, `ficha`, `seis dimensiones`, `catalogo de referencias` | S01, S03 | 🟢 | `docs/references/doc-arquitecto.md` |
-| **audit-tracker** | El contrato de `/orquestar` y `/proximo-encargo`: el canal de firma, la cola de Issues, el snapshot como cache, la taxonomía de labels | — | `orquestar`, `proximo-encargo`, `firma`, `cola de issues`, `snapshot`, `auditar obra`, `tracker` | S03, S05, S06, S07, S08 | 🔴 | `docs/references/audit-tracker.md` |
+| **audit-tracker** | El contrato de `/orquestar` y `/proximo-encargo`: el canal de firma, la cola de Issues, el snapshot como cache, la taxonomía de labels | 2026-07-19 | `orquestar`, `proximo-encargo`, `firma`, `cola de issues`, `snapshot`, `auditar obra`, `tracker`, `despacho`, `bookkeeping`, `validador` | S03, S05, S06, S07, S08 | 🟢 | `docs/references/audit-tracker.md` |
 | **plugins-claude-code** | Cómo se construye la clase de artefacto que este proyecto produce: estructura del plugin, manifiesto, declaración de comandos y skills, instalación y distribución | 2026-07-19 | `plugin`, `marketplace`, `comando`, `skill`, `install`, `manifiesto`, `slash command`, `plugin.json`, `marketplace.json`, `git-subdir` | S01, S02 | 🟢 | `docs/references/plugins-claude-code.md` |
 | **workflows-fan-out** | Qué es un workflow en este taller y cuál es su contrato de fan-out: cómo se lanza, qué devuelve, cómo se estructura un pase adversarial | — | `workflow`, `fan-out`, `multi-agente`, `pase adversarial`, `sub-agente`, `paralelo` | S04 | 🔴 | `docs/references/workflows-fan-out.md` |
 | **perimetro-de-confianza** | Patrones de prompt-injection en agentes y cómo se sostiene un perímetro de confianza: etiquetado de dato externo, no-transitividad, egreso tipado | — | `inyeccion`, `prompt injection`, `dato externo`, `egreso`, `confianza`, `no confiable`, `sub-agente` | S05, S06, S07, S09 | 🔴 | `docs/references/perimetro-de-confianza.md` |
@@ -39,7 +39,7 @@ Artefactos que el plano cita y que viven **fuera** de este repositorio. No son r
 |---|---|---|
 | ~~`doc-arquitecto.md`~~ | ~~S01~~ | ✅ **generada 2026-07-19 en S01** |
 | ~~`plugins-claude-code.md`~~ | ~~S01, S02~~ | ✅ **generada 2026-07-19 en S01** |
-| `audit-tracker.md` | S03 — fase `analizar` | Delegar la primera lectura de estado |
+| ~~`audit-tracker.md`~~ | ~~S03~~ | ✅ **generada 2026-07-19 en S03** |
 | `workflows-fan-out.md` | S04 — fase `planificar` | Delegar el pase adversarial |
 | `perimetro-de-confianza.md` | S05 — externos | Escribir el modelo de confianza |
 
