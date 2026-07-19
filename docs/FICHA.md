@@ -7,15 +7,21 @@
 
 Corrección al plan original ("construir última"): `batuta` NO tiene que esperar a que TODOS sus delegados existan. Su **loop central corre solo con los dos cimientos** —`doc-arquitecto` (documentar) y `audit-tracker` (auditar + `/orquestar`)— **más los workflows, que ya existen.** Por eso se construye una **v0 MÍNIMA head-first** y se usa para bootstrappear el resto (armar la cabeza, y con la cabeza construir las extremidades más fácil).
 
-**El salvaguarda real NO es el orden, es la regla "bloqueá, nunca reimplementes" (§8/§11):** cuando una fase necesita un músico que no existe (testear→verificador, publicar→publicador, portafolio→cartera), `batuta` FRENA y lo reporta como hueco-a-construir — jamás hace el trabajo ella misma "temporalmente". Único antídoto contra el god-object-por-necesidad; la tentación es máxima justo en ese momento.
+**El salvaguarda real NO es el orden, es la regla "bloqueá, nunca reimplementes" (§8/§11):** cuando una fase necesita un músico que no existe o no está terminado (testear→verificador, publicar→publicador, portafolio→cartera), `batuta` FRENA y lo reporta como hueco-a-construir — jamás hace el trabajo ella misma "temporalmente". Único antídoto contra el god-object-por-necesidad; la tentación es máxima justo en ese momento.
 
 **Precondición (lo mínimo ANTES de construir v0):** los dos cimientos SÓLIDOS. `audit-tracker` ✅. `doc-arquitecto` casi: sus comandos existen pero falta cerrar el fix `fede-tools` (#29→#21) y **PROBAR el install** — recién ahí es cimiento firme.
+
+**Nomenclatura de versiones (firmada 2026-07-19 — ver `decisiones/007-corte-de-versiones.md`):**
+
+- **v0 — bootstrap.** El loop de 4 fases (analizar → planificar → ejecutar-con-compuertas → cerrar) sobre los dos cimientos, con externos y ruteo en forma MÍNIMA best-effort, sin campo estructurado. Se construye para bootstrappear el resto del taller.
+- **v1 — las 6 fases formales.** Suma `mapear-externos` y `definir-ruteo` como fases propias, el campo estructurado `externos` en `doc-arquitecto` Y `audit-tracker`, y el Plan de Ruteo firmado.
+- **v2 — portafolio.** Altitud de flota (consume `cartera`) y estado VERIFICADO de externos.
 
 ### Alcance MÍNIMO de v0
 
 - **Orquesta SOLO:** `doc-arquitecto` (`/documentar`, `/auditar-docs`), `audit-tracker` (`/audit-tracker`, `/orquestar`), y workflows (fan-out + la planificación absorbida de `director-de-obra`).
 - **Fases activas:** analizar → planificar → ejecutar-con-compuertas → cerrar. Mapeo-de-externos y ruteo en su forma MÍNIMA (best-effort: cosecha lo que los cimientos flaguean y, ante la duda, PREGUNTA — sin el campo estructurado `externos`, que es post-v0).
-- **BLOQUEA** (hueco-a-construir, nunca reimplementa): criterios→tests (falta `verificador`), publicar (falta `publicador`), enumeración de flota / portafolio (falta `cartera`; además es v2), egreso outward genérico.
+- **BLOQUEA** (hueco-a-construir, nunca reimplementa): criterios→tests (falta `verificador`), publicar (falta `publicador`), enumeración de flota / portafolio (`cartera` a medias, no terminada; además es v2), egreso outward genérico.
 - **MONO-PROYECTO.** Portafolio = v2.
 
 ## 1. Propósito
@@ -58,7 +64,7 @@ Plugin de Claude Code, comando `/batuta`. Genérico (cualquier proyecto en GitHu
 
 ## 5. Modelo de externos (Manifiesto)
 
-Contrato de **NECESIDADES, jamás de SECRETOS.** Por cada externo: QUÉ es (MCP/API/credencial/servicio), POR QUÉ (qué encargo lo requiere, file:line), CÓMO se provee (la instrucción), QUIÉN (SIEMPRE el humano) y ESTADO. batuta **identifica y pide; nunca fabrica, asume, mockea ni auto-provisiona.** Guarda la necesidad, nunca el valor. Estado BINARIO **REQUERIDO / PROVISTO** en v1 (verifica PRESENCIA de la env var / MCP, sin leer el valor); **VERIFICADO** (capacidad real: scopes, plan) es un egreso con compuerta → v2. Un falso VERIFICADO es peor que bloquear: revienta a mitad con trabajo gastado. Externo faltante = prerrequisito ⛓️ en la cola de Issues (label `externo`).
+Contrato de **NECESIDADES, jamás de SECRETOS.** Por cada externo: QUÉ es (MCP/API/credencial/servicio), POR QUÉ (qué encargo lo requiere, file:line), CÓMO se provee (la instrucción), QUIÉN (SIEMPRE el humano) y ESTADO. batuta **identifica y pide; nunca fabrica, asume, mockea ni auto-provisiona.** Guarda la necesidad, nunca el valor. Estado BINARIO **REQUERIDO / PROVISTO** en v0 y v1 (verifica PRESENCIA de la env var / MCP, sin leer el valor); **VERIFICADO** (capacidad real: scopes, plan) es un egreso con compuerta → v2. Un falso VERIFICADO es peor que bloquear: revienta a mitad con trabajo gastado. Externo faltante = prerrequisito ⛓️ en la cola de Issues (label `externo`).
 
 ## 6. Modelo de ruteo (Plan de Ruteo)
 
@@ -85,19 +91,34 @@ Partitura **descriptiva firmada** (grafo dirigido tipado), no un runtime. Nodos 
 
 `director-de-obra` **no se construye por separado ni se archiva: se pliega como la fase 2 (Planificación).** En el índice queda marcado "absorbida por batuta" (rastro de decisión, no se borra). Sus 4 capacidades entran intactas como maquinaria de la fase. Sus **4 decisiones firmadas (2026-07-18) viajan como invariantes** (D1 enumera-y-clasifica; D2 GitHub-first; D3 baseline liviano; D4 consume cartera) — pero son PISO, no techo: batuta EJECUTA y toca externos, y eso abre decisiones nuevas que ninguna de las 4 cubre (ver §10). La deferida "¿herramienta o capacidad?" se auto-resuelve: batuta ES la herramienta, la planificación es su fase.
 
-## 10. Decisiones PENDIENTES de Fede
+## 10. Decisiones
 
-- [ ] **Mono-proyecto vs portafolio en v1** (primer orden — bloquea el ruteo). Recomendado: MONO-PROYECTO (rompe la dependencia dura de cartera; enumeración trivial = el repo).
-- [ ] **Detección de externos:** ¿se agrega un campo estructurado `externos` a doc-arquitecto Y audit-tracker (correcto, pero abre encargos en 3 repos) o batuta absorbe un mini-detector (más rápido, roza god-object)? Recomendado: lo primero.
-- [ ] **Clase "micro"** (typo, bump): ¿se firma distinto, espejo del automerge de orquestar? Si existe, la firma el HUMANO en calibración, nunca batuta en caliente. Default: todo a `/orquestar`.
-- [ ] **Granularidad de compuertas** (anti-fatiga): ¿firma la RUTA entera + solo encargos, o cada transición de fase? Recomendado: fusionar analizar→rutear en UNA Compuerta Cero; gates duros solo en ejecutar/cerrar.
-- [ ] **Modo boceto greenfield:** ¿siempre bloquea en `/documentar` sin plano, o admite un plano-borrador ratificable? Recomendado: siempre `/documentar` en v1 (lo otro roza fabricar contrato).
-- [ ] **Decisiones nuevas de ejecutar+externos** que las D1-D4 no cubren (fuentes de estado de credenciales, salud de servicios externos, egreso outward): auditar y firmar.
-- [ ] Rúbrica de confidence (heredada abierta de director-de-obra) — se resuelve al construir.
+Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + fecha**; las abiertas, **PENDIENTE + dueño + qué la desbloquea**. Los `- [ ]` quedan reservados a los criterios de aceptación de §12 — miden al software, no al humano.
 
-## 11. Fuera de alcance (v1)
+### Firmadas
 
-- No construir hasta que los delegados estén 🟢 (§0). No planificación de portafolio. No estado VERIFICADO de externos ni health-check vivo. No EGRESO arbitrario (solo los que la caja ya cubre con compuerta probada: merge vía `/orquestar`, publicación vía `/publicar`). No modo boceto greenfield. No runtime de ruteo con estado. **No reimplementar NINGÚN trabajo de la caja** — delegado faltante = hueco que se lleva a firma, jamás un reemplazo "temporal". No proyectos fuera de GitHub. No 6 compuertas en serie.
+- **Mono-proyecto en v0 y v1** — FIRMADA 2026-07-18 · `decisiones/001-mono-proyecto.md`. Portafolio = v2. Rompe la dependencia dura de `cartera`; enumeración trivial = el repo. Aplicada en §0 y §4.
+- **Granularidad: Compuerta Cero** — FIRMADA 2026-07-19 · `decisiones/002-granularidad-de-compuertas.md`. Fases 1-4 colapsan en UNA firma de «plan aprobado por horizonte», con diff; gates duros individuales solo en ejecutar y cerrar. Aplicada en §4 y §11.
+- **Modo boceto greenfield: no existe** — FIRMADA 2026-07-19 · `decisiones/003-modo-boceto-greenfield.md`. Sin plano se rutea siempre a `/documentar`; un plano-borrador ratificable roza fabricar contrato. Aplicada en §11 y §12.
+- **Detección de externos: campo estructurado, jamás detector propio** — FIRMADA 2026-07-19 · `decisiones/004-deteccion-de-externos.md`. v0 cosecha best-effort lo que los cimientos flaguean; v1 agrega el campo `externos` a `doc-arquitecto` Y `audit-tracker`. El mini-detector queda descartado por §8.
+- **Clase «micro»: no existe** — FIRMADA 2026-07-19 · `decisiones/005-clase-micro.md`. Todo cambio de código va a `/orquestar`, sin excepción por tamaño.
+- **Sustrato: markdown puro** — FIRMADA 2026-07-19 · `decisiones/006-sustrato-markdown-puro.md`. Comando `.md`, sin código, sin build, sin dependencias. Consecuencia: los criterios de §12 se verifican con **corridas sembradas**, no con tests unitarios.
+- **Corte de versiones v0/v1/v2** — FIRMADA 2026-07-19 · `decisiones/007-corte-de-versiones.md`. Ver §0.
+- **Absorción de `director-de-obra` como fase 2** — FIRMADA 2026-07-18 · `decisiones/008-absorcion-director-de-obra.md`. Ver §9.
+
+### Pendientes
+
+- **PENDIENTE — Autenticación de la firma** · `decisiones/009-autenticacion-de-la-firma.md`. Dueño: Fede. El `✅ validado` de un PR es dato entrante de un externo, la clase que §7 declara no-confiable — y a la vez es lo único que mueve el loop. Desbloquea: S06.
+- **PENDIENTE — Escaneo de secretos en v0** · `decisiones/010-secretos-en-v0.md`. Dueño: Fede. §12 exige «gitleaks limpio» pero eso está delegado a `publicador`, que no existe. Desbloquea: S05.
+- **PENDIENTE — Acto de ratificación del plano** · `decisiones/011-ratificacion-del-plano.md`. Dueño: Fede. Desbloquea: S02.
+- **PENDIENTE — Umbral de egreso** · `decisiones/012-umbral-de-egreso.md`. Dueño: Fede. Desbloquea: S07.
+- **PENDIENTE — `retrospectiva` opcional** · `decisiones/013-retrospectiva-opcional.md`. Dueño: Fede. Desbloquea: S08.
+- **PENDIENTE — Rúbrica de confidence** · `decisiones/014-rubrica-de-confidence.md`. Dueño: Fede. Desbloquea: firmarla **antes** de S04 — si se difiere «al construir», la implementación la fija de hecho.
+- **PENDIENTE — Decisiones nuevas de ejecutar + externos** · `decisiones/015-eje-externo.md`. Dueño: Fede. Desbloquea: auditar el eje externo una vez escrito el modelo de S05.
+
+## 11. Fuera de alcance (v0 y v1)
+
+- No construir hasta que los dos cimientos (`doc-arquitecto` + `audit-tracker`) estén 🟢 (§0). No planificación de portafolio. No estado VERIFICADO de externos ni health-check vivo. No EGRESO arbitrario (solo los que la caja ya cubre con compuerta probada: merge vía `/orquestar`, publicación vía `/publicar`). No modo boceto greenfield. No runtime de ruteo con estado. **No reimplementar NINGÚN trabajo de la caja** — delegado faltante = hueco que se lleva a firma, jamás un reemplazo "temporal". No proyectos fuera de GitHub. No 6 compuertas en serie.
 
 ## 12. Criterios de aceptación (borrador)
 
