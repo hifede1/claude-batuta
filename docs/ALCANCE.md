@@ -19,7 +19,12 @@ Este documento firma el alcance de **v0**. v1 y v2 se listan solo para fijar el 
 | Cimiento | Estado | Verificado |
 |---|---|---|
 | `audit-tracker` | 🟢 | 2026-07-18 |
-| `doc-arquitecto` | 🟠 el fix está mergeado; **falta solo PROBAR el install limpio** | 2026-07-19 |
+| `doc-arquitecto` | 🟢 | **2026-07-19** |
+
+> ✅ **COMPUERTA ABIERTA — 2026-07-19.** El fix está mergeado y el install limpio quedó
+> probado de punta a punta. Evidencia completa en
+> [`audits/s01-install-limpio-2026-07-19.md`](audits/s01-install-limpio-2026-07-19.md).
+> **v0 se puede construir.**
 
 ### Qué es `fede-tools` y dónde viven los PRs
 
@@ -29,23 +34,40 @@ Resuelto en la auditoría del 2026-07-19 — la compuerta ya es auditable:
 - **`#29` y `#21` son PRs, no issues.** El orden real es `hifede1/claude-audit-tracker#29` → `hifede1/claude-doc-arquitecto#21` (Parte B antes que Parte A, según el propio cuerpo del PR #21). ⚠️ Existen **dos** PRs numerados #29, uno en cada repo: el de `doc-arquitecto` es otro cambio, posterior y sin relación con el fix.
 - **Ambos PRs están MERGED** y el issue `hifede1/claude-doc-arquitecto#20` está CLOSED (2026-07-18). Confirmado además en `tools/ROADMAP.md:52`.
 
-### Condición binaria de apertura
+### Condición binaria de apertura — ✅ cumplida el 2026-07-19
 
-La compuerta abre cuando esta secuencia corre sin error en un perfil limpio:
+La compuerta abría cuando esta secuencia corriera sin error en un perfil limpio:
 
 ```
-/plugin uninstall doc-arquitecto
+/plugin uninstall doc-arquitecto@fede-tools
 /plugin marketplace add hifede1/claude-audit-tracker
 /plugin install doc-arquitecto@fede-tools
 ```
 
-y `/documentar` + `/auditar-docs` responden de punta a punta sobre un repo de prueba vacío. Nunca se probó el install de cero: la máquina de Fede ya tenía el plugin del marketplace viejo.
+⚠️ **Corrección de S01:** el `uninstall` lleva el sufijo `@fede-tools`. La versión anterior
+de este documento lo omitía; sin el sufijo el comando puede no resolver el plugin.
+
+**Cómo se verificó** (detalle en `audits/s01-install-limpio-2026-07-19.md`):
+
+| Paso | Resultado |
+|---|---|
+| Perfil limpio vía `CLAUDE_CONFIG_DIR` | `No marketplaces configured` — virgen confirmado |
+| `marketplace add` + `install` | `EXIT 0` · `doc-arquitecto 1.0.0 · enabled` |
+| `/documentar` sobre carpeta vacía | Generó el árbol completo: VISION · ALCANCE · PLAN (4 sesiones, 12 criterios con su verificación) · 4 ADRs con `Estado` y `superaA` · catálogo de referencias |
+| `/auditar-docs` | Informe con las 6 dimensiones — **atestación humana de Fede**, no verificación de máquina: el comando solo emite en pantalla y no persiste archivo |
+
+> Por qué nunca se había probado: se creía que la máquina de Fede tenía el plugin instalado
+> del marketplace viejo. **Verificado en S01: estaba _cacheado_, no instalado** — el efecto
+> era el mismo (el camino desde cero nunca se ejercitó), pero el motivo era otro.
 
 El estado de dependencias vive **solo acá** (README y FICHA apuntan a esta tabla, no lo repiten) y lleva fecha de verificación explícita: sin fecha, la marca miente sola.
 
 Cerrar esta compuerta es **S01** del plan, y toda sesión posterior la declara como prerrequisito ⛓️.
 
-> Nota: el hallazgo «la condición no es auditable» de la auditoría del 2026-07-19 quedó **resuelto** ese mismo día (ver arriba: `fede-tools` identificado, PRs calificados y verificados como merged). S01 se reduce a probar el install limpio y refrescar esta tabla.
+> Nota histórica: el hallazgo «la condición no es auditable» de la auditoría del 2026-07-19
+> quedó resuelto ese mismo día (`fede-tools` identificado, PRs calificados y verificados
+> como merged), y la compuerta se cerró en S01 esa misma fecha. Se deja registrado porque
+> la trazabilidad del contrato depende de poder releer por qué estuvo bloqueada.
 
 ## v0 SÍ hace
 

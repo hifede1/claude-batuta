@@ -93,18 +93,72 @@ $P/plugins/cache/fede-tools/doc-arquitecto/1.0.0/commands/auditar-docs.md
 
 ---
 
+## Paso 4 — corrida de punta a punta sobre carpeta vacía
+
+Corrida por **Fede en sesión interactiva**, el mismo 2026-07-19, sobre
+`/Users/federicopernice/Developer/Prueba` (carpeta vacía; proyecto inventado para la prueba:
+un CLI de notas rápidas).
+
+### `/doc-arquitecto:documentar` — modo nuevo
+
+Generó el árbol completo:
+
+```
+docs/VISION.md
+docs/ALCANCE.md
+docs/PLAN.md
+docs/decisiones/001-lenguaje-go.md
+docs/decisiones/002-persistencia-json-local.md
+docs/decisiones/003-distribucion-build-local.md
+docs/decisiones/004-testing-unit-integracion.md
+docs/references/README.md
+docs/business/usuario-y-contexto.md
+```
+
+**Verificación de contrato** (no solo de existencia — se comprobó que la salida cumpla el
+formato que el propio comando declara):
+
+| Exigencia del contrato | Medido |
+|---|---|
+| Cada sesión con 🎯 🛠️ ✅ 📚 ⛓️ | 4 sesiones · las 5 marcas presentes 4 veces cada una |
+| Cada criterio con su `(verificación: …)` | 12 criterios, todos con método |
+| ADRs con `Estado` | 4 de 4 |
+| ADRs con `superaA` | 4 de 4 |
+| Catálogo de referencias con pills de frescura | presente |
+
+### `/doc-arquitecto:auditar-docs`
+
+Emitió el informe recorriendo **las 6 dimensiones**.
+
+> ⚠️ **Esto es atestación humana, no verificación de máquina.** `/auditar-docs` **no
+> persiste ningún archivo**: emite el informe en pantalla y ahí termina. No queda rastro en
+> disco que un tercero pueda inspeccionar después. La afirmación se apoya en el reporte
+> directo de Fede, que corrió el comando y vio el informe.
+>
+> Se registra la distinción a propósito: el resto de esta evidencia es reproducible por
+> cualquiera; **esta línea no lo es**. Si en algún momento hace falta que lo sea, la vía es
+> que `/auditar-docs` persista su informe — hoy no lo hace, y está anotado como deuda en
+> `references/doc-arquitecto.md`.
+
+---
+
 ## Veredicto
 
 | Criterio de S01 | Estado | Evidencia |
 |---|---|---|
-| El install corre sin error en perfil limpio | ✅ **VERIFICADO** | Exit 0; los tres pasos de arriba |
-| `/documentar` y `/auditar-docs` responden de punta a punta | ⛔ **NO VERIFICADO** | Ver bloqueo abajo |
-| Queda evidencia persistida de la corrida | ✅ **VERIFICADO** | Este archivo |
-| La tabla de cimientos marca 🟢 con fecha fresca | ⛔ **NO APLICABLE TODAVÍA** | Depende del criterio 2 |
+| El install corre sin error en perfil limpio | ✅ **VERIFICADO (máquina)** | Exit 0; pasos 1-3 |
+| `/documentar` y `/auditar-docs` responden de punta a punta | ✅ **VERIFICADO** | `/documentar`: árbol medido contra el contrato (máquina) · `/auditar-docs`: atestación humana |
+| Queda evidencia persistida de la corrida | ✅ **VERIFICADO (máquina)** | Este archivo |
+| La tabla de cimientos marca 🟢 con fecha fresca | ✅ **VERIFICADO (máquina)** | `ALCANCE.md`, 2026-07-19 |
+
+**⛔ → ✅ La compuerta de precondición queda ABIERTA. v0 se puede construir.**
 
 ---
 
-## El bloqueo: por qué el criterio 2 no se pudo cerrar
+## Anexo — el bloqueo que hubo a mitad de camino
+
+Se documenta porque explica por qué el criterio 2 lo cerró un humano y no la máquina, y
+porque va a volver a aparecer en cualquier sesión que intente verificar un comando interactivo.
 
 Se intentó correr `/doc-arquitecto:auditar-docs` en modo headless sobre un repo de prueba
 vacío, dentro del perfil aislado:
@@ -136,6 +190,17 @@ comportamiento correcto.
 
 **Conclusión: el criterio 2 requiere que Fede corra los dos comandos en una sesión
 interactiva.** No es una limitación que se pueda saltear con más intentos.
+
+**Resolución:** Fede los corrió el mismo día. Ver «Paso 4» arriba.
+
+### Lección para las sesiones siguientes
+
+Todo criterio que dependa de un **comando interactivo** o de una **salida que no se
+persiste** tiene un techo de verificación automática. Conviene detectarlo al escribir el
+criterio, no al intentar cerrarlo: o se acepta explícitamente que lo cierra un humano, o se
+cambia el criterio por uno que deje rastro en disco.
+
+Aplica directo a S09, cuya batería entera son corridas sembradas.
 
 ---
 

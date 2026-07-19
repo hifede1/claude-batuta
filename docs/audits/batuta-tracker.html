@@ -385,12 +385,12 @@
    ========================================================================== */
 
 const LAST_AUDIT = '2026-07-19';
-const CLOSED_COUNT = 0;              // pendientes cerrados y verificados históricamente
+const CLOSED_COUNT = 4;              // pendientes cerrados y verificados históricamente (S01)
 const REPO = 'hifede1/claude-batuta';
 
 /* Estimación ratificada: talle S / M / L por pendiente. */
 const EST = {
-  's01-install':'M','s01-e2e':'S','s01-eviden':'S','s01-tabla':'S',
+  /* S01 cerrada y verificada 2026-07-19 — sus pendientes salieron de DATA */
   's02-plugin':'M','s02-cadena':'M','s02-idlink':'S','s02-d011':'S',
   's03-lee':'M','s03-compuerta':'S','s03-frena':'M','s03-eslabon':'S',
   's04-grafo':'L','s04-gated':'L','s04-adver':'M','s04-cotak':'S','s04-d014':'S',
@@ -405,23 +405,18 @@ const DATA = [
   {
     zona: 'Cimientos — la compuerta que habilita la obra',
     bloques: [{
-      id: 'b01', titulo: 'S01 · Cerrar la precondición', estado: 'curso',
+      id: 'b01', titulo: 'S01 · Precondición cerrada', estado: 'hecho',
       sesion: 'S01', talle: 'M', issue: 5, trat: 'directo',
-      planteamiento: 'Es la compuerta que habilita toda la obra. Una compuerta que no se puede evaluar no bloquea nada — cualquiera puede declararla abierta. La auditoría del 2026-07-19 la volvió auditable y cerró su primera mitad.',
-      hallazgo: 'El fix <b>ya está mergeado</b>. <code>fede-tools</code> es un <b>marketplace</b>, no un repo; <code>#29</code> y <code>#21</code> son <b>PRs</b> de <code>hifede1/claude-doc-arquitecto</code>, ambos MERGED, con el issue #20 cerrado. Ojo: existen <b>dos</b> PRs #29, uno por repo. Queda vivo <b>solo probar el install limpio</b>.',
+      planteamiento: '✅ <b>Cerrada el 2026-07-19.</b> Era la compuerta que habilitaba toda la obra: mientras no fuera evaluable, cualquiera podía declararla abierta. Hoy <code>doc-arquitecto</code> está en 🟢 y <b>v0 se puede construir</b>.',
+      hallazgo: 'Cómo se cerró: el fix ya estaba mergeado (<code>fede-tools</code> = marketplace, <code>#29</code>/<code>#21</code> = PRs de <code>claude-doc-arquitecto</code>). Lo que faltaba —el install limpio— se probó en un perfil virgen vía <code>CLAUDE_CONFIG_DIR</code>: <code>EXIT 0</code>. Después Fede corrió <code>/documentar</code> sobre una carpeta vacía (árbol completo, medido contra el contrato) y <code>/auditar-docs</code> (6 dimensiones, atestación humana).',
       metodo: [
-        'Correr la secuencia de install limpio en un perfil nuevo (ver bloque de código).',
-        'Ejercitar <code>/documentar</code> y <code>/auditar-docs</code> de punta a punta sobre un repo de prueba <b>vacío</b>.',
-        'Registrar la evidencia de la corrida — hoy no existe artefacto que pruebe el install.',
-        'Actualizar la tabla de cimientos de <code>ALCANCE.md</code> y pasar <code>doc-arquitecto</code> a 🟢.'
+        '<b>Cómo protegerlo al tocarlo:</b> si cambia el <code>marketplace.json</code> de <code>claude-audit-tracker</code>, revalidar que la <code>url</code> del source <code>git-subdir</code> siga siendo <b>HTTPS completa</b>. Con el shorthand <code>owner/repo</code> el CLI resuelve a SSH y el install rompe <b>solo en máquinas limpias</b> — el peor lugar para enterarse.',
+        'Si cambia la versión del CLI, revalidar <code>references/plugins-claude-code.md</code>: es territorio volátil, 3 meses.',
+        'Reproducir la verificación: perfil aislado con <code>CLAUDE_CONFIG_DIR</code>, confirmar <code>No marketplaces configured</code>, y correr los dos comandos del bloque de abajo.',
+        '⚠️ El perfil aislado <b>no tiene credenciales</b>: sirve para probar el install, no para correr los comandos. Eso lo cierra un humano.'
       ],
-      code: '/plugin uninstall doc-arquitecto\n/plugin marketplace add hifede1/claude-audit-tracker\n/plugin install doc-arquitecto@fede-tools',
-      pend: [
-        {id:'s01-install', t:'El install corre sin error en perfil limpio', v:'la secuencia de 3 comandos, salida sin error'},
-        {id:'s01-e2e', t:'<code>/documentar</code> y <code>/auditar-docs</code> responden de punta a punta', v:'corrida sobre repo de prueba vacío; el árbol docs/ existe y el informe lista las 6 dimensiones'},
-        {id:'s01-eviden', t:'Queda evidencia persistida de la corrida', v:'el artefacto existe y tiene fecha — hoy este es el hueco'},
-        {id:'s01-tabla', t:'La tabla de cimientos marca <code>doc-arquitecto</code> 🟢 con fecha fresca', v:'inspección de ALCANCE.md'}
-      ],
+      code: '/plugin uninstall doc-arquitecto@fede-tools\n/plugin marketplace add hifede1/claude-audit-tracker\n/plugin install doc-arquitecto@fede-tools',
+      pend: [],
       refs: ['doc-arquitecto','plugins-claude-code'],
       prereq: []
     }]
@@ -611,8 +606,7 @@ const DEBT = [
 ];
 
 const PLAN = [
-  {s:'S01', o:'Cerrar la precondición: doc-arquitecto en 🟢', b:'b01', issue:5, talle:'M', trat:'directo', pre:'Ninguno — es la raíz del plan'},
-  {s:'S02', o:'Andamio del comando + registro de trazabilidad', b:'b02', issue:6, talle:'M', trat:'directo', pre:'S01 (#5) · 🔒 decisión 011'},
+  {s:'S02', o:'Andamio del comando + registro de trazabilidad', b:'b02', issue:6, talle:'M', trat:'directo', pre:'✅ S01 cerrada · 🔒 decisión 011'},
   {s:'S03', o:'Fase analizar', b:'b03', issue:7, talle:'M', trat:'directo', pre:'S02 (#6)'},
   {s:'S04', o:'Fase planificar (director-de-obra plegado)', b:'b04', issue:8, talle:'L', trat:'sdd', pre:'S03 (#7) · 🔒 decisión 014 · 🔒 cota K'},
   {s:'S05', o:'Externos y ruteo mínimos (best-effort)', b:'b05', issue:9, talle:'L', trat:'sdd', pre:'S04 (#8) · 🔒 decisión 010'},
@@ -693,7 +687,7 @@ const TESTS = {
   ],
   flows: FLOWS.map(f => ({id:f.id, t:f.t, pill:'rojo', test:'Sin test. Se clava en S09 (#13) o en la corrida sembrada de su propia sesión.'})),
   contrato: [
-    {b:'b01', bt:'S01 · Precondición', total:4, clavados:0, nota:'Los 4 criterios se verifican por corrida manual del install. Ninguno queda protegido después: si el marketplace cambia, nadie se entera hasta la próxima auditoría.'},
+    {b:'b01', bt:'S01 · Precondición ✅', total:4, clavados:0, nota:'<b>Cerrada, pero sin test que la proteja.</b> 3 criterios se verificaron por máquina y 1 por atestación humana (<code>/auditar-docs</code> no persiste informe). Si el <code>marketplace.json</code> volviera al shorthand <code>owner/repo</code>, el install rompería en máquinas limpias y <b>nadie se enteraría hasta la próxima auditoría</b>. Candidato claro a pendiente: un check de CI que valide que la url del <code>git-subdir</code> es HTTPS.'},
     {b:'b02', bt:'S02 · Andamio', total:4, clavados:0, nota:'3 de 4 son inspección del <code>.md</code>. La inspección no es regresiva: protege el día que se escribe, no después.'},
     {b:'b03', bt:'S03 · Analizar', total:4, clavados:0, nota:'Los 4 exigen corrida sembrada. El de «git status limpio» es el más valioso del proyecto y no tiene escenario construido.'},
     {b:'b04', bt:'S04 · Planificar', total:5, clavados:0, nota:'El criterio de la cota K no es evaluable hasta que se fije K.'},
@@ -706,14 +700,15 @@ const TESTS = {
 };
 
 const REFS = [
-  {id:'doc-arquitecto', t:'doc-arquitecto', q:'El contrato de entrada/salida de <code>/documentar</code> y <code>/auditar-docs</code>: qué consume, qué árbol produce, qué formato tienen fichas y ADRs.', fecha:'', fresc:'falta', trig:['documentar','auditar-docs','plano','contrato','cimiento','ADR','ficha'], usa:['S01 (#5)','S03 (#7)'], path:'docs/references/doc-arquitecto.md', antes:'S01 — antes de abrir la compuerta'},
-  {id:'plugins-claude-code', t:'plugins-claude-code', q:'Cómo se construye la clase de artefacto que este proyecto produce: estructura del plugin, manifiesto, declaración de comandos y skills, instalación y distribución.', fecha:'', fresc:'falta', trig:['plugin','marketplace','comando','skill','install','manifiesto','slash command'], usa:['S01 (#5)','S02 (#6)'], path:'docs/references/plugins-claude-code.md', antes:'S01/S02 — antes de escribir la estructura', volatil:true},
+  {id:'doc-arquitecto', t:'doc-arquitecto', q:'El contrato de entrada/salida de <code>/documentar</code> y <code>/auditar-docs</code>: qué consume, qué árbol produce, qué formato tienen fichas y ADRs.', fecha:'2026-07-19', fresc:'fresca', trig:['documentar','auditar-docs','plano','contrato','cimiento','ADR','ficha','seis dimensiones'], usa:['S01 ✅','S03 (#7)'], path:'docs/references/doc-arquitecto.md', antes:'generada en S01'},
+  {id:'plugins-claude-code', t:'plugins-claude-code', q:'Cómo se construye la clase de artefacto que este proyecto produce: estructura del plugin, manifiesto, declaración de comandos y skills, instalación y distribución.', fecha:'2026-07-19', fresc:'fresca', trig:['plugin','marketplace','comando','skill','install','manifiesto','slash command','git-subdir'], usa:['S01 ✅','S02 (#6)'], path:'docs/references/plugins-claude-code.md', antes:'generada en S01', volatil:true},
   {id:'audit-tracker', t:'audit-tracker', q:'El contrato de <code>/orquestar</code> y <code>/proximo-encargo</code>: el canal de firma, la cola de Issues, el snapshot como cache, la taxonomía de labels.', fecha:'', fresc:'falta', trig:['orquestar','proximo-encargo','firma','cola de issues','snapshot','auditar obra','tracker'], usa:['S03 (#7)','S05 (#9)','S06 (#10)','S07 (#11)','S08 (#12)'], path:'docs/references/audit-tracker.md', antes:'S03 — antes de delegar la primera lectura de estado', volatil:true},
   {id:'workflows-fan-out', t:'workflows-fan-out', q:'Qué es un workflow en este taller y cuál es su contrato de fan-out: cómo se lanza, qué devuelve, cómo se estructura un pase adversarial.', fecha:'', fresc:'falta', trig:['workflow','fan-out','multi-agente','pase adversarial','sub-agente','paralelo'], usa:['S04 (#8)'], path:'docs/references/workflows-fan-out.md', antes:'S04 — antes de delegar el pase adversarial'},
   {id:'perimetro-de-confianza', t:'perimetro-de-confianza', q:'Patrones de prompt-injection en agentes y cómo se sostiene un perímetro de confianza: etiquetado de dato externo, no-transitividad, egreso tipado.', fecha:'', fresc:'falta', trig:['inyeccion','prompt injection','dato externo','egreso','confianza','no confiable','sub-agente'], usa:['S05 (#9)','S06 (#10)','S07 (#11)','S09 (#13)'], path:'docs/references/perimetro-de-confianza.md', antes:'S05 — antes de escribir el modelo de confianza'}
 ];
 
 const CHANGELOG = [
+  {f:'2026-07-19', t:'⛔→✅ S01 cerrada: la compuerta de precondición está ABIERTA', d:'Re-auditoría tras el encargo #5. <b>Los 4 pendientes de S01 se verificaron y salieron del tablero.</b> El install limpio se probó en un perfil virgen (<code>CLAUDE_CONFIG_DIR</code>, <code>EXIT 0</code>); <code>/documentar</code> generó el árbol completo sobre una carpeta vacía y se midió contra el contrato (4 sesiones con las 5 marcas, 12 criterios con su verificación, 4/4 ADRs con <code>Estado</code> y <code>superaA</code>); <code>/auditar-docs</code> emitió las 6 dimensiones —<b>atestación humana</b>, porque ese comando no persiste informe—. Se generaron 2 de las 5 referencias 🔴. <b>Hallazgos:</b> la ficha traía mal la sintaxis de <code>uninstall</code> (falta <code>@fede-tools</code>), y el perfil real tenía <code>doc-arquitecto</code> <i>cacheado, no instalado</i> — la premisa registrada era imprecisa. <b>v0 se puede construir: las 8 sesiones restantes ya no están detrás de la compuerta, solo detrás de sus firmas.</b>'},
   {f:'2026-07-19', t:'Auditoría inicial y despacho de la cola', d:'Estado: plano firmado, obra no iniciada (22 markdowns, cero código). Se verificó el estado real de los 4 delegados. <b>Hallazgo principal:</b> la compuerta de precondición estaba desactualizada — el fix <code>fede-tools</code> ya estaba mergeado y las incógnitas (<code>fede-tools</code> = marketplace, <code>#29</code>/<code>#21</code> = PRs de <code>claude-doc-arquitecto</code>) quedaron resueltas. <code>ALCANCE.md</code> corregido al momento. Se publicaron los 9 encargos como issues #5–#13 en modo orquestado.'}
 ];
 
@@ -866,7 +861,7 @@ function renderMapa() {
     y dónde depende de que alguien se acuerde.</p><div class="flow">`;
 
   const pasos = [
-    {b:'b01', edge:'⛔ COMPUERTA · humana · el install limpio tiene que probarse antes de cualquier otra cosa'},
+    {b:'b01', edge:'✅ COMPUERTA ABIERTA (2026-07-19) · el install limpio quedó probado; ya no bloquea'},
     {b:'b02', edge:'automático · el registro de cadena queda definido y toda fase posterior está obligada a escribirlo'},
     {b:'b03', edge:'🖐️ HUMANO · batuta devuelve «esto entendí» y FRENA hasta confirmación'},
     {b:'b04', edge:'automático · la RUTA sale con recomendaciones rankeadas y decisiones-a-firmar'},
@@ -1045,14 +1040,16 @@ function renderRefs() {
     <p class="sec-note">El <b>CÓMO</b> técnico destilado: patrones, tradeoffs, citas y fecha.
     Las fichas solo las <b>linkean</b> — pero además se cargan <b>por trigger</b>: el ejecutor lee toda referencia
     cuyos triggers matcheen su encargo, aunque la ficha no la linkee.
-    <b>${falta} de ${REFS.length} faltan</b>, y cada una hay que generarla ANTES del encargo que la necesita.</p>
+    <b>${REFS.length - falta} generadas · ${falta} faltan</b>, y cada una hay que generarla ANTES del encargo que la necesita.</p>
 
-    <div class="ro" style="border-color:var(--stop)">
-      <h3>🔴 El catálogo está vacío: las 5 referencias faltan</h3>
-      <p class="strong">Consecuencia práctica: los primeros encargos van a arrancar generando referencia antes de tocar nada.
-      No es un problema, es el diseño funcionando — pero calculá que <b>S01 y S02 van a costar más de lo que dice su talle</b>.
-      <code>docs/business/</code> no aplica a este proyecto y está declarado así explícitamente: <code>batuta</code> es
-      herramienta interna sin mercado ni usuarios externos.</p></div>
+    <div class="ro" style="border-color:var(--ok)">
+      <h3>🟢 S01 saldó 2 de las 5 — quedan ${falta}</h3>
+      <p class="strong">El 2026-07-19, el encargo de S01 generó <code>plugins-claude-code.md</code> y
+      <code>doc-arquitecto.md</code> antes de tocar nada, como manda el protocolo. La primera trajo el gotcha
+      que explica por qué el install no rompe: en <code>git-subdir</code> la url debe ser HTTPS completa.
+      <b>Se confirmó en la corrida real</b> (<code>SSH not configured, cloning via HTTPS</code>).</p>
+      <p><code>docs/business/</code> no aplica a este proyecto y está declarado así explícitamente:
+      <code>batuta</code> es herramienta interna sin mercado ni usuarios externos.</p></div>
 
     <div class="filters">
       <button class="rchip" data-rf="todas" aria-pressed="${rFilter === 'todas'}">Todas</button>
@@ -1061,16 +1058,22 @@ function renderRefs() {
     </div>`;
 
   const vis = REFS.filter(r => rFilter === 'todas' || (rFilter === 'falta' && r.fresc === 'falta') || (rFilter === 'volatil' && r.volatil));
+  const FRESC = {
+    falta:  ['stop', '🔴 faltante'],
+    refresco: ['warn', '🟠 pendiente de refresco'],
+    fresca: ['ok', '🟢 fresca']
+  };
   for (const r of vis) {
-    h += `<div class="ro" style="border-color:var(--stop)">
+    const [fc, ft] = FRESC[r.fresc] || FRESC.falta;
+    h += `<div class="ro" style="border-color:var(--${fc === 'ok' ? 'ok' : fc === 'warn' ? 'warn' : 'stop'})">
       <h3>${r.t}</h3>
       <div class="ro-meta">
-        <span class="pill stop">🔴 faltante</span>
+        <span class="pill ${fc}">${ft}</span>
         ${r.volatil ? '<span class="pill warn">territorio volátil · revalidar cada 3 meses</span>' : ''}
-        <span class="pill idle">sin fecha</span>
+        <span class="pill idle">${r.fecha || 'sin fecha'}</span>
       </div>
       <p>${r.q}</p>
-      <p><b>Generar antes de:</b> ${r.antes}</p>
+      <p><b>${r.fresc === 'fresca' ? 'Origen:' : 'Generar antes de:'}</b> ${r.antes}</p>
       <p><b>La usan:</b> ${r.usa.join(' · ')}</p>
       <p><b>Triggers:</b> ${r.trig.map(t => `<code>${t}</code>`).join(' ')}</p>
       <p><code>${r.path}</code></p></div>`;
