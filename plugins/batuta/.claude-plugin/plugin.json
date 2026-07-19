@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "batuta",
+  "displayName": "batuta",
+  "version": "0.1.0",
+  "description": "Director de orquesta DELGADO: lleva un proyecto de objetivo a obra componiendo las herramientas del taller, sin reimplementar el trabajo de ninguna ni mover el loop sin firma. Preserva la cadena idea → plano → encargos → obra y exhibe todo desvío como hallazgo.",
+  "author": {
+    "name": "Federico Pernice"
+  },
+  "repository": "https://github.com/hifede1/claude-batuta",
+  "license": "MIT",
+  "keywords": [
+    "orquestacion",
+    "trazabilidad",
+    "compuertas",
+    "claude-code",
+    "contexto"
+  ]
+}
