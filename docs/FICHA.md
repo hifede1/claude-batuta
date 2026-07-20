@@ -105,6 +105,7 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 - **Sustrato: markdown puro** — FIRMADA 2026-07-19 · `decisiones/006-sustrato-markdown-puro.md`. Comando `.md`, sin código, sin build, sin dependencias. Consecuencia: los criterios de §12 se verifican con **corridas sembradas**, no con tests unitarios.
 - **Corte de versiones v0/v1/v2** — FIRMADA 2026-07-19 · `decisiones/007-corte-de-versiones.md`. Ver §0.
 - **Absorción de `director-de-obra` como fase 2** — FIRMADA 2026-07-18 · `decisiones/008-absorcion-director-de-obra.md`. Ver §9.
+- **Rúbrica de confidence: cuantitativa** — FIRMADA 2026-07-20 · `decisiones/014-rubrica-de-confidence.md`. Puntaje `confidence = clamp(0.5·E + 0.3·R − 0.4·B, 0, 1)`; el número ordena pero nunca aprueba solo (mitigación de la falsa precisión). Aplicada en la fase 2 de `plugins/batuta/commands/batuta.md`. Desbloqueó S04.
 
 ### Pendientes
 
@@ -113,7 +114,6 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 - **PENDIENTE — Acto de ratificación del plano** · `decisiones/011-ratificacion-del-plano.md`. Dueño: Fede. Desbloquea: S02.
 - **PENDIENTE — Umbral de egreso** · `decisiones/012-umbral-de-egreso.md`. Dueño: Fede. Desbloquea: S07.
 - **PENDIENTE — `retrospectiva` opcional** · `decisiones/013-retrospectiva-opcional.md`. Dueño: Fede. Desbloquea: S08.
-- **PENDIENTE — Rúbrica de confidence** · `decisiones/014-rubrica-de-confidence.md`. Dueño: Fede. Desbloquea: firmarla **antes** de S04 — si se difiere «al construir», la implementación la fija de hecho.
 - **PENDIENTE — Decisiones nuevas de ejecutar + externos** · `decisiones/015-eje-externo.md`. Dueño: Fede. Desbloquea: auditar el eje externo una vez escrito el modelo de S05.
 
 ## 11. Fuera de alcance (v0 y v1)

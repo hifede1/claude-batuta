@@ -110,20 +110,87 @@ comparar después.
 > **Eslabón que agrega: `plano`** · **Recibe:** de `idea`, el objetivo confirmado
 > **Delega en:** un **workflow** de fan-out (pase adversarial contra estado FRESCO)
 > **Produce ella:** el grafo, los horizontes y la RUTA. Es su única capacidad propia
-> (absorbida de `director-de-obra`, `decisiones/008`).
+> (absorbida de `director-de-obra`, `decisiones/008`). Referencia: `docs/references/workflows-fan-out.md`.
 
-1. Construí el grafo de dependencias e inversiones sobre el estado leído en la fase 1.
-2. Producí horizontes distinguiendo **gated-por-EJECUCIÓN** de **gated-por-FIRMA**. Esa
-   distinción **ES el ruteador** de la fase 5: confundirlas hace que un proyecto espere por
-   algo que nadie tenía que hacer.
-3. Delegá el pase adversarial a un **workflow**. No lo hagas a mano.
-4. Emití recomendaciones rankeadas con contrapunto + las decisiones-a-firmar.
+### 1. El grafo de dependencias e inversiones
 
-**Invariantes heredadas (PISO, no techo):** D1 enumera-y-clasifica · D2 GitHub-first ·
-D3 baseline liviano · D4 consume cartera.
+Sobre el estado leído en la fase 1 (bloques, pendientes, decisiones pendientes del artefacto),
+armá el grafo dirigido: cada nodo es un requisito/pendiente; cada arista es «B necesita que A
+esté hecho antes». Marcá las **inversiones** —dónde el orden natural del humano choca con el
+orden que impone la dependencia—: son las trampas donde un proyecto se cree listo y no lo está.
 
-**Escribí el eslabón `plano`:** por cada requisito que cubre la idea, su **identificador** y
-por qué lo cubre.
+### 2. Horizontes: EJECUCIÓN vs FIRMA — **esta distinción ES el ruteador de la fase 3**
+
+Agrupá los nodos en **horizontes** (lo que puede avanzar en paralelo ahora, después, etc.).
+Y por cada nodo bloqueado, clasificá **por qué** está bloqueado. **La regla, sin ambigüedad:**
+
+| Clasificación | Qué lo destraba | Pregunta de decisión |
+|---|---|---|
+| **gated-por-EJECUCIÓN** | Que **alguien HAGA trabajo**: un encargo sin terminar, un delegado que no existe, código que falta. | ¿Existe una tarea que, hecha, lo destraba? → **EJECUCIÓN** |
+| **gated-por-FIRMA** | Que **un humano DECIDA**: un ADR pendiente, una compuerta sin firmar, una opción sin elegir. Nadie tiene que construir nada. | ¿Lo único que falta es que un humano diga sí / elija? → **FIRMA** |
+
+> ⚠️ **Confundirlas es la falla que este producto existe para evitar.** Un nodo gated-por-FIRMA
+> ruteado como EJECUCIÓN hace que el proyecto **espere por trabajo que nadie tenía que hacer**;
+> al revés, un nodo gated-por-EJECUCIÓN ruteado como FIRMA le pide al humano que firme algo que
+> todavía no existe. La fase 3 rutea EJECUCIÓN → `/orquestar` y FIRMA → Compuerta. Si acá se
+> clasifica mal, la fase 3 rutea mal.
+
+### 3. La banda angosta — selección de tools condicional pero **acotada a K = 3**
+
+Qué delegados/tools entran en la RUTA **depende del objetivo** — no hay playbook estático (dos
+objetivos de forma distinta producen RUTAs distintas). Pero esa selección condicional, sin
+cota, se va a **re-análisis infinito**: cada pasada descubre un matiz y vuelve a re-seleccionar.
+
+**Cota dura: `K = 3`.** La selección de tools puede re-analizarse **como máximo 3 veces** antes
+de presentar la RUTA. Si en la 3.ª pasada todavía no convergió, presentás **la mejor RUTA hasta
+el momento marcada como «convergencia incompleta: N nodos sin resolver»** — y frenás el
+re-análisis. Presentar una RUTA imperfecta que el humano ve es infinitamente mejor que analizar
+para siempre una que nadie ve. (Este número es firma de Fede, 2026-07-20; cambiarlo es re-firmar.)
+
+### 4. El pase adversarial — **se delega a un workflow, NO se hace a mano**
+
+Delegá el pase adversarial a un **workflow** de fan-out (`references/workflows-fan-out.md`),
+contra **estado FRESCO, no cacheado**: los agentes releen el estado en el momento del pase, no
+un blob memorizado de la fase 1. Forma canónica — *generar por lentes → refutar → sintetizar*:
+varios agentes atacan el plan desde ángulos distintos (dependencia mal trazada, horizonte que
+asume trabajo fantasma, clasificación EJECUCIÓN/FIRMA invertida); por cada hallazgo, agentes
+independientes prompteados para **refutarlo**; sobrevive solo lo que no se logra refutar.
+
+> Si te encontrás corriendo los sub-agentes «a mano» en vez de invocar un workflow: **pará**.
+> Eso es hacer el fan-out a mano, prohibido por el test de delgadez. Tiene que **haber
+> invocación de workflow** en la traza.
+
+### 5. Recomendaciones rankeadas con contrapunto — rúbrica CUANTITATIVA (`decisiones/014`)
+
+Emití las recomendaciones **rankeadas por un puntaje de `confidence` ∈ [0,1]** (firmado en
+`decisiones/014`):
+
+```
+confidence = clamp( 0.5·E + 0.3·R − 0.4·B , 0, 1 )
+```
+
+- **E** (evidencia): respaldada por estado real observado `1` ↔ especulativa `0`.
+- **R** (reversibilidad): reversible sin costo `1` ↔ irreversible/outward `0`.
+- **B** (dependencias abiertas): fracción de prerrequisitos aún abiertos. Penaliza.
+
+**El número ordena; NO decide solo** (mitigación innegociable de la falsa precisión, `014`):
+toda recomendación se muestra con (a) su `confidence`, (b) el **eje dominante** que lo mueve, y
+(c) su **contrapunto** (el argumento en contra, siempre). Bandas en la Compuerta Cero: **alta**
+`≥0.66` (primera, contrapunto en una línea) · **media** `0.33–0.66` (con el eje que la frena
+resaltado) · **baja** `<0.33` («requiere decisión humana explícita» — el número no la aprueba).
+
+Adjuntá siempre las **decisiones-a-firmar** que la RUTA destape: son nodos gated-por-FIRMA.
+
+### Invariantes heredadas — **PISO, no techo** (`decisiones/008`)
+
+- **D1 enumera-y-clasifica** — el grafo enumera cada nodo y lo clasifica (paso 1 y 2).
+- **D2 GitHub-first** — la RUTA se materializa en Issues/PRs, no en un bus propio.
+- **D3 baseline liviano** — se persiste un baseline liviano de la corrida, no un dump pesado.
+- **D4 consume cartera** — en v0 (mono-proyecto, `decisiones/001`) la «cartera» es el propio
+  repo: enumeración trivial. La invariante se acata sin construir portafolio.
+
+**Escribí el eslabón `plano`:** por cada requisito que cubre la idea, su **identificador**
+(`<SESIÓN>/<slug-del-criterio>`), su `confidence` con el eje dominante, y por qué lo cubre.
 
 ---
 
