@@ -385,13 +385,12 @@
    ========================================================================== */
 
 const LAST_AUDIT = '2026-07-19';
-const CLOSED_COUNT = 8;              // pendientes cerrados y verificados (S01 + S02)
+const CLOSED_COUNT = 12;             // pendientes cerrados y verificados (S01 + S02 + S03)
 const REPO = 'hifede1/claude-batuta';
 
 /* Estimación ratificada: talle S / M / L por pendiente. */
 const EST = {
   /* S01 y S02 cerradas y verificadas 2026-07-19 — sus pendientes salieron de DATA */
-  's03-lee':'M','s03-compuerta':'S','s03-frena':'M','s03-eslabon':'S',
   's04-grafo':'L','s04-gated':'L','s04-adver':'M','s04-cotak':'S','s04-d014':'S',
   's05-manif':'L','s05-bloquea':'M','s05-carril':'S','s05-honesto':'M','s05-d010':'S',
   's06-auth':'L','s06-diff':'M','s06-doble':'M','s06-canal':'S','s06-d009':'M',
@@ -439,23 +438,17 @@ const DATA = [
         refs:['plugins-claude-code'], prereq:[]
       },
       {
-        id:'b03', titulo:'S03 · Fase analizar', estado:'pend',
+        id:'b03', titulo:'S03 · Fase analizar', estado:'hecho',
         sesion:'S03', talle:'M', issue:7, trat:'directo',
-        planteamiento:'Un objetivo mal leído envenena las cinco fases siguientes: todo el trabajo posterior es correcto respecto de la cosa equivocada. Por eso esta fase termina devolviéndole al humano <b>su propia intención reformulada</b>. Y hace cumplir la regla más dura: sin plano firmado, <code>batuta</code> escribe CERO contrato.',
-        gotcha:'La tentación de «completar» un plano delgado es máxima acá. Es fabricar contrato — está fuera de alcance y tiene criterio que lo prueba.',
+        planteamiento:'✅ <b>Cerrada el 2026-07-20.</b> La fase que lee el objetivo y devuelve al humano su intención reformulada antes de avanzar. Hace cumplir la regla más dura —sin plano firmado, cero contrato— y lee el estado real <b>sin auditar</b>.',
+        hallazgo:'Se cerró tras resolver una dependencia en otro repo: <code>/audit-tracker</code> no tenía modo lectura, así que <code>analizar</code> no podía «leer sin re-auditar». En vez de reimplementar, se llevó a firma (<code>audit-tracker#31</code>) → se construyó el contrato <code>estado.json</code> (audit-tracker v1.12.0, PR #32) → <code>analizar</code> ahora lee ese artefacto. La regla madre encadenó cuatro pasos sin que nadie reimplementara nada.',
         metodo:[
-          'Con plano firmado: delegar la lectura a <code>/audit-tracker</code> y sintetizar. <b>batuta LEE, no re-audita.</b>',
-          'Sin plano: rutear a <code>/documentar</code> y <b>frenar</b>. Cero bytes de contrato escritos.',
-          'Emitir la compuerta de lectura: «esto entendí que querés y por qué».',
-          'Escribir el primer eslabón de la cadena definida en S02.'
+          '<b>Cómo protegerlo al tocarlo:</b> <code>analizar</code> LEE <code>docs/audits/&lt;proyecto&gt;-estado.json</code>. Si alguna vez vuelve a invocar <code>/audit-tracker</code> para leer, es un bug: eso re-audita.',
+          'Si el artefacto falta o está viejo, rutea a <code>/audit-tracker</code> para que lo <b>produzca</b> — nunca audita ella. Mismo patrón que «sin plano → <code>/documentar</code>».',
+          'La corrida sembrada exhibió 2 desvíos como hallazgos (pedido sin requisito, drift de docs). Ese comportamiento ES el norte: al tocar la fase, no lo pierdas.'
         ],
-        pend:[
-          {id:'s03-lee', t:'Con plano firmado lee vía audit-tracker y no re-audita', v:'corrida sembrada; traza sin escaneo propio del código'},
-          {id:'s03-compuerta', t:'Devuelve al humano su lectura del objetivo antes de avanzar', v:'la corrida se detiene y emite la síntesis'},
-          {id:'s03-frena', t:'Sin plano, rutea a /documentar y frena', v:'corrida sobre repo sin docs/; git status limpio al terminar'},
-          {id:'s03-eslabon', t:'Registra el eslabón <code>idea</code>', v:'inspección del registro tras la corrida'}
-        ],
-        refs:['audit-tracker','doc-arquitecto'], prereq:['S02 (#6)']
+        pend:[],
+        refs:['audit-tracker','doc-arquitecto'], prereq:[]
       },
       {
         id:'b04', titulo:'S04 · Fase planificar', estado:'pend',
@@ -594,7 +587,8 @@ const DATA = [
 
 const DEBT = [
   {t:'El comando se llama /batuta:batuta, no /batuta', d:'<code>FICHA.md</code> §2 declara «Plugin de Claude Code, comando <code>/batuta</code>». La realidad verificada en S02 es <code>/batuta:batuta</code>: el namespacing de Claude Code es <code>plugin:comando</code> y acá ambos se llaman igual. <b>Drift doc↔código, y toca el nombre público del producto.</b> Dos salidas: renombrar el comando (p. ej. <code>commands/correr.md</code> → <code>/batuta:correr</code>) o corregir la ficha. <b>Requiere decisión humana</b> — no se resuelve por omisión.', sev:'warn'},
-  {t:'¿Un plano con decisiones pendientes puede estar VIGENTE?', d:'La pregunta la hizo visible la decisión <code>011</code> al volver evaluable el estado del plano. Hoy quedan <b>6 decisiones ⏳ sin firmar</b> y 6 de 7 sesiones restantes bloqueadas por ellas. Dos lecturas: «VIGENTE = lo escrito obliga, las pendientes bloquean sus sesiones» (coherente con <i>bloqueá, nunca reimplementes</i>) o «VIGENTE exige plano completo». Registrada como pendiente explícita en el ADR — <b>no resuelta por omisión</b>.', sev:'warn'},
+  {t:'¿Un plano con decisiones pendientes puede estar VIGENTE?', d:'La pregunta la hizo visible la decisión <code>011</code> al volver evaluable el estado del plano. Hoy quedan <b>6 decisiones ⏳ sin firmar</b> y 6 de 6 sesiones restantes bloqueadas por ellas. Dos lecturas: «VIGENTE = lo escrito obliga, las pendientes bloquean sus sesiones» (coherente con <i>bloqueá, nunca reimplementes</i>) o «VIGENTE exige plano completo». Registrada como pendiente explícita en el ADR — <b>no resuelta por omisión</b>.', sev:'warn'},
+  {t:'El label «externo» no existe en audit-tracker', d:'<code>FICHA.md</code> §5 dice que un externo faltante va a la cola de Issues «con label <code>externo</code>». La auditoría de S03 verificó que ese label <b>no está</b> en la taxonomía de <code>audit-tracker</code> (solo <code>encargo</code> / <code>sesion-NN</code> / <code>maquina/*</code>). Hay que decidir de quién es: o <code>batuta</code> lo crea (taxonomía propia, a declarar) o se coordina con <code>audit-tracker</code>. <b>Muerde en S05.</b>', sev:'warn'},
   {t:'Deuda de verificación total', d:'0 de 9 sesiones tienen escenario sembrado construido. Al ser markdown puro no hay tests unitarios: la única forma de clavar un flujo es la corrida sembrada. S09 existe para saldar esta deuda — hasta que corra, <b>ningún</b> criterio del proyecto está protegido contra regresión.', sev:'stop'},
   {t:'gitleaks delegado a un delegado sin capacidad', d:'<code>decisiones/010</code> difiere el escaneo de secretos a <code>publicador</code>. Verificado 2026-07-19: <code>claude-publicador</code> tiene la decisión firmada en su ficha y cero código (2 commits, sin comando instalable). El bloqueo no tiene fecha de resolución.', sev:'stop'},
   {t:'«Los workflows ya existen» sin artefacto verificable', d:'<code>FICHA.md</code> §0 apoya un tercio del alcance de v0 en los workflows, pero la auditoría no pudo identificar cuál es el artefacto que respalda esa afirmación. <b>Requiere confirmación humana antes de S04.</b>', sev:'warn'},
@@ -604,8 +598,7 @@ const DEBT = [
 ];
 
 const PLAN = [
-  {s:'S03', o:'Fase analizar', b:'b03', issue:7, talle:'M', trat:'directo', pre:'✅ S02 cerrada — sin decisión pendiente, ejecutable ya'},
-  {s:'S04', o:'Fase planificar (director-de-obra plegado)', b:'b04', issue:8, talle:'L', trat:'sdd', pre:'S03 (#7) · 🔒 decisión 014 · 🔒 cota K'},
+  {s:'S04', o:'Fase planificar (director-de-obra plegado)', b:'b04', issue:8, talle:'L', trat:'sdd', pre:'✅ S03 cerrada · 🔒 decisión 014 · 🔒 cota K'},
   {s:'S05', o:'Externos y ruteo mínimos (best-effort)', b:'b05', issue:9, talle:'L', trat:'sdd', pre:'S04 (#8) · 🔒 decisión 010'},
   {s:'S06', o:'Compuerta Cero', b:'b06', issue:10, talle:'L', trat:'sdd', pre:'S05 (#9) · 🔒 decisión 009 (bloqueante duro)'},
   {s:'S07', o:'Fase ejecutar-con-compuertas', b:'b07', issue:11, talle:'L', trat:'sdd', pre:'S06 (#10) · 🔒 decisión 012'},
@@ -682,11 +675,15 @@ const TESTS = {
     {n:'Lint', cmd:'—', est:'na', nota:'No hay linter configurado. Candidato futuro: linter de markdown.'},
     {n:'Corrida sembrada', cmd:'repo de prueba por escenario + corrida de <code>batuta</code>', est:'rojo', nota:'<b>Es el único gate real del proyecto y no existe ninguna.</b> Toda la batería es S09.'}
   ],
-  flows: FLOWS.map(f => ({id:f.id, t:f.t, pill:'rojo', test:'Sin test. Se clava en S09 (#13) o en la corrida sembrada de su propia sesión.'})),
+  flows: FLOWS.map(f => {
+    if (f.id === 'f1') return {id:f.id, t:f.t, pill:'verde', test:'Clavado por la corrida sembrada de S03 (2026-07-20): leyó el estado del estado.json sin re-auditar y devolvió su lectura en la compuerta. docs/audits/s03-analizar-verificacion-2026-07-20.md'};
+    if (f.id === 'f2') return {id:f.id, t:f.t, pill:'verde', test:'Clavado por las corridas de S02 (repo vacío → ruteó a /documentar, git limpio) y S03 (plano presente, git igual limpio). Cero contrato fabricado.'};
+    return {id:f.id, t:f.t, pill:'rojo', test:'Sin test. Se clava en S09 (#13) o en la corrida sembrada de su propia sesión.'};
+  }),
   contrato: [
     {b:'b01', bt:'S01 · Precondición ✅', total:4, clavados:0, nota:'<b>Cerrada, pero sin test que la proteja.</b> 3 criterios se verificaron por máquina y 1 por atestación humana (<code>/auditar-docs</code> no persiste informe). Si el <code>marketplace.json</code> volviera al shorthand <code>owner/repo</code>, el install rompería en máquinas limpias y <b>nadie se enteraría hasta la próxima auditoría</b>. Candidato claro a pendiente: un check de CI que valide que la url del <code>git-subdir</code> es HTTPS.'},
     {b:'b02', bt:'S02 · Andamio ✅', total:4, clavados:1, nota:'<b>1 clavado de verdad:</b> «<code>/batuta</code> arranca» se verificó con corrida real (<code>claude --plugin-dir</code>, <code>EXIT 0</code>) y es <b>reproducible</b>. Los otros 3 son inspección: protegen el día que se escriben, no después. <b>Deuda concreta:</b> si alguien borra una declaración de eslabón, nada lo detecta. Candidato claro: un check de CI que cuente las 4 declaraciones y falle si falta alguna.'},
-    {b:'b03', bt:'S03 · Analizar', total:4, clavados:0, nota:'Los 4 exigen corrida sembrada. El de «git status limpio» es el más valioso del proyecto y no tiene escenario construido.'},
+    {b:'b03', bt:'S03 · Analizar ✅', total:4, clavados:3, nota:'<b>3 clavados por corrida sembrada</b> (repo con plano firmado + estado.json): lee vía artefacto sin re-auditar, compuerta de lectura, git limpio. El 4º (eslabón <code>idea</code>) es por diseño, gated en la confirmación humana — mismo techo interactivo que el <code>/auditar-docs</code> de S01. Evidencia: <code>docs/audits/s03-analizar-verificacion-2026-07-20.md</code>.'},
     {b:'b04', bt:'S04 · Planificar', total:5, clavados:0, nota:'El criterio de la cota K no es evaluable hasta que se fije K.'},
     {b:'b05', bt:'S05 · Externos', total:5, clavados:0, nota:'El criterio «ningún secreto queda versionado» <b>no es ejecutable hoy</b>: depende de <code>publicador</code>.'},
     {b:'b06', bt:'S06 · Compuerta Cero', total:5, clavados:0, nota:'El criterio de cero doble-firma exige una corrida con N encargos, que hoy no se puede montar.'},
@@ -699,12 +696,13 @@ const TESTS = {
 const REFS = [
   {id:'doc-arquitecto', t:'doc-arquitecto', q:'El contrato de entrada/salida de <code>/documentar</code> y <code>/auditar-docs</code>: qué consume, qué árbol produce, qué formato tienen fichas y ADRs.', fecha:'2026-07-19', fresc:'fresca', trig:['documentar','auditar-docs','plano','contrato','cimiento','ADR','ficha','seis dimensiones'], usa:['S01 ✅','S03 (#7)'], path:'docs/references/doc-arquitecto.md', antes:'generada en S01'},
   {id:'plugins-claude-code', t:'plugins-claude-code', q:'Cómo se construye la clase de artefacto que este proyecto produce: estructura del plugin, manifiesto, declaración de comandos y skills, instalación y distribución.', fecha:'2026-07-19', fresc:'fresca', trig:['plugin','marketplace','comando','skill','install','manifiesto','slash command','git-subdir'], usa:['S01 ✅','S02 (#6)'], path:'docs/references/plugins-claude-code.md', antes:'generada en S01', volatil:true},
-  {id:'audit-tracker', t:'audit-tracker', q:'El contrato de <code>/orquestar</code> y <code>/proximo-encargo</code>: el canal de firma, la cola de Issues, el snapshot como cache, la taxonomía de labels.', fecha:'', fresc:'falta', trig:['orquestar','proximo-encargo','firma','cola de issues','snapshot','auditar obra','tracker'], usa:['S03 (#7)','S05 (#9)','S06 (#10)','S07 (#11)','S08 (#12)'], path:'docs/references/audit-tracker.md', antes:'S03 — antes de delegar la primera lectura de estado', volatil:true},
+  {id:'audit-tracker', t:'audit-tracker', q:'El contrato de <code>/orquestar</code> y <code>/proximo-encargo</code>: el canal de firma, la cola de Issues, el snapshot como cache, y el artefacto <code>estado.json</code> que <code>analizar</code> consume.', fecha:'2026-07-19', fresc:'fresca', trig:['orquestar','proximo-encargo','firma','cola de issues','snapshot','auditar obra','tracker','despacho','bookkeeping','validador'], usa:['S03 ✅','S05 (#9)','S06 (#10)','S07 (#11)','S08 (#12)'], path:'docs/references/audit-tracker.md', antes:'generada en S03', volatil:true},
   {id:'workflows-fan-out', t:'workflows-fan-out', q:'Qué es un workflow en este taller y cuál es su contrato de fan-out: cómo se lanza, qué devuelve, cómo se estructura un pase adversarial.', fecha:'', fresc:'falta', trig:['workflow','fan-out','multi-agente','pase adversarial','sub-agente','paralelo'], usa:['S04 (#8)'], path:'docs/references/workflows-fan-out.md', antes:'S04 — antes de delegar el pase adversarial'},
   {id:'perimetro-de-confianza', t:'perimetro-de-confianza', q:'Patrones de prompt-injection en agentes y cómo se sostiene un perímetro de confianza: etiquetado de dato externo, no-transitividad, egreso tipado.', fecha:'', fresc:'falta', trig:['inyeccion','prompt injection','dato externo','egreso','confianza','no confiable','sub-agente'], usa:['S05 (#9)','S06 (#10)','S07 (#11)','S09 (#13)'], path:'docs/references/perimetro-de-confianza.md', antes:'S05 — antes de escribir el modelo de confianza'}
 ];
 
 const CHANGELOG = [
+  {f:'2026-07-20', t:'✅ S03 cerrada: la fase analizar lee estado sin re-auditar', d:'Re-auditoría tras el encargo #7 (PR #21). La fase <code>analizar</code> ahora lee <code>docs/audits/&lt;proyecto&gt;-estado.json</code> —el contrato que <code>audit-tracker</code> emite desde v1.12.0— en vez de invocar <code>/audit-tracker</code>, que re-auditaría. <b>La cadena de la sesión:</b> S03 necesitaba leer estado sin re-auditar → <code>/audit-tracker</code> no tenía modo lectura → en vez de reimplementar, se bloqueó y se llevó a firma (<code>audit-tracker#31</code>) → se construyó el contrato <code>estado.json</code> (audit-tracker v1.12.0, PR #32, firmado y mergeado) → S03 se reanudó y cerró. <b>Cuatro pasos, dos repos, nadie reimplementó nada</b> — la regla madre encadenó sola. Verificación por corrida sembrada: leyó un pendiente que solo vive en el JSON («no auditté nada»), frenó en la compuerta, git limpio, y exhibió 2 desvíos como hallazgos. La referencia <code>audit-tracker.md</code> pasó a 🟢. Flujos f1 (idea vuelve reformulada) y f2 (sin plano nada se escribe): clavados.'},
   {f:'2026-07-19', t:'✅ S02 cerrada: existe la primera línea de producto', d:'Re-auditoría tras el encargo #6 (PR #18). <b><code>plugins/batuta/</code> existe</b>: manifiesto v0.1.0 (<code>validate</code> OK) y el comando con las 4 fases. El <b>registro de cadena</b> quedó definido en <code>docs/registro-de-cadena.md</code> — 4 eslabones (<code>idea · plano · encargos · obra</code>), identificador <code>&lt;SESIÓN&gt;/&lt;slug&gt;</code> con reglas de unicidad y estabilidad, persistencia en <code>${CLAUDE_PLUGIN_DATA}</code>, y los criterios de eslabón ROTO. <b>La corrida de prueba no solo no falló:</b> sobre una carpeta vacía detectó ausencia de plano, ruteó a <code>/documentar</code>, <b>frenó</b> en la compuerta de lectura y dejó <code>git status</code> limpio — cero contrato fabricado. También se firmó la decisión <b>011</b> (acto de ratificación). <b>Drift abierto:</b> el comando se invoca <code>/batuta:batuta</code>, no <code>/batuta</code> como declara <code>FICHA.md</code> §2 — requiere decisión humana.'},
   {f:'2026-07-19', t:'⛔→✅ S01 cerrada: la compuerta de precondición está ABIERTA', d:'Re-auditoría tras el encargo #5. <b>Los 4 pendientes de S01 se verificaron y salieron del tablero.</b> El install limpio se probó en un perfil virgen (<code>CLAUDE_CONFIG_DIR</code>, <code>EXIT 0</code>); <code>/documentar</code> generó el árbol completo sobre una carpeta vacía y se midió contra el contrato (4 sesiones con las 5 marcas, 12 criterios con su verificación, 4/4 ADRs con <code>Estado</code> y <code>superaA</code>); <code>/auditar-docs</code> emitió las 6 dimensiones —<b>atestación humana</b>, porque ese comando no persiste informe—. Se generaron 2 de las 5 referencias 🔴. <b>Hallazgos:</b> la ficha traía mal la sintaxis de <code>uninstall</code> (falta <code>@fede-tools</code>), y el perfil real tenía <code>doc-arquitecto</code> <i>cacheado, no instalado</i> — la premisa registrada era imprecisa. <b>v0 se puede construir: las 8 sesiones restantes ya no están detrás de la compuerta, solo detrás de sus firmas.</b>'},
   {f:'2026-07-19', t:'Auditoría inicial y despacho de la cola', d:'Estado: plano firmado, obra no iniciada (22 markdowns, cero código). Se verificó el estado real de los 4 delegados. <b>Hallazgo principal:</b> la compuerta de precondición estaba desactualizada — el fix <code>fede-tools</code> ya estaba mergeado y las incógnitas (<code>fede-tools</code> = marketplace, <code>#29</code>/<code>#21</code> = PRs de <code>claude-doc-arquitecto</code>) quedaron resueltas. <code>ALCANCE.md</code> corregido al momento. Se publicaron los 9 encargos como issues #5–#13 en modo orquestado.'}
@@ -1010,8 +1008,11 @@ function renderTests() {
     h += `<h2 class="sec">Cobertura a altitud de flujo</h2>
       <p class="sec-note">Los mismos siete recorridos de la pestaña Stack, con su evidencia.</p>`;
     for (const f of TESTS.flows) {
+      const fp = f.pill === 'verde' ? '<span class="pill ok">🟢 clavado por test</span>'
+               : f.pill === 'ambar' ? '<span class="pill warn">🟠 solo camino feliz</span>'
+               : '<span class="pill stop">🔴 sin test</span>';
       h += `<div class="ro"><h3>${f.t}</h3>
-        <div class="ro-meta"><span class="pill stop">🔴 sin test</span></div>
+        <div class="ro-meta">${fp}</div>
         <p>${f.test}</p></div>`;
     }
   }
