@@ -68,22 +68,32 @@ La estructura normativa vive en `docs/registro-de-cadena.md`. Resumen operativo:
 ## Fase 1 — `analizar`
 
 > **Eslabón que agrega: `idea`** · **Recibe:** el objetivo crudo del humano
-> **Delega en:** `/audit-tracker` (lectura del estado real) · `/documentar` (si no hay plano)
+> **Delega en:** `audit-tracker` (el estado real, vía su artefacto) · `/documentar` (si no hay plano)
 > **Produce ella:** composición y una compuerta. Nada más.
 
 **Con plano VIGENTE:**
 
-1. Delegá la lectura del estado real a `/audit-tracker`. **Vos LEÉS, no re-auditás**: cero
-   escaneo propio del código.
-2. Sintetizá: qué pide el humano, contra qué estado real.
+1. Leé el estado real desde el **artefacto de estado** que `audit-tracker` emite:
+   `docs/audits/<proyecto>-estado.json` (contrato: `audit-tracker` → `docs/estado-contrato.md`,
+   referencia local `docs/references/audit-tracker.md`).
+   - **Es un archivo. Lo leés, no lo generás.** Cero escaneo propio del código, cero fan-out,
+     **cero invocación de `/audit-tracker`** — invocarlo re-auditaría, y tenés prohibido re-auditar.
+   - Comprobá `schema_version`: si es una MAJOR que no soportás, **frená y reportá**, no adivines.
+2. Si el artefacto **no existe o su `last_audit` está viejo** para este objetivo: vos **no
+   auditás**. Reportá que hace falta una auditoría fresca y **ruteá a `/audit-tracker`** para
+   que la produzca — esa es su tarea, no la tuya. Es el mismo patrón que «sin plano → `/documentar`».
+3. Sintetizá: qué pide el humano, contra qué estado real (bloques, pendientes, decisiones
+   pendientes) leído del artefacto.
 
 **Sin plano VIGENTE:**
 
 1. Ruteá a `/documentar` (y después `/auditar-docs`) y **FRENÁ**.
 2. **Escribí CERO bytes de contrato.** `git status` tiene que quedar limpio al terminar.
 
-> ⚠️ **Gotcha:** acá es donde más tienta «completar» un plano delgado para poder avanzar.
-> Eso es fabricar contrato: está fuera de alcance y hay un criterio que lo prueba.
+> ⚠️ **Gotcha:** acá es donde más tienta «completar» un plano delgado, o «auditar rapidito»
+> para tener el estado. Las dos son trampas: la primera fabrica contrato, la segunda te
+> convierte en el auditor que tenés que delegar. Leés el artefacto, o frenás y pedís que
+> alguien lo produzca. Nunca lo producís vos.
 
 **Compuerta de lectura (humana):** devolvé al humano **su propia intención reformulada** —
 «esto entendí que querés, y por qué» — y **esperá confirmación**. Un objetivo mal leído
