@@ -22,28 +22,26 @@ Esta referencia fija qué puede esperar de él — y, sobre todo, **qué NO le p
 
 ---
 
-## 🔴 El hallazgo que condiciona la fase `analizar`
+## ✅ Cómo `analizar` lee el estado sin re-auditar (resuelto en v1.12.0)
 
-> **`/audit-tracker` NO tiene modo de solo lectura.**
+> **`audit-tracker` emite un artefacto de estado consumible: `docs/audits/<proyecto>-estado.json`.**
 
-El comando arranca en **Fase 0 (calibración, con preguntas al humano)** y sigue a **Fase 1
-(auditoría con fan-out de agentes Explore sobre el código)**. No hay flag, sección ni modo que
-permita «leer el estado sin re-auditar».
+Fue un hallazgo bloqueante y quedó resuelto el 2026-07-20 (`claude-audit-tracker#31`, PR #32).
+Hasta v1.11 `/audit-tracker` **no tenía modo de solo lectura**: arrancaba en calibración y
+seguía a auditoría con fan-out. El criterio de S03 —«lee vía `audit-tracker` y **no
+re-audita**»— no era satisfacible, y parsear el HTML a mano sería el god-object que
+`FICHA.md` §8 prohíbe.
 
-Esto choca de frente con el criterio de S03:
+Desde **audit-tracker v1.12.0** hay un contrato declarado (`audit-tracker` →
+`docs/estado-contrato.md`, schema `1.0`):
 
-> «Con plano firmado, lee el estado vía `audit-tracker` y **no re-audita** *(verificación:
-> la traza no muestra escaneo propio del código)*»
-
-**Las dos lecturas del criterio son incompatibles con el contrato actual:**
-
-| Si `batuta`… | Resultado |
+| `batuta` hace… | Resultado |
 |---|---|
-| **invoca `/audit-tracker`** | Re-audita: fan-out completo sobre el código. Caro y contradice «no re-audita» |
-| **lee los artefactos directamente** | No es «vía `audit-tracker`», y **no existe contrato de consumo por terceros** (ver abajo) |
+| **lee `docs/audits/<proyecto>-estado.json`** | Estado auditado (bloques, pendientes, decisiones, referencias) **sin ejecutar nada**. Es la vía correcta. |
+| ~~invoca `/audit-tracker`~~ | Re-auditaría. **Solo** si el artefacto falta o está viejo: se rutea a `/audit-tracker` para que lo **produzca**, no para leerlo. |
 
-Es una decisión de diseño abierta, no un detalle de implementación. Está registrada como
-tal; **no se resuelve por omisión.**
+El artefacto está **versionado** (`schema_version` semver): `batuta` comprueba la MAJOR y
+frena si no la soporta. Es un snapshot derivado de la auditoría, no estado vivo.
 
 ---
 
@@ -231,7 +229,7 @@ consume.
 
 ## Aplicación directa a `batuta`
 
-1. **La fase `analizar` no puede cumplir su criterio con el contrato actual.** Ver el hallazgo del principio. Requiere decisión humana.
+1. **La fase `analizar` lee `docs/audits/<proyecto>-estado.json`** (contrato desde v1.12.0). Si falta o está viejo, rutea a `/audit-tracker` para que lo produzca — nunca audita ella.
 2. **Herencia obligatoria del canal de firma:** el silencio nunca es firma; solo el validador mueve el loop; se anuncia el canal al abrir el primer PR.
 3. **El snapshot orienta, GitHub decide.** Nunca decidir con cache.
 4. **El patrón «falta la precondición → frená»** de `/orquestar` es el mismo que `batuta` aplica cuando no hay plano. No inventar uno nuevo.
