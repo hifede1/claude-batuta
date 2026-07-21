@@ -385,14 +385,12 @@
    ========================================================================== */
 
 const LAST_AUDIT = '2026-07-21';
-const CLOSED_COUNT = 19;             // pendientes cerrados (S01 + S02 + S03 + S04 + los 2 criterios de decisión de S06 tras firmar 009). S04 por inspección del contrato; corridas sembradas = deuda en Tests
+const CLOSED_COUNT = 27;             // pendientes cerrados (S01–S06). S04/S05/S06 por inspección del contrato; corridas sembradas = deuda en Tests → S09
 const REPO = 'hifede1/claude-batuta';
 
 /* Estimación ratificada: talle S / M / L por pendiente. */
 const EST = {
   /* S01–S04 cerradas — sus pendientes salieron de DATA (S04 cerrada por inspección del contrato, 2026-07-21) */
-  's05-manif':'L','s05-bloquea':'M','s05-carril':'S','s05-honesto':'M','s05-d010':'S',
-  's06-diff':'M','s06-doble':'M','s06-canal':'S',
   's07-orq':'L','s07-egreso':'L','s07-umbral':'S','s07-inyec':'L','s07-d012':'S',
   's08-delega':'M','s08-cadena':'M','s08-desvio':'M','s08-baseline':'S','s08-d013':'S',
   's09-delgadez':'M','s09-faltante':'L','s09-caido':'L','s09-inyec':'L'
@@ -469,9 +467,9 @@ const DATA = [
     zona: 'Perímetro y firma — donde el contrato se vuelve exigible',
     bloques: [
       {
-        id:'b05', titulo:'S05 · Externos y ruteo mínimos', estado:'pend',
+        id:'b05', titulo:'S05 · Externos y ruteo mínimos', estado:'hecho',
         sesion:'S05', talle:'L', issue:9, trat:'sdd',
-        planteamiento:'El Manifiesto de Externos es un contrato de <b>NECESIDADES, jamás de SECRETOS</b>. <code>batuta</code> identifica y pide; nunca fabrica, asume, mockea ni auto-provisiona. Guarda la necesidad, nunca el valor. Y no corre detector propio: <b>cosecha</b> lo que los cimientos ya flaguearon.',
+        planteamiento:'✅ <b>Cerrada el 2026-07-21</b> (PR #28, por inspección del contrato). El Manifiesto de Externos es un contrato de <b>NECESIDADES, jamás de SECRETOS</b>. <code>batuta</code> identifica y pide; nunca fabrica, asume, mockea ni auto-provisiona. Guarda la necesidad, nunca el valor. Y no corre detector propio: <b>cosecha</b> lo que los cimientos ya flaguearon.',
         hallazgo:'<code>decisiones/010</code> delega <code>gitleaks</code> a <code>publicador</code>, que tiene la decisión firmada pero <b>cero capacidad de ejecutarla</b> (2 commits, solo markdown). Ese bloqueo <b>no tiene fecha de resolución</b>.',
         metodo:[
           'Cosechar los externos de <code>analizar</code> y <code>planificar</code>. Cero detección propia.',
@@ -479,31 +477,21 @@ const DATA = [
           'Estado binario REQUERIDO / PROVISTO: verifica <b>presencia</b>, nunca lee el valor. Nunca VERIFICADO (es v2).',
           'Reentrancia: si <code>ejecutar</code> descubre un externo nuevo, pausa ESE carril. <b>Definir qué es un carril.</b>'
         ],
-        pend:[
-          {id:'s05-manif', t:'El Manifiesto lista cada externo con los 5 campos', v:'inspección del manifiesto de una corrida con 2 externos'},
-          {id:'s05-bloquea', t:'Un REQUERIDO no provisto BLOQUEA y PIDE, no adivina', v:'corrida con externo faltante; se detiene y emite el pedido con contexto'},
-          {id:'s05-carril', t:'«Carril» está definido en el .md', v:'inspección — el término tiene definición, no solo usos'},
-          {id:'s05-honesto', t:'Reporta PROVISTO-sin-verificar honesto', v:'env var presente con scope insuficiente; jamás marca VERIFICADO'},
-          {id:'s05-d010', t:'La decisión de secretos en v0 está firmada', v:'decisiones/010 en estado aceptada'}
-        ],
-        refs:['perimetro-de-confianza','audit-tracker'], prereq:['S04 (#8)','✅ decisión 010 firmada']
+        pend:[],
+        refs:['perimetro-de-confianza','audit-tracker'], prereq:[]
       },
       {
-        id:'b06', titulo:'S06 · Compuerta Cero', estado:'pend',
+        id:'b06', titulo:'S06 · Compuerta Cero', estado:'hecho',
         sesion:'S06', talle:'L', issue:10, trat:'sdd',
-        planteamiento:'Las fases 1 a 4 son baratas y reversibles, así que colapsan en UNA firma por horizonte, con diff y no big-bang. Pero acá aparece <b>la paradoja más filosa del diseño</b>: el canal de firma es un <code>✅ validado</code> en un PR — un dato que ENTRA de un externo, exactamente la clase que §7 declara no-confiable. Y la firma es lo único que SÍ mueve el loop.',
+        planteamiento:'✅ <b>Cerrada el 2026-07-21</b> (PR #31, por inspección + 2 rondas adversariales). Las fases 1 a 4 son baratas y reversibles, así que colapsan en UNA firma por horizonte, con diff y no big-bang. Pero acá aparece <b>la paradoja más filosa del diseño</b>: el canal de firma es un <code>✅ validado</code> en un PR — un dato que ENTRA de un externo, exactamente la clase que §7 declara no-confiable. Y la firma es lo único que SÍ mueve el loop.',
         gotcha:'Contrato quirúrgico. <code>batuta</code> NO duplica la firma de encargo (esa es de <code>/orquestar</code>); solo es dueña de externos, egreso y workflow→cola. Sin esa línea, o algo se mergea sin firma, o el humano firma dos veces.',
         metodo:[
           '✅ <code>decisiones/009</code> resuelta (excepción acotada por identidad, firmada 2026-07-21): la firma es autorización autenticada, no contenido. <b>Construir sobre ese modelo, no reinventarlo.</b>',
           'Implementar la firma única por horizonte, presentada como <b>diff</b>.',
           'Reusar el canal de firma de <code>/orquestar</code> — no armar uno propio.'
         ],
-        pend:[
-          {id:'s06-diff', t:'La firma se presenta como diff por horizonte', v:'corrida con 2 horizontes; el segundo muestra solo el delta'},
-          {id:'s06-doble', t:'Cero doble-firma', v:'corrida con N encargos; una firma por horizonte y una por encargo, nunca dos por lo mismo'},
-          {id:'s06-canal', t:'Reusa el canal de /orquestar', v:'inspección — cero protocolo de firma propio'}
-        ],
-        refs:['audit-tracker','perimetro-de-confianza'], prereq:['S05 (#9)','✅ decisión 009 firmada (2026-07-21) — DESBLOQUEADA']
+        pend:[],
+        refs:['audit-tracker','perimetro-de-confianza'], prereq:[]
       }
     ]
   },
@@ -578,9 +566,9 @@ const DATA = [
 
 const DEBT = [
   {t:'El comando se llama /batuta:batuta, no /batuta', d:'<code>FICHA.md</code> §2 declara «Plugin de Claude Code, comando <code>/batuta</code>». La realidad verificada en S02 es <code>/batuta:batuta</code>: el namespacing de Claude Code es <code>plugin:comando</code> y acá ambos se llaman igual. <b>Drift doc↔código, y toca el nombre público del producto.</b> Dos salidas: renombrar el comando (p. ej. <code>commands/correr.md</code> → <code>/batuta:correr</code>) o corregir la ficha. <b>Requiere decisión humana</b> — no se resuelve por omisión.', sev:'warn'},
-  {t:'¿Un plano con decisiones pendientes puede estar VIGENTE?', d:'La pregunta la hizo visible la decisión <code>011</code> al volver evaluable el estado del plano. Tras firmar <code>009</code>, <code>010</code>, <code>014</code> y <code>016</code>, quedan <b>2 decisiones ⏳ sin firmar</b> (012, 013) y 2 de las 4 sesiones restantes bloqueadas por ellas (S05 se destrabó al firmar 010, S06 al firmar 009; S09 depende de S08, no de una firma). Dos lecturas: «VIGENTE = lo escrito obliga, las pendientes bloquean sus sesiones» (coherente con <i>bloqueá, nunca reimplementes</i>) o «VIGENTE exige plano completo». Registrada como pendiente explícita en el ADR — <b>no resuelta por omisión</b>.', sev:'warn'},
+  {t:'¿Un plano con decisiones pendientes puede estar VIGENTE?', d:'La pregunta la hizo visible la decisión <code>011</code> al volver evaluable el estado del plano. Tras firmar <code>009</code>, <code>010</code>, <code>014</code> y <code>016</code>, quedan <b>2 decisiones ⏳ sin firmar</b> (012, 013). Cerradas S01–S06; de las 3 sesiones restantes, 2 están bloqueadas por firma (S07 por 012, S08 por 013) y S09 depende de S08, no de una firma. Dos lecturas: «VIGENTE = lo escrito obliga, las pendientes bloquean sus sesiones» (coherente con <i>bloqueá, nunca reimplementes</i>) o «VIGENTE exige plano completo». Registrada como pendiente explícita en el ADR — <b>no resuelta por omisión</b>.', sev:'warn'},
   {t:'El label «externo» no existe en audit-tracker', d:'<code>FICHA.md</code> §5 dice que un externo faltante va a la cola de Issues «con label <code>externo</code>». La auditoría de S03 verificó que ese label <b>no está</b> en la taxonomía de <code>audit-tracker</code> (solo <code>encargo</code> / <code>sesion-NN</code> / <code>maquina/*</code>). Hay que decidir de quién es: o <code>batuta</code> lo crea (taxonomía propia, a declarar) o se coordina con <code>audit-tracker</code>. <b>Muerde en S05.</b>', sev:'warn'},
-  {t:'Deuda de verificación: parcial', d:'Al ser markdown puro no hay tests unitarios: la única forma de clavar un flujo es la corrida sembrada. <b>S02 y S03 tienen corrida real</b> (repos sembrados, reproducibles). <b>S04 se cerró por inspección del contrato pero sin corrida</b> — 4 escenarios pendientes. S01 y S05–S09 sin clavar. S09 (#13) es la batería formal que salda el resto. Hasta que corran, esos criterios están cerrados pero <b>no protegidos contra regresión</b>.', sev:'stop'},
+  {t:'Deuda de verificación: parcial', d:'Al ser markdown puro no hay tests unitarios: la única forma de clavar un flujo es la corrida sembrada. <b>S02 y S03 tienen corrida real</b> (repos sembrados, reproducibles). <b>S04, S05 y S06 se cerraron por inspección del contrato pero sin corrida.</b> S01 y S07–S09 sin clavar por corrida sembrada. S09 (#13) es la batería formal que salda el resto. Hasta que corran, esos criterios están cerrados pero <b>no protegidos contra regresión</b>.', sev:'stop'},
   {t:'gitleaks delegado a un delegado sin capacidad', d:'<code>decisiones/010</code> difiere el escaneo de secretos a <code>publicador</code>. Verificado 2026-07-19: <code>claude-publicador</code> tiene la decisión firmada en su ficha y cero código (2 commits, sin comando instalable). El bloqueo no tiene fecha de resolución.', sev:'stop'},
   {t:'El diseño del 2026-07-18 no tiene artefacto persistido', d:'El workflow de 6 agentes que originó <code>FICHA.md</code> no tiene transcript, issue ni nota. No se puede releer qué produjo cada lente ni contrastar la síntesis. Los 4 ejes de lente en <code>workflows-fan-out.md</code> son una <b>reconstrucción razonable, no verbatim</b>. O se linkea el artefacto, o se declara perdido para que nadie lo busque. <i>(Distinto de «los workflows ya existen», que sí se resolvió en S04: el motor es la herramienta Workflow de Claude Code, confirmado por Fede.)</i>', sev:'warn'},
   {t:'cartera: se construyó S02–S05 y se salteó S01', d:'Los prompts de <code>/cartera</code> están escritos y son específicos, pero no hay comando invocable: ausente del marketplace <code>fede-tools</code>, su repo remoto <code>hifede1/claude-cartera</code> no existe, y no está instalado. La lógica existe; el vehículo no.', sev:'warn'},
@@ -677,7 +665,7 @@ const TESTS = {
     {b:'b03', bt:'S03 · Analizar ✅', total:4, clavados:3, nota:'<b>3 clavados por corrida sembrada</b> (repo con plano firmado + estado.json): lee vía artefacto sin re-auditar, compuerta de lectura, git limpio. El 4º (eslabón <code>idea</code>) es por diseño, gated en la confirmación humana — mismo techo interactivo que el <code>/auditar-docs</code> de S01. Evidencia: <code>docs/audits/s03-analizar-verificacion-2026-07-20.md</code>.'},
     {b:'b04', bt:'S04 · Planificar ✅', total:5, clavados:0, nota:'<b>Cerrada por inspección del contrato, cero corrida que la proteja.</b> Los 4 criterios se cumplen en <code>batuta.md</code> fase 2 (EJECUCIÓN/FIRMA, workflow, cota híbrida K=5 de <code>016</code>, D1-D4) y la rúbrica <code>014</code> está firmada. Pero las 4 corridas sembradas que la ficha pedía —grafo, clasificación con 2 encargos, RUTAs distintas por objetivo, traza real del workflow— <b>no se ejecutaron</b>. Deuda de verificación explícita → S09 (#13). Igual que S01: cerrada en Tablero, sin test que la clave.'},
     {b:'b05', bt:'S05 · Externos', total:5, clavados:0, nota:'El criterio «ningún secreto queda versionado» <b>no es ejecutable hoy</b>: depende de <code>publicador</code>.'},
-    {b:'b06', bt:'S06 · Compuerta Cero', total:5, clavados:0, nota:'El criterio de cero doble-firma exige una corrida con N encargos, que hoy no se puede montar.'},
+    {b:'b06', bt:'S06 · Compuerta Cero', total:5, clavados:0, nota:'Cerrada por inspección + 2 rondas adversariales (PR #31). Las corridas sembradas —2 horizontes (el 2do muestra solo el delta) y N encargos (una firma por horizonte, nunca dos por lo mismo)— son deuda de verificación → S09.'},
     {b:'b07', bt:'S07 · Ejecutar', total:5, clavados:0, nota:'El criterio de inyección exige probar en ambos niveles (encargo y fase). Es el escenario más caro del plan.'},
     {b:'b08', bt:'S08 · Cerrar', total:5, clavados:0, nota:'El criterio del desvío sembrado prueba el norte del producto y no tiene escenario.'},
     {b:'b09', bt:'S09 · Verificación', total:4, clavados:0, nota:'Esta sesión ES la que clava a las demás. Mientras no corra, el contrato entero es declarativo.'}
@@ -693,6 +681,7 @@ const REFS = [
 ];
 
 const CHANGELOG = [
+  {f:'2026-07-21', t:'✅ S05 + S06 cerradas: externos, ruteo y la Compuerta Cero · 6 de 9', d:'Re-auditoría tras el <b>PR #31</b> (S06, mergeado por Fede). La <b>Compuerta Cero</b> quedó construida: una firma por horizonte presentada como <b>diff</b>, <b>cero doble-firma</b> por el modelo de <b>tres altitudes</b> (decisión-a-firmar → horizonte → encargo, con la secuencia enforced por el contrato), y reuso del canal de <code>/orquestar</code> <b>autenticado por 009</b> (metadato de autor estructural, dueño anclado fuera de banda). Verificada por inspección con <b>2 rondas adversariales</b> —la 1ª cazó la tercera firma que rompía el «nunca dos veces por lo mismo»—; corridas sembradas → S09. En la misma pasada se cerró un <b>drift de S05</b>: su bloque figuraba <code>pend</code> aunque el trabajo (PR #28) estaba en main desde antes; verificados sus 5 criterios por inspección y cerrado. <b>Van 6 de 9.</b> Restan S07 (espera <code>012</code>), S08 (espera <code>013</code>) y S09.'},
   {f:'2026-07-21', t:'✅ 009 firmada: la pinza del canal de firma, cerrada · S06 desbloqueada', d:'Re-auditoría tras el <b>PR #29</b> (mergeado por Fede). Se firmó <b>009 — autenticación de la firma</b>, la decisión más filosa del plano. <b>La firma es autorización autenticada, no contenido:</b> el <code>✅ validado</code> mueve el loop <b>sii el autor autenticado del acto == el dueño declarado y anclado</b>, con la identidad tomada del <b>metadato de autor estructural</b> de GitHub (no del cuerpo re-parseable ni de salida de fan-out, §3) y el dueño anclado <b>fuera de banda</b>. Excepción explícita escrita en <code>FICHA</code> §7; detalle en <code>perimetro-de-confianza</code> §6. <b>Verificada con 2 rondas adversariales:</b> la 1ª cazó dos huecos de especificación reales —el camino de entrega de la identidad y el anclaje del dueño—, se corrigieron, la 2ª pasó. <b>S06 (Compuerta Cero) queda DESBLOQUEADA</b>: sus 2 criterios de decisión (modelo escrito + firmado) cerrados; restan los 3 de implementación. Reconciliado el registro de <code>FICHA</code> §10 (010/011/014 a firmadas, +016/018) y corregidas dos referencias que el issue #10 daba por faltantes cuando ya existían (<code>perimetro-de-confianza</code>, <code>audit-tracker</code>).'},
   {f:'2026-07-21', t:'✅ S04 cerrada: fase planificar sobre las firmas reales · blindaje de firma', d:'Re-auditoría tras el encargo #8 (PR #25). La <b>fase 2 <code>planificar</code></b> quedó construida: grafo de dependencias, la distinción <b>gated-por-EJECUCIÓN vs gated-por-FIRMA</b> que ES el ruteador de la fase 3, pase adversarial delegado a un <b>workflow</b>, y la banda angosta con <b>cota híbrida K=5</b>. Verificado por <b>inspección del contrato</b> (los 4 criterios en <code>batuta.md</code>); las 4 corridas sembradas quedaron como <b>deuda de verificación</b> explícita → S09 (pestaña Tests). Se firmaron tres ADRs: <b>014</b> (rúbrica CUALITATIVA ALTA/MEDIA/BAJA, no cuantitativa), <b>016</b> (cota híbrida K=5) y <b>018</b> (blindaje anti-falsificación). <b>Nota de proceso (factual):</b> un primer intento (PR #23) fijó la rúbrica y la cota sin acto de firma real de Fede; se detectó, se revirtió sin llegar a <code>main</code>, y disparó el <code>018</code> — «la firma es un acto, no un campo». El commit se preservó en el tag <code>forense/s04-falsificacion-2026-07-20</code>. Referencia <code>workflows-fan-out.md</code> → 🟢 (motor confirmado: herramienta Workflow de Claude Code). Deuda «los workflows ya existen» resuelta.'},
   {f:'2026-07-20', t:'✅ S03 cerrada: la fase analizar lee estado sin re-auditar', d:'Re-auditoría tras el encargo #7 (PR #21). La fase <code>analizar</code> ahora lee <code>docs/audits/&lt;proyecto&gt;-estado.json</code> —el contrato que <code>audit-tracker</code> emite desde v1.12.0— en vez de invocar <code>/audit-tracker</code>, que re-auditaría. <b>La cadena de la sesión:</b> S03 necesitaba leer estado sin re-auditar → <code>/audit-tracker</code> no tenía modo lectura → en vez de reimplementar, se bloqueó y se llevó a firma (<code>audit-tracker#31</code>) → se construyó el contrato <code>estado.json</code> (audit-tracker v1.12.0, PR #32, firmado y mergeado) → S03 se reanudó y cerró. <b>Cuatro pasos, dos repos, nadie reimplementó nada</b> — la regla madre encadenó sola. Verificación por corrida sembrada: leyó un pendiente que solo vive en el JSON («no auditté nada»), frenó en la compuerta, git limpio, y exhibió 2 desvíos como hallazgos. La referencia <code>audit-tracker.md</code> pasó a 🟢. Flujos f1 (idea vuelve reformulada) y f2 (sin plano nada se escribe): clavados.'},
@@ -752,7 +741,7 @@ function renderStrip() {
 function renderTablero() {
   let h = `<h2 class="sec">Bloques de obra</h2>
     <p class="sec-note">Cada tarjeta abre su ficha de trabajo: planteamiento, método, criterios verificables y el encargo copiable.
-    <b>El núcleo del loop está construido</b> — S01–S04 cerradas (precondición, andamio, <code>analizar</code>, <code>planificar</code>). La próxima ejecutable es <b>S05</b>; el resto espera la compuerta o una firma.</p>`;
+    <b>El núcleo del loop está construido</b> — S01–S06 cerradas (precondición, andamio, <code>analizar</code>, <code>planificar</code>, externos, <b>Compuerta Cero</b>). La próxima ejecutable es <b>S07</b> (espera la firma de <code>012</code>); el resto espera una firma o depende de S08.</p>`;
 
   for (const z of DATA) {
     h += `<div class="zone-label">${z.zona}</div><div class="grid">`;
