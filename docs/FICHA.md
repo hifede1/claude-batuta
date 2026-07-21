@@ -107,14 +107,16 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 - **Corte de versiones v0/v1/v2** — FIRMADA 2026-07-19 · `decisiones/007-corte-de-versiones.md`. Ver §0.
 - **Absorción de `director-de-obra` como fase 2** — FIRMADA 2026-07-18 · `decisiones/008-absorcion-director-de-obra.md`. Ver §9.
 - **Autenticación de la firma: excepción acotada por identidad** — FIRMADA 2026-07-21 · `decisiones/009-autenticacion-de-la-firma.md`. El `✅ validado` mueve el loop si y solo si su **autor autenticado == el dueño declarado**; es autorización, no contenido. Resuelve la «duda» que §7 dejaba abierta. Desbloquea: S06.
+- **Escaneo de secretos en v0: diferido a `publicador`** — FIRMADA 2026-07-20 · `decisiones/010-secretos-en-v0.md`. «gitleaks limpio» se difiere a `publicador`; la v0 se protege por diseño (§5: guarda la necesidad, nunca el valor). Aplicada en S05.
+- **Acto de ratificación del plano** — aceptada 2026-07-19 · `decisiones/011-ratificacion-del-plano.md`. Línea de firma explícita en cabecera; sin ella el plano es borrador. Aplicada en S02.
+- **Rúbrica de confidence: cualitativa de 3 niveles** — FIRMADA 2026-07-20 · `decisiones/014-rubrica-de-confidence.md`. ALTA/MEDIA/BAJA sin puntaje; siempre nivel + porqué + contrapunto. Aplicada en S04.
+- **Cota de la banda angosta: híbrida con techo K=5** — FIRMADA 2026-07-20 · `decisiones/016-cota-banda-angosta.md`. Convergencia declarada + fusible K=5, lo que pase primero; el techo es anomalía, no verde. Aplicada en S04.
+- **La firma es un acto, no un campo (blindaje anti-falsificación)** — FIRMADA 2026-07-20 · `decisiones/018-blindaje-antifalsificacion.md`. Todo ADR nace PROPUESTA; el sello FIRMADA solo con acto humano rastreable en `Procedencia de la firma`. Complemento operativo de 011.
 
 ### Pendientes
 
-- **PENDIENTE — Escaneo de secretos en v0** · `decisiones/010-secretos-en-v0.md`. Dueño: Fede. §12 exige «gitleaks limpio» pero eso está delegado a `publicador`, que no existe. Desbloquea: S05.
-- **PENDIENTE — Acto de ratificación del plano** · `decisiones/011-ratificacion-del-plano.md`. Dueño: Fede. Desbloquea: S02.
 - **PENDIENTE — Umbral de egreso** · `decisiones/012-umbral-de-egreso.md`. Dueño: Fede. Desbloquea: S07.
 - **PENDIENTE — `retrospectiva` opcional** · `decisiones/013-retrospectiva-opcional.md`. Dueño: Fede. Desbloquea: S08.
-- **PENDIENTE — Rúbrica de confidence** · `decisiones/014-rubrica-de-confidence.md`. Dueño: Fede. Desbloquea: firmarla **antes** de S04 — si se difiere «al construir», la implementación la fija de hecho.
 - **PENDIENTE — Decisiones nuevas de ejecutar + externos** · `decisiones/015-eje-externo.md`. Dueño: Fede. Desbloquea: auditar el eje externo una vez escrito el modelo de S05.
 
 ## 11. Fuera de alcance (v0 y v1)
