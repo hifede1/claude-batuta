@@ -49,7 +49,6 @@ Plugin de Claude Code, comando `/batuta`. Genérico (cualquier proyecto en GitHu
 | Criterios → tests | `verificador /criterios-a-tests` |
 | Publicar (gitleaks + firma) | `publicador /publicar` — batuta jamás pushea |
 | Enumerar la flota | `cartera` (v2, altitud portafolio) |
-| Retro del proceso al cerrar | `retrospectiva` (opcional, cuando exista) |
 
 **Lo que batuta hace por sí misma (y nada más):** análisis-de-orquestación (sintetiza la RUTA), selección condicional de tools, mapeo de externos, diseño del ruteo, y el loop de ejecución abriendo SOLO los gates META que ninguna tool posee.
 
@@ -113,15 +112,15 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 - **Rúbrica de confidence: cualitativa de 3 niveles** — FIRMADA 2026-07-20 · `decisiones/014-rubrica-de-confidence.md`. ALTA/MEDIA/BAJA sin puntaje; siempre nivel + porqué + contrapunto. Aplicada en S04.
 - **Cota de la banda angosta: híbrida con techo K=5** — FIRMADA 2026-07-20 · `decisiones/016-cota-banda-angosta.md`. Convergencia declarada + fusible K=5, lo que pase primero; el techo es anomalía, no verde. Aplicada en S04.
 - **La firma es un acto, no un campo (blindaje anti-falsificación)** — FIRMADA 2026-07-20 · `decisiones/018-blindaje-antifalsificacion.md`. Todo ADR nace PROPUESTA; el sello FIRMADA solo con acto humano rastreable en `Procedencia de la firma`. Complemento operativo de 011.
+- **`retrospectiva`: fuera de alcance de v0, explícito** — FIRMADA 2026-07-22 · `decisiones/013-retrospectiva-opcional.md`. La fila sale de §3; la fase `cerrar` no la produce, ni la delega, ni la bloquea — el binario delega-o-BLOQUEA queda intacto. Si entra en v2+, será ruteo al comando de `audit-tracker` (ficha externa). Desbloqueó: S08.
 
 ### Pendientes
 
-- **PENDIENTE — `retrospectiva` opcional** · `decisiones/013-retrospectiva-opcional.md`. Dueño: Fede. Desbloquea: S08.
 - **PENDIENTE — Decisiones nuevas de ejecutar + externos** · `decisiones/015-eje-externo.md`. Dueño: Fede. Desbloquea: auditar el eje externo una vez escrito el modelo de S05.
 
 ## 11. Fuera de alcance (v0 y v1)
 
-- No construir hasta que los dos cimientos (`doc-arquitecto` + `audit-tracker`) estén 🟢 (§0). No planificación de portafolio. No estado VERIFICADO de externos ni health-check vivo. No EGRESO arbitrario (solo los que la caja ya cubre con compuerta probada: merge vía `/orquestar`, publicación vía `/publicar`). No modo boceto greenfield. No runtime de ruteo con estado. **No reimplementar NINGÚN trabajo de la caja** — delegado faltante = hueco que se lleva a firma, jamás un reemplazo "temporal". No proyectos fuera de GitHub. No 6 compuertas en serie.
+- No construir hasta que los dos cimientos (`doc-arquitecto` + `audit-tracker`) estén 🟢 (§0). No planificación de portafolio. No estado VERIFICADO de externos ni health-check vivo. No EGRESO arbitrario (solo los que la caja ya cubre con compuerta probada: merge vía `/orquestar`, publicación vía `/publicar`). No modo boceto greenfield. No runtime de ruteo con estado. **No retro del proceso** (`retrospectiva` — fuera de alcance explícito, `decisiones/013`; si entra en v2+ será ruteo al comando de `audit-tracker`). **No reimplementar NINGÚN trabajo de la caja** — delegado faltante = hueco que se lleva a firma, jamás un reemplazo "temporal". No proyectos fuera de GitHub. No 6 compuertas en serie.
 
 ## 12. Criterios de aceptación (borrador)
 

@@ -91,7 +91,7 @@ Cerrar esta compuerta es **S01** del plan, y toda sesión posterior la declara c
 | Enumerar la flota / portafolio | `cartera` está **a medias** (verificado 2026-07-19): los prompts de S02-S05 están escritos, pero **S01 —hacerlo instalable— se salteó**. No está en el marketplace, su repo remoto no existe y no está instalado. Además es v2. **BLOQUEA** — el criterio de delegado usable es «terminado», no «existe». |
 
 > Precisión sobre los tres BLOQUEA (auditoría 2026-07-19): ninguno de los delegados está *indefinido*. Los tres tienen ficha firmada y plan de sesiones. La distancia para levantarlos es **ejecutar**, no **decidir** — dato que importa al estimar cuándo cae cada bloqueo.
-| Retro del proceso al cerrar | Falta `retrospectiva`. Su estado exacto («opcional» vs BLOQUEA) es decisión pendiente — `decisiones/013-retrospectiva-opcional.md`. |
+| Retro del proceso al cerrar | **Fuera de alcance de v0, explícito** (`decisiones/013`, FIRMADA 2026-07-22): ni delega, ni bloquea — la fila salió del modelo. Si entra en v2+, será ruteo al comando de `audit-tracker`. |
 | Campo estructurado `externos` | Es v1. En v0 se cosecha best-effort. |
 | Estado VERIFICADO de externos y health-check vivo | Es v2. Un falso VERIFICADO revienta a mitad con trabajo gastado: peor que bloquear. |
 | EGRESO outward arbitrario | Solo los que la caja ya cubre con compuerta probada: merge vía `/orquestar`, publicación vía `/publicar`. |

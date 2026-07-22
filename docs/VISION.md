@@ -37,10 +37,10 @@ El éxito es **observable**, y esta es la definición operativa que reemplaza a 
 **Al cerrar una corrida, `batuta` exhibe la cadena completa `idea → plano → encargos → obra` sin eslabones rotos**, donde:
 
 - cada encargo referencia el identificador del requisito del plano que lo origina,
-- cada pieza de obra mergeada referencia el encargo que la produjo,
+- cada pieza de obra mergeada referencia el encargo que la produjo (o su asiento autenticado: decisión del dueño / bookkeeping — `registro-de-cadena.md` §6),
 - y **todo desvío entre lo pedido y lo construido aparece como hallazgo explícito, jamás enterrado**.
 
-Un eslabón roto —un encargo sin requisito de origen, una pieza de obra sin encargo, un desvío silencioso— es un fallo del norte, no un detalle de reporte.
+Un eslabón roto —un encargo sin requisito de origen, una pieza de obra sin encargo ni asiento, un desvío silencioso— es un fallo del norte, no un detalle de reporte.
 
 Su criterio de aceptación verificable vive en `PLAN.md` (S02 y S08) y su verificación es una corrida sembrada con un desvío plantado: pasa si el desvío aparece en el cierre como hallazgo.
 

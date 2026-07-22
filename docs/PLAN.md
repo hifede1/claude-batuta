@@ -206,7 +206,7 @@
 
 ✅ **Criterios de aceptación.**
 - [ ] La re-auditoría se delega, no se hace *(verificación: inspección de la traza — hay invocación de `/audit-tracker`, cero escaneo propio)*
-- [ ] Exhibe la cadena completa sin eslabones rotos *(verificación: corrida completa; cada encargo referencia su requisito de origen y cada pieza de obra su encargo)*
+- [ ] Exhibe la cadena completa sin eslabones rotos *(verificación: corrida completa; cada encargo referencia su requisito de origen y cada pieza de obra su encargo — o su asiento autenticado según los salvos de `registro-de-cadena.md` §6: decisión del dueño / bookkeeping de `005`)*
 - [ ] Un desvío sembrado aparece como hallazgo explícito *(verificación: corrida donde un encargo construye algo distinto de lo pedido; el cierre lo reporta, no lo entierra)*
 - [ ] El estado de `retrospectiva` está resuelto *(verificación: `decisiones/013` en estado `aceptada`; la fase `cerrar` la delega o la declara fuera de alcance — sin tercer estado)*
 - [ ] Persiste el baseline liviano *(verificación: el artefacto existe tras la corrida)*

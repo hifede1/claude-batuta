@@ -181,15 +181,21 @@ estado: en-curso | cerrada | bloqueada
 
 **Recibe de `encargos`:** los encargos y su estado.
 
-| Pieza de obra | Encargo | Requisito |
+**Re-auditoría delegada:** invocada AAAA-MM-DDTHH:MM:SSZ · `last_audit` del artefacto: …
+
+| Pieza de obra | Encargo / asiento | Requisito |
 |---|---|---|
 | PR `#18` | `#6` | `S02/registro-cadena` |
+| PR `#29` | decisión `009` (dueño — autenticado: FIRMADA con procedencia + `merged_by` == dueño) | — |
+| PR `#30` | bookkeeping del cierre `#28` (`decisiones/005`) | — |
 
 ### Desvíos detectados
 
 | Qué se pidió | Qué se construyó | Dónde |
 |---|---|---|
 | (vacío si no hubo) | | |
+
+**Etiquetas de dato externo que llegaron a la obra:** (vacío si no hubo)
 ```
 
 ---
@@ -200,9 +206,11 @@ La cadena está rota —y `cerrar` debe reportarlo como hallazgo— cuando:
 
 - un **encargo** no referencia ningún requisito, o referencia uno inexistente en
   `plano_version`
-- una **pieza de obra** mergeada no referencia ningún encargo — salvo el **PR de decisión del
-  dueño** (su asiento es la decisión-a-firmar que materializa, y su firma es el merge mismo,
-  `decisiones/018`)
+- una **pieza de obra** mergeada no referencia ningún encargo — con dos salvos, cada uno con su
+  asiento propio: el **PR de decisión del dueño** (asiento: la decisión-a-firmar que
+  materializa, autenticada — FIRMADA con procedencia `018` y `merged_by` == dueño `009`) y el
+  **PR de bookkeeping del tracker** (asiento: el cierre firmado cuya contabilidad refleja,
+  `decisiones/005`). Un reclamo de salvo que no autentica es la causal, no la excepción
 - un **requisito** firmado en la RUTA no tiene encargo ni motivo registrado de por qué no lo tiene
 - un **egreso-que-escribe** ejecutado que no figura en el eslabón `encargos` con su firma y
   resultado
