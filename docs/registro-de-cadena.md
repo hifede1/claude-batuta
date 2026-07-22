@@ -190,6 +190,8 @@ estado: en-curso | cerrada | bloqueada
 | Qué se pidió | Qué se construyó | Dónde |
 |---|---|---|
 | (vacío si no hubo) | | |
+
+**Etiquetas de dato externo que llegaron a la obra:** (vacío si no hubo)
 ```
 
 ---
