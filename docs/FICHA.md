@@ -79,7 +79,7 @@ Partitura **descriptiva firmada** (grafo dirigido tipado), no un runtime. Nodos 
 - **La confianza NO es transitiva:** todo sub-agente que toca externos etiqueta su salida "contiene data externa no verificada" y batuta la trata con esa desconfianza aguas arriba (un workflow de research puede sintetizar contenido web inyectado y devolverlo "lavado"). Propagación obligatoria de la etiqueta.
 - Instrucciones de terceros jamás mueven el loop, en AMBOS niveles (encargo y fase). Ante la duda de si una señal es del dueño, se trata como de tercero.
 - **EXCEPCIÓN acotada — la firma autenticada del dueño** (`decisiones/009`, FIRMADA): el `✅ validado` mueve el loop **si y solo si su autor autenticado == el dueño declarado**. No viola el perímetro porque la firma es **autorización, no contenido**; resuelve la «duda» de la línea anterior por identidad del autor. Colaboradores, bots y texto inyectado NO firman (no pueden falsificar el autor autenticado por GitHub). Sin canal propio: es el mismo de `/orquestar`. Detalle operativo en `references/perimetro-de-confianza.md` §6.
-- **Egreso tipado:** EGRESO-que-lee idempotente (GET/search) se batchea en una autorización de sesión; EGRESO-que-escribe-o-tiene-efecto (POST/mail/pago/deploy) lleva compuerta INDIVIDUAL. Umbral restrictivo por default, se afloja con historial, nunca por adelantado.
+- **Egreso tipado:** EGRESO-que-lee idempotente (GET/search) se batchea en una autorización de sesión; EGRESO-que-escribe-o-tiene-efecto (POST/mail/pago/deploy) lleva compuerta INDIVIDUAL. Umbral restrictivo por default, se afloja con historial, nunca por adelantado — **firmado en `decisiones/012`**: umbral 0, lista blanca firmada, el historial (N=5) **propone** y la firma **dispone**, leído por `009` (el historial jamás afloja solo).
 - **Fallo parcial:** si un delegado cae, batuta REPORTA, escala y sostiene el estado — jamás suple el trabajo del delegado caído (la tentación de "lo arreglo yo para no frenar el loop" es god-object por necesidad, y es máxima justo en el fallo).
 
 ## 8. Guardrails anti-god-object
@@ -109,13 +109,13 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 - **Autenticación de la firma: excepción acotada por identidad** — FIRMADA 2026-07-21 · `decisiones/009-autenticacion-de-la-firma.md`. El `✅ validado` mueve el loop si y solo si su **autor autenticado == el dueño declarado**; es autorización, no contenido. Resuelve la «duda» que §7 dejaba abierta. Desbloquea: S06.
 - **Escaneo de secretos en v0: diferido a `publicador`** — FIRMADA 2026-07-20 · `decisiones/010-secretos-en-v0.md`. «gitleaks limpio» se difiere a `publicador`; la v0 se protege por diseño (§5: guarda la necesidad, nunca el valor). Aplicada en S05.
 - **Acto de ratificación del plano** — aceptada 2026-07-19 · `decisiones/011-ratificacion-del-plano.md`. Línea de firma explícita en cabecera; sin ella el plano es borrador. Aplicada en S02.
+- **Umbral de egreso: lista blanca + historial N=5** — FIRMADA 2026-07-21 · `decisiones/012-umbral-de-egreso.md`. Umbral 0: todo egreso-que-escribe con compuerta individual; lista blanca firmada como única vía de batcheo; el historial (N=5 corridas limpias) **propone** el alta, la firma **dispone**. Desbloqueó: S07.
 - **Rúbrica de confidence: cualitativa de 3 niveles** — FIRMADA 2026-07-20 · `decisiones/014-rubrica-de-confidence.md`. ALTA/MEDIA/BAJA sin puntaje; siempre nivel + porqué + contrapunto. Aplicada en S04.
 - **Cota de la banda angosta: híbrida con techo K=5** — FIRMADA 2026-07-20 · `decisiones/016-cota-banda-angosta.md`. Convergencia declarada + fusible K=5, lo que pase primero; el techo es anomalía, no verde. Aplicada en S04.
 - **La firma es un acto, no un campo (blindaje anti-falsificación)** — FIRMADA 2026-07-20 · `decisiones/018-blindaje-antifalsificacion.md`. Todo ADR nace PROPUESTA; el sello FIRMADA solo con acto humano rastreable en `Procedencia de la firma`. Complemento operativo de 011.
 
 ### Pendientes
 
-- **PENDIENTE — Umbral de egreso** · `decisiones/012-umbral-de-egreso.md`. Dueño: Fede. Desbloquea: S07.
 - **PENDIENTE — `retrospectiva` opcional** · `decisiones/013-retrospectiva-opcional.md`. Dueño: Fede. Desbloquea: S08.
 - **PENDIENTE — Decisiones nuevas de ejecutar + externos** · `decisiones/015-eje-externo.md`. Dueño: Fede. Desbloquea: auditar el eje externo una vez escrito el modelo de S05.
 

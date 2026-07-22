@@ -165,6 +165,14 @@ estado: en-curso | cerrada | bloqueada
 |---|---|---|---|
 | `#6` | `S02/registro-cadena` | `/orquestar` | mergeado |
 
+**Egresos firmados** (el historial contable del que sale el N=5 de `decisiones/012`):
+
+| Egreso (operación · destino) | Firma | Resultado |
+|---|---|---|
+| (vacío si no hubo) | | |
+
+**Etiquetas de dato externo y hallazgos de inyección:** (vacío si no hubo)
+
 ---
 
 ## 4. obra — agregado por `cerrar`
@@ -192,6 +200,8 @@ La cadena está rota —y `cerrar` debe reportarlo como hallazgo— cuando:
   `plano_version`
 - una **pieza de obra** mergeada no referencia ningún encargo
 - un **requisito** firmado en la RUTA no tiene encargo ni motivo registrado de por qué no lo tiene
+- un **egreso-que-escribe** ejecutado que no figura en el eslabón `encargos` con su firma y
+  resultado
 - el **pedido literal** y la **lectura de `batuta`** divergen sin que la compuerta de lectura
   lo haya resuelto
 - el plano cambió de versión durante la corrida
