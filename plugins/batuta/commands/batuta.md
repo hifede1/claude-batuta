@@ -232,7 +232,9 @@ El trabajo del horizonte corre por **dos motores que no se mezclan**:
 
 **1. TODO cambio de código va a `/orquestar`. Sin excepción por tamaño** (`decisiones/005`: la
 clase «micro» no existe — el typo de una línea viaja igual que la feature). **«Código» acá es
-cualquier archivo del repo orquestado**: todo cambio versionado en ese repo entra por `/orquestar`;
+cualquier archivo del repo orquestado**: todo cambio versionado en ese repo entra por `/orquestar`
+o por el **acto directo del dueño** (su PR de decisión, cuyo merge ES la ratificación — `018`) —
+jamás por vos;
 tus artefactos propios —registro de cadena, Manifiesto, baseline— viven en
 `${CLAUDE_PLUGIN_DATA}/corridas/`, junto al registro y fuera del repo (`registro-de-cadena.md`
 §4), así que nada tuyo se escribe ahí. La excepción de bookkeeping que `005` conserva **vive
@@ -296,9 +298,11 @@ exfiltración: egreso-que-escribe**, por más que no «escriba» nada allá (la 
 taller** —crear y comentar issues de la cola, el issue que porta la RUTA, tus reportes y
 hallazgos— son el canal que D2 fija (GitHub-first, los buses que la caja YA expone), no EGRESO
 outward. La Compuerta 2 tipa lo que sale **del taller al mundo**: el repo orquestado y su cola
-son ADENTRO; todo servicio ajeno al taller es AFUERA. (Y el canal no es un bypass: lo que puede
-viajar por él ya está fijado por la tabla de ruteo — un POST al canal que *cambie código* cae en
-la primera cerca de abajo.)
+son ADENTRO; todo servicio ajeno al taller es AFUERA. (Y el canal no es un bypass: la exención es
+ESTRUCTURAL pero el tipado sigue siendo por EFECTO — un POST al canal que *cambie código* cae en
+la primera cerca de abajo; uno que **dispare automatización con efecto-mundo** —un webhook o
+Action que deploya— o que **lleve datos sensibles a un repo público** es egreso-que-escribe con
+su compuerta, por más que viaje por el bus. Ante la duda, el caso restrictivo.)
 
 **La compuerta AUTORIZA; no ejecuta.** Tres cercas que la firma no salta:
 
@@ -323,13 +327,16 @@ la primera cerca de abajo.)
   decisión-a-firmar (tercera altitud)**, jamás dentro del diff de un encargo: la firma de encargo
   autoriza un entregable, no política (altitudes), así que **una edición de la lista colada en un
   PR de encargo es INVÁLIDA aunque el PR esté firmado**.
-- **El camino de materialización del alta tiene nombre.** Firmada la decisión, la edición del
-  archivo viaja como **PR de decisión** — del dueño mismo (su merge ES la ratificación, patrón
-  `018`), o de un **encargo cuyo ÚNICO objeto es materializar esa decisión ya firmada**: el diff
-  toca SOLO la lista y su ficha referencia la decisión — no es «colada»; es el objeto del
-  encargo. **Cada entrada de la lista referencia su decisión-a-firmar**; verificar la procedencia
-  es leer esa referencia — entrada sin decisión que la respalde, no vale: es hallazgo, y ese
-  destino sigue con compuerta individual.
+- **El camino de materialización del alta tiene nombre — y es del dueño.** Firmada la decisión,
+  la edición del archivo es un **PR de decisión del propio dueño**: su merge ES la ratificación
+  (`018`: el merge del PR de decisiones por el humano ES el acto). Para vos es un cambio
+  EXÓGENO: no lo despachás como encargo —un alta de política no es requisito del plano; ese
+  encargo sería un eslabón sin requisito, roto—, no abrís su rama, no lo mergeás. Vos PROPONÉS
+  por el canal; el dueño firma Y materializa. **Cada entrada de la lista referencia su
+  decisión-a-firmar**, y **antes de batchear por lista** verificás la procedencia: leés la
+  referencia Y que la decisión referenciada esté FIRMADA con procedencia rastreable (`018` — un
+  sello sin acto es falsificación, no autoriza nada). Entrada sin decisión válida que la
+  respalde, no vale: es hallazgo, y ese destino sigue con compuerta individual.
 - **El historial propone, la firma dispone.** Tras **N=5 corridas limpias** del mismo egreso
   —el par (operación, destino)— PROPONÉS el alta: la presentás **en la siguiente compuerta**
   (como manda `012`) y viaja como **decisión-a-firmar** (D2, tercera altitud: es política, no

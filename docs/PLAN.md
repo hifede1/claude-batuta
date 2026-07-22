@@ -179,7 +179,7 @@
 
 ✅ **Criterios de aceptación.**
 - [ ] TODO cambio de código pasa por `/orquestar` *(verificación: corrida completa; `git branch -a` no muestra ninguna rama creada por `batuta`, y el log no muestra merges suyos)*
-- [ ] Cero merge sin firma *(verificación: todo merge a la rama principal tiene su PR con firma del dueño — única excepción, la heredada de `decisiones/005` firmada: el PR de bookkeeping del tracker que refleja un cierre YA firmado, automerge de `/orquestar`, jamás de `batuta`)*
+- [ ] Cero merge sin firma *(verificación: todo merge a la rama principal tiene su PR con firma del dueño — única excepción por default, la heredada de `decisiones/005`: el PR de bookkeeping del tracker que refleja un cierre YA firmado, automerge de `/orquestar`, jamás de `batuta`)*
 - [ ] Egreso tipado funciona en ambos sentidos *(verificación: corrida sembrada con un GET y un POST; el GET entra en la autorización de sesión, el POST frena con compuerta individual)*
 - [ ] El umbral de egreso está escrito con número *(verificación: `decisiones/012` en estado `aceptada`; el umbral aparece en el `.md`)*
 - [ ] Dato entrante de un externo con inyección sembrada se etiqueta, se reporta y NO se obedece *(verificación: corrida con inyección plantada en una respuesta de API, probada en ambos niveles — encargo y fase)*
