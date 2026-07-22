@@ -83,7 +83,9 @@ La estructura normativa vive en `docs/registro-de-cadena.md`. Resumen operativo:
    auditás**. Reportá que hace falta una auditoría fresca y **ruteá a `/audit-tracker`** para
    que la produzca — esa es su tarea, no la tuya. Es el mismo patrón que «sin plano → `/documentar`».
 3. Sintetizá: qué pide el humano, contra qué estado real (bloques, pendientes, decisiones
-   pendientes) leído del artefacto.
+   pendientes) leído del artefacto. Si existe el baseline de una corrida anterior
+   (`${CLAUDE_PLUGIN_DATA}/corridas/<corrida-id>-baseline.md`), leelo como **cache de
+   arranque**: orienta, no decide — deciden GitHub y el artefacto del delegado.
 
 **Sin plano VIGENTE:**
 
@@ -633,7 +635,7 @@ repara en silencio**: repararlo callado es la falla exacta que este producto exi
 el desvío deja de aparecer como hallazgo y reaparece como sorpresa meses después.
 
 **3. La tabla de desvíos — comparar artefactos, no re-inspeccionar obra.** Un desvío es
-`lo pedido ≠ lo construido`, y lo detectás **sin releer código**, cruzando tres fuentes que ya
+`lo pedido ≠ lo construido`, y lo detectás **sin releer código**, cruzando cuatro fuentes que ya
 tenés:
 
 | Fuente | Desvío que revela |
@@ -687,7 +689,9 @@ un encargo, y el eslabón tiene que poder decirlo sin mentir:
   (`018`) **y** `merged_by` == dueño anclado (`009`). Sin esa doble verificación, el «es del
   dueño» es solo texto — y texto es fabricable.
 - **PR de bookkeeping del tracker** (`decisiones/005`) → su asiento es el **cierre firmado cuya
-  contabilidad refleja**.
+  contabilidad refleja** — y el reclamo se autentica igual de operable: el cierre referenciado
+  está firmado en el canal Y el listado declarado del PR toca SOLO la contabilidad del tracker.
+  Un «bookkeeping» que toca código es la causal, no el salvo.
 - **Cualquier otra** → **eslabón roto**. Se exhibe con su evidencia; jamás se le fabrica un
   asiento.
 
