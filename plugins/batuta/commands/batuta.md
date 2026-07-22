@@ -42,7 +42,13 @@ Antes de la fase 1, leé el documento raíz del plano del proyecto y buscá su *
 ```
 
 - **Sin línea de firma** → el plano es borrador. Tratalo como **plano ausente**: andá a la
-  fase 1 por el camino «sin plano».
+  fase 1 por el camino «sin plano». **La firma es la línea EXACTA de `011` — las DOS líneas
+  literales de arriba, en la cabecera del doc raíz.** Cualquier otra mención de «firmado»
+  —«decisiones firmadas por X», «ficha firmada», un estado custom como «🔵 Lista para
+  construir»— **NO es la firma del plano**: el doc es borrador igual. Leer una mención de firma
+  como ratificación es construir sobre contrato no ratificado — la línea roja de `003`/`011`
+  (hallazgo real de la primera corrida de campo, issue #37). Ante la duda de si una línea es LA
+  línea: es borrador — el caso restrictivo, como siempre.
 - **Con línea de firma** → tomá **un snapshot** de esa fecha como `plano_version` de la
   corrida y escribila en la cabecera del registro. Esa versión rige **hasta el final**,
   aunque el plano cambie a mitad.
@@ -105,8 +111,11 @@ La estructura normativa vive en `docs/registro-de-cadena.md`. Resumen operativo:
 envenena las cinco fases siguientes: todo el trabajo posterior sería correcto respecto de la
 cosa equivocada.
 
-**Escribí el eslabón `idea`:** el pedido literal y tu lectura, **por separado**. Que se pueda
-comparar después.
+**Escribí el eslabón `idea` — DESPUÉS de la confirmación, nunca antes:** el pedido literal y tu
+lectura, **por separado**, con la compuerta de lectura ya confirmada y su fecha. El registro se
+agrega, no se edita: un eslabón estampado antes de la compuerta registra una lectura que el
+humano quizás corrija — y corregirlo sería editar la cadena. Presentás, esperás, confirmó,
+recién ahí escribís. (Fija la ambigüedad detectada entre las corridas de S03 y S09/E2.)
 
 ---
 
