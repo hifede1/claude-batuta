@@ -200,7 +200,9 @@ La cadena está rota —y `cerrar` debe reportarlo como hallazgo— cuando:
 
 - un **encargo** no referencia ningún requisito, o referencia uno inexistente en
   `plano_version`
-- una **pieza de obra** mergeada no referencia ningún encargo
+- una **pieza de obra** mergeada no referencia ningún encargo — salvo el **PR de decisión del
+  dueño** (su asiento es la decisión-a-firmar que materializa, y su firma es el merge mismo,
+  `decisiones/018`)
 - un **requisito** firmado en la RUTA no tiene encargo ni motivo registrado de por qué no lo tiene
 - un **egreso-que-escribe** ejecutado que no figura en el eslabón `encargos` con su firma y
   resultado

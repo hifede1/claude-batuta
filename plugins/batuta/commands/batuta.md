@@ -335,8 +335,11 @@ su compuerta, por más que viaje por el bus. Ante la duda, el caso restrictivo.)
   por el canal; el dueño firma Y materializa. **Cada entrada de la lista referencia su
   decisión-a-firmar**, y **antes de batchear por lista** verificás la procedencia: leés la
   referencia Y que la decisión referenciada esté FIRMADA con procedencia rastreable (`018` — un
-  sello sin acto es falsificación, no autoriza nada). Entrada sin decisión válida que la
-  respalde, no vale: es hallazgo, y ese destino sigue con compuerta individual.
+  sello sin acto es falsificación, no autoriza nada), Y que el ACTO de ratificación sea
+  autenticable por el camino de `009` — el metadato estructural del merge del PR de decisión
+  (`merged_by`) == el dueño anclado, nunca solo el texto del sello (texto versionado es
+  fabricable; el metadato de autor no). Entrada sin decisión válida que la respalde, no vale: es
+  hallazgo, y ese destino sigue con compuerta individual.
 - **El historial propone, la firma dispone.** Tras **N=5 corridas limpias** del mismo egreso
   —el par (operación, destino)— PROPONÉS el alta: la presentás **en la siguiente compuerta**
   (como manda `012`) y viaja como **decisión-a-firmar** (D2, tercera altitud: es política, no
