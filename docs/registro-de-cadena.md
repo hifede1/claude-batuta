@@ -155,6 +155,8 @@ estado: en-curso | cerrada | bloqueada
 **RUTA:** (horizontes, gated-por-EJECUCIÓN vs gated-por-FIRMA)
 **Firma de Compuerta Cero:** ⏳ pendiente | ✅ 2026-07-19T15:00:00Z
 
+**Etiquetas de dato externo y hallazgos de inyección** (de las lentes del fan-out): (vacío si no hubo)
+
 ---
 
 ## 3. encargos — agregado por `ejecutar-con-compuertas`
@@ -202,6 +204,8 @@ La cadena está rota —y `cerrar` debe reportarlo como hallazgo— cuando:
 - un **requisito** firmado en la RUTA no tiene encargo ni motivo registrado de por qué no lo tiene
 - un **egreso-que-escribe** ejecutado que no figura en el eslabón `encargos` con su firma y
   resultado
+- un **dato externo** que llegó a un artefacto de la corrida —ficha, decisión-a-firmar, diff de
+  horizonte, eslabón— **sin su etiqueta**: el lavado ES eslabón roto
 - el **pedido literal** y la **lectura de `batuta`** divergen sin que la compuerta de lectura
   lo haya resuelto
 - el plano cambió de versión durante la corrida
