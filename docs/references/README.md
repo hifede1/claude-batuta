@@ -30,7 +30,7 @@ Artefactos que el plano cita y que viven **fuera** de este repositorio. No son r
 | Ficha de `director-de-obra` | Las 4 invariantes D1-D4 que `batuta` acata (`decisiones/008`) | `../../../fichas/director-de-obra.md` | Releer si se reabre o modifica alguna de D1-D4 |
 | README de `audit-tracker` | `/orquestar`, canal de firma, cola de Issues | `../../../claude-audit-tracker/README.md` | Cualquier cambio en `/orquestar`, el canal de firma o la taxonomía de labels |
 | README de `doc-arquitecto` | Contrato de `/documentar` y `/auditar-docs` | `../../../claude-doc-arquitecto/README.md` | Cualquier cambio en la firma o salida de los comandos, y antes de abrir la compuerta de S01 |
-| Fichas de los delegados | Diseño de `verificador`, `publicador`, `cartera`, `retrospectiva` — los que BLOQUEAN | `../../../fichas/{verificador,publicador,cartera,retrospectiva}.md` | Releer cuando cualquiera pase a 🟢: su existencia levanta un BLOQUEA |
+| Fichas de los delegados | Diseño de `verificador`, `publicador`, `cartera` — los que BLOQUEAN — y `retrospectiva` (fuera de alcance v0, `decisiones/013`: ni delega ni bloquea) | `../../../fichas/{verificador,publicador,cartera,retrospectiva}.md` | Releer cuando cualquiera pase a 🟢: su existencia levanta un BLOQUEA (la retro, en cambio, exigiría decisión nueva sobre `007`) |
 | Índice del taller (**candidato, sin confirmar**) | `FICHA.md` §9 asigna a «el índice» la obligación de marcar `director-de-obra` como «absorbida por batuta», sin nombrarlo | `../../../README.md` | Requiere confirmación humana de que ES el índice |
 
 ## Faltantes con su encargo
