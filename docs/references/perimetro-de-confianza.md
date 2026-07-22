@@ -6,7 +6,7 @@ fuentes:
   - las tres reglas de `batuta` (comando `batuta.md` §«Las tres reglas que no se negocian», regla 3)
   - docs/decisiones/009-autenticacion-de-la-firma.md (la firma autenticada es la única excepción del perímetro)
   - docs/decisiones/010-secretos-en-v0.md (guarda la necesidad, nunca el valor)
-  - docs/decisiones/012-umbral-de-egreso.md (egreso tipado; umbral PENDIENTE)
+  - docs/decisiones/012-umbral-de-egreso.md (egreso tipado; umbral FIRMADO 2026-07-21 — 0 por default · lista blanca firmada · historial N=5 propone)
   - docs/decisiones/015-eje-externo.md (fuentes de estado de credencial; salud de servicio; egreso outward)
   - docs/references/audit-tracker.md §3 (canal de firma: solo el validador mueve el loop)
   - docs/references/workflows-fan-out.md §1 (el fan-out devuelve contenido no confiable)
@@ -125,8 +125,9 @@ Por qué **tipar** en vez de «compuerta a todo» o «compuerta a nada»:
 - *Tipar* → pone la compuerta **exactamente donde está la irreversibilidad**.
 
 > **Restrictivo por default, se afloja con historial, nunca por adelantado** (`FICHA.md` §7). El
-> **umbral todavía no tiene número**: es `decisiones/012` (PENDIENTE). Esta referencia da el
-> CRITERIO de tipado; el número lo fija ese ADR cuando se firme.
+> **umbral tiene número desde el 2026-07-21**: `decisiones/012` (FIRMADA) — 0 batcheado por
+> default, lista blanca firmada, historial N=5 que **PROPONE** el alta (la firma dispone). Esta
+> referencia da el CRITERIO de tipado; el número lo fija ese ADR.
 
 **La trifecta letal** (Willison) explica por qué esta compuerta es la de mayor consecuencia: el
 daño grave necesita las tres a la vez — **acceso a datos privados** (las credenciales del
@@ -211,8 +212,9 @@ autenticado del dueño**.
    que se integra; la etiqueta se propaga aguas arriba (`workflows-fan-out.md` §1). No se lava
    pasándolo por un sub-agente confiable.
 3. **Egreso tipado = una de las tres compuertas de la Fase 3:** GET/lee **batchea**;
-   POST/mail/pago/deploy **compuerta individual**. El umbral aún **sin número** —`decisiones/012`
-   PENDIENTE—; acá está el criterio de tipado que ese ADR completará.
+   POST/mail/pago/deploy **compuerta individual**. Umbral **con número** — `decisiones/012`
+   FIRMADA: 0 por default, lista blanca firmada, N=5 propone —; acá está el criterio de tipado
+   que ese ADR completó.
 4. **Defensa arquitectónica, no filtro:** `batuta` **no escanea ni sanitiza el texto**; le niega
    autoridad al externo. Coherente con la delgadez (`FICHA.md` §8: nada de detector/filtro propio).
 5. **El Manifiesto de Externos aplica el perímetro a las credenciales:** guarda la **necesidad,

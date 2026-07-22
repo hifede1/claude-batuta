@@ -1,34 +1,51 @@
 # 012 — Umbral de egreso
 
-**Estado:** ⏳ **PENDIENTE** · Dueño: **Fede** · Desbloquea: **S07 (ejecutar-con-compuertas)**
+**Estado:** ✅ **FIRMADA** · 2026-07-21 · **Firmada por:** Fede
 **superaA:** —
 **Origen:** hallazgo 🟠 de la auditoría del plano, 2026-07-19
+**Procedencia de la firma:** Fede eligió la **«Lista blanca + historial N=5»** entre las cuatro opciones presentadas con sus tradeoffs vía elección explícita en sesión interactiva (acto humano rastreable, 2026-07-21), y ratifica esta redacción al mergear su PR. Ver `018` (la firma es un acto, no un campo).
 
 ## Contexto / problema
 
 `FICHA.md` §7 declara el egreso tipado: *«EGRESO-que-lee idempotente (GET/search) se batchea en una autorización de sesión; EGRESO-que-escribe-o-tiene-efecto (POST/mail/pago/deploy) lleva compuerta INDIVIDUAL. **Umbral restrictivo por default, se afloja con historial, nunca por adelantado.**»*
 
-Dos partes son inaplicables tal como están:
+Dos partes eran inaplicables tal como estaban:
 
-1. **No declara ningún umbral.** «Restrictivo por default» no es un número.
-2. **No declara qué historial** autoriza aflojarlo: ¿cuántas corridas? ¿evaluadas por quién? ¿aflojado en qué medida?
+1. **No declaraba ningún umbral.** «Restrictivo por default» no es un número.
+2. **No declaraba qué historial** autoriza aflojarlo: ¿cuántas corridas? ¿evaluadas por quién? ¿aflojado en qué medida?
 
-Es la regla que protege pagos, mails y deploys, y **no tiene ni número ni test** — ningún criterio de §12 verifica el egreso tipado.
+Es la regla que protege pagos, mails y deploys, y no tenía ni número ni test.
 
-## Opciones a evaluar (sin decidir)
+## Opciones evaluadas
 
-| Opción | Tradeoffs a sopesar |
+| Opción | Tradeoffs |
 |---|---|
-| **Umbral fijo sin aflojamiento** | Simple y auditable: todo egreso-que-escribe lleva compuerta, siempre. Costo: fricción permanente. |
-| **Aflojamiento por lista blanca explícita** | El humano declara en calibración qué destinos concretos quedan batcheados. Nunca automático. Costo: mantener la lista. |
-| **Aflojamiento por historial contado** | Tras N corridas limpias del mismo tipo de egreso, se batchea. Costo: hay que definir N, quién audita las N, y qué resetea el contador. |
+| **Lista blanca + historial N=5 (híbrida)** ✅ | Default compuerta individual (umbral 0); lista blanca firmada en calibración; el historial **propone**, la firma **dispone**. Coherente con `009` (solo la firma mueve el loop). Costo: mantener lista + contador. |
+| **Umbral fijo sin aflojamiento** | Todo egreso-que-escribe lleva compuerta, siempre. Simple y auditable. Costo: fricción permanente incluso para destinos probados. |
+| **Aflojamiento por lista blanca sola** | El humano declara en calibración qué destinos quedan batcheados; nunca cambia salvo edición firmada. Costo: mantener la lista a mano, sin ayuda del historial. |
+| **Historial contado N=5 automático** | Tras N corridas limpias se batchea SOLO, sin firma. Lectura literal de §7, pero cede la autorización a un contador — contradice `009`. |
 
-## Qué hace falta para cerrarla
+## Decisión y porqué
 
-1. Fijar el umbral inicial con un número.
-2. Definir la política de aflojamiento (o descartarla).
-3. Escribir el criterio de aceptación con escenario sembrado: un GET y un POST en la misma corrida — el GET entra en la autorización de sesión, el POST frena con compuerta individual.
+**Se adopta la híbrida: lista blanca firmada + historial contado N=5 como motor de propuesta.** Las cinco reglas:
 
-## Consecuencias de dejarla abierta
+1. **Umbral inicial = 0.** TODO egreso-que-escribe-o-tiene-efecto (POST/mail/pago/deploy) lleva compuerta individual. Ningún destino nace batcheado.
+2. **Lista blanca firmada.** En calibración (o en cualquier compuerta posterior), el dueño puede firmar una lista blanca de destinos concretos cuyo egreso-que-escribe queda batcheado en la autorización de sesión. La lista es parte del estado que el dueño firma — nunca se autoedita.
+3. **El historial propone, la firma dispone.** Tras **N=5 corridas limpias** del mismo egreso (misma operación, mismo destino), `batuta` **PROPONE** el alta del destino a la lista blanca en la siguiente compuerta. El alta solo entra con firma del dueño. El historial jamás afloja por sí mismo.
+4. **Reset del contador.** Cualquier fallo del egreso, rechazo del dueño en compuerta, o cambio de destino/operación resetea el contador de ese egreso a 0.
+5. **El EGRESO-que-lee no cambia.** GET/search idempotente sigue batcheado en la autorización de sesión, como declara §7.
 
-La compuerta de egreso —una de las tres únicas que `batuta` posee— no es verificable. En un producto que puede disparar pagos y deploys, es la pendiente de mayor consecuencia material.
+**Definiciones operativas:** «mismo egreso» = par (tipo de operación, destino/servicio concreto). «Corrida limpia» = el egreso se ejecutó con compuerta aprobada, sin fallo técnico y sin rechazo posterior del dueño sobre su resultado.
+
+**Por qué la híbrida y no las otras:** el aflojamiento automático (opción 4) haría que un contador —un dato— mueva el loop, exactamente lo que `009` prohíbe: solo la firma autenticada del dueño autoriza. La lista blanca sola (opción 3) pierde la única información objetiva que el sistema acumula gratis: el historial de corridas. Y el umbral fijo (opción 2) castiga con fricción eterna los destinos ya probados, invitando a saltearse la compuerta — la fricción inútil es el enemigo de la disciplina. La híbrida es fiel a la letra de §7 («se afloja con historial, nunca por adelantado») leída a través de `009`: el historial afloja **vía firma**, nunca solo.
+
+## Criterio de aceptación (escenario sembrado)
+
+Una corrida con un GET y un POST al mismo tiempo: el GET entra en la autorización de sesión sin frenar; el POST — a destino fuera de la lista blanca — frena con compuerta individual. Con el destino del POST en la lista blanca firmada, el mismo POST se batchea. Es el criterio 3 de S07.
+
+## Consecuencias
+
+- **S07 desbloqueada:** la fase `ejecutar-con-compuertas` construye el egreso tipado sobre números firmados, no sobre una política cualitativa.
+- **El umbral existe con número:** 0 batcheado por default; N=5 corridas limpias para que un destino sea *propuesto* (nunca auto-aprobado).
+- **La compuerta de egreso es verificable:** el escenario sembrado GET+POST es clavable como test de corrida.
+- **Coherencia del plano:** `009` (la firma mueve el loop) y `012` (el historial propone) quedan alineadas — ningún mecanismo automático adquiere autoridad.
