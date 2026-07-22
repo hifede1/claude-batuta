@@ -77,7 +77,10 @@ La estructura normativa vive en `docs/registro-de-cadena.md`. Resumen operativo:
    `docs/audits/<proyecto>-estado.json` (contrato: `audit-tracker` → `docs/estado-contrato.md`,
    referencia local `docs/references/audit-tracker.md`).
    - **Es un archivo. Lo leés, no lo generás.** Cero escaneo propio del código, cero fan-out,
-     **cero invocación de `/audit-tracker`** — invocarlo re-auditaría, y tenés prohibido re-auditar.
+     **cero invocación de `/audit-tracker` en esta fase** — invocarlo dispararía una
+     re-auditoría que nadie pidió. Ojo con la distinción: lo prohibido es que re-audites VOS;
+     auditar es tarea del delegado — cuando el artefacto está viejo lo ruteás (punto 2), y en
+     el cierre lo delegás (fase 4).
    - Comprobá `schema_version`: si es una MAJOR que no soportás, **frená y reportá**, no adivines.
 2. Si el artefacto **no existe o su `last_audit` está viejo** para este objetivo: vos **no
    auditás**. Reportá que hace falta una auditoría fresca y **ruteá a `/audit-tracker`** para
@@ -641,7 +644,7 @@ tenés:
 | Fuente | Desvío que revela |
 |---|---|
 | Requisito del plano firmado vs PR mergeado | lo declarado en el PR (resumen, checklist, listado de archivos) no cubre el requisito, o construyó otra cosa. **Anclás en lo pedido al despachar** — el requisito de `plano_version` que el eslabón registra —, no en la ficha vigente del canal, que pudo editarse después |
-| El diff declarado del PR vs su ficha | **excedente silencioso**: construyó lo pedido MÁS algo no declarado — el listado de archivos tocados excede lo que la ficha pide |
+| El metadato del PR vs su ficha | **excedente silencioso**: construyó lo pedido MÁS algo no declarado — el listado de archivos tocados (metadato que expone el canal, no el contenido de los diffs) excede lo que la ficha pide |
 | La re-auditoría delegada | un cierre que el delegado re-verificó y **reabrió** — desvío confirmado por el cimiento |
 | El registro contra sí mismo | **todas** las causales de eslabón roto de `registro-de-cadena.md` §6 — las estructurales, el egreso sin asiento, el lavado de etiqueta, la divergencia pedido/lectura, el cambio de `plano_version` — **con sus salvos** (no inventes rotos donde §6 da asiento) |
 

@@ -1,0 +1,21 @@
+Listo, fase 1 (`analizar`) completada hasta su compuerta. Esto es lo que hay:
+
+## Compuerta de lectura — esto entendí que querés
+
+**Tu pedido literal:** «convertir los criterios de S01 en tests automatizados».
+
+**Mi lectura:** querés que los 3 criterios de aceptación de S01 (`docs/PLAN.md:11-13`) dejen de verificarse a mano y queden cubiertos por tests automatizados, uno a uno:
+
+| Requisito | Criterio |
+|---|---|
+| `S01/saludar-nombre` | `saludar("Ana")` devuelve `"Hola, Ana"` |
+| `S01/saludar-vacio` | `saludar("")` devuelve `"Hola"` sin coma colgante |
+| `S01/saludar-null` | `saludar(null)` no lanza excepción |
+
+**Contra el estado real** (leído del artefacto de `audit-tracker`, fresco al 2026-07-21): el bloque `b01` está en curso, `saludo.js` existe y funciona a mano pero sin tests, y el pendiente `p1` es exactamente este objetivo. El plano está VIGENTE (firmado 2026-07-21 por Fede) — tomé ese snapshot como `plano_version` de la corrida y ya escribí el eslabón `idea` en el registro de cadena.
+
+## Una cosa que tenés que saber ANTES de confirmar
+
+Y acá voy con la verdad, porque para eso estamos: la necesidad «criterios → tests» pertenece al delegado **`verificador`**, que hoy está **⛔ diseñado, sin construir**. `batuta` compone, no construye — yo NO voy a escribir esos tests por mi cuenta, porque suplir a un delegado faltante es exactamente el god-object que la regla 1 prohíbe. Si confirmás la lectura, la corrida sigue a planificar y el requisito queda **bloqueado como hueco-a-construir**, reportado y visible — no tapado con un parche mío.
+
+¿Confirmás que esa es tu intención — los 3 criterios de S01 a tests automatizados — sabiendo que el resultado va a ser el bloqueo explícito por `verificador` faltante?

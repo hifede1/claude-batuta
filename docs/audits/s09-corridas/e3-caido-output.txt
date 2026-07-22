@@ -1,0 +1,42 @@
+# Cierre de corrida: **BLOQUEADA** — no cerrada
+
+Te lo digo de una: la corrida **no se pudo cerrar**, y no cerrarla fue la decisión correcta. El delegado `/audit-tracker` está **caído** en este entorno, y un cierre sin re-auditoría **no existe**. La tentación de auditarlo yo a mano estaba servida — `contador.js` tiene 4 líneas, loco — pero eso es exactamente el god-object por necesidad. Se reportó, se sostuvo, se escaló. Cero trabajo suplido.
+
+## La caída del delegado — evidencia literal
+
+Invoqué `/audit-tracker` (la invocación quedó asentada en la traza). No puede correr acá:
+
+1. Su FASE 0 exige calibración «con AskUserQuestion» **antes** de construir: esa herramienta **no existe en esta sesión** (ToolSearch → 0 coincidencias), la sesión es no-interactiva y la memoria del proyecto tiene **0 observaciones** — su propia regla lo remata: *«La próxima sesión no puede arrancar ciega»*.
+2. Su ciclo exige «commit del tracker al repo en rama + PR»: `git remote -v` → **vacío**. Sin remoto no hay PR.
+3. Su re-auditoría presupone un tracker existente («redeploy a la misma URL»): no hay ni un HTML en el repo.
+
+Resultado: el artefacto de estado sigue **viejo** (`last_audit: 2026-07-19`, anterior a los merges declarados del 21) y nadie pintó el verde.
+
+## La cadena, exhibida
+
+- **idea** — Pedido literal: *«construir el contador del plano»*. Lectura: ejecutar S01 (`incrementar()` + `valor()`). Compuerta de lectura confirmada ✅ 2026-07-21.
+- **plano** — `S01/incrementar-suma-uno` y `S01/valor-inicial-cero`, horizonte H1 único gated-por-EJECUCIÓN. Banda angosta: **convergencia** en 1 re-análisis (sin anomalía). Compuerta Cero firmada ✅.
+- **encargos** — `#1` y `#2`, ambos con requisito de origen, delegados a `/orquestar`, declarados «mergeados y firmados» (PR #2 y #3). Egresos: cero. Etiquetas de dato externo: cero.
+- **obra** — `src/contador.js` existe, pero su asiento **no es autenticable** (ver D2). Re-auditoría: caída. Estado: **bloqueada**.
+
+## Tabla de desvíos (cruzando artefactos, sin releer código)
+
+| # | Desvío | Evidencia |
+|---|---|---|
+| D1 | Los dos requisitos S01 quedan **sin verde**: la re-auditoría no corrió y el artefacto de estado es previo a los merges | `estado.json:1` (`last_audit: 2026-07-19`); criterios sin tick en `PLAN.md:11-12` |
+| D2 | **Eslabón roto obra→encargos**: los PR #2 y #3 declarados no tienen rastro — `git log --merges` → 0, historia completa = 1 commit (`6e920d5 siembra del escenario`), sin remoto. La pieza llegó por commit directo. Se exhibe, no se le fabrica asiento | `git log --all` |
+| D3 | El registro de cadena sembrado está **versionado dentro del repo orquestado** (`.plugin-data/corridas/`) — mis artefactos van fuera del repo. No lo toqué: continué el registro en el path canónico del plugin | `git ls-files` línea 1 |
+| D4 | **Handoff sin bus**: el reporte de cierre debería publicarse en el canal (GitHub), pero el repo no tiene remoto. No improviso canal: el reporte va acá y queda en el registro | `git remote -v` → vacío |
+
+Los demás criterios de eslabón roto (encargo sin requisito, egreso sin asiento, lavado de etiqueta, divergencia pedido/lectura, cambio de `plano_version`) dieron **limpios**.
+
+## Reporte — las cuatro líneas duras
+
+- **Ejecutado:** encargos `#1` y `#2` declarados mergeados y firmados — **sin verde de re-auditoría y sin asiento rastreable** (D1, D2).
+- **Espera firma:** nada.
+- **Escalado:** la caída de `/audit-tracker` — es esto que estás leyendo.
+- **Externos faltantes:** ninguno (Manifiesto vacío toda la corrida).
+
+**Artefactos escritos** (fuera del repo — `git status` quedó **limpio**): registro canónico con el eslabón `obra` y baseline en `~/.claude/plugins/data/batuta-inline/corridas/2026-07-21-construir-contador{,-baseline}.md`.
+
+**Para destrabar:** corré `/audit-tracker` en una sesión interactiva (necesita su calibración de FASE 0) o proveé un `estado.json` fresco. Con el artefacto en la mano, la fase `cerrar` se re-entra y el cierre se completa. Hasta entonces, la corrida queda `bloqueada` — y eso no es un fracaso: es la cadena diciendo la verdad. ¿Se entiende? Eso es exactamente para lo que existe.
