@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0",
+  "proyecto": "claude-batuta",
+  "last_audit": "2026-07-24 (4)",
+  "closed_count": 41,
+  "calibracion": {
+    "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
+    "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
+    "metodologia": "mixta — SDD completo en sesiones de diseño (S04-S07, S09), directo en las mecánicas (S01-S03, S08)",
+    "loop": "orquestado (despacho activo) — cola de issues #5–#13, hoy VACÍA"
+  },
+  "bloques": [
+    {
+      "id": "b01",
+      "nombre": "S01 · Precondición cerrada",
+      "zona": "Cimientos — la compuerta que habilita la obra",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-19. Install limpio verificado en perfil virgen (CLAUDE_CONFIG_DIR, EXIT 0) + /documentar y /auditar-docs corridos. doc-arquitecto en 🟢: v0 se puede construir.",
+      "pendientes": []
+    },
+    {
+      "id": "b02",
+      "nombre": "S02 · Andamio + trazabilidad",
+      "zona": "Núcleo del loop — leer, entender, planificar",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-19 (PR #18). Existe plugins/batuta/ (manifiesto v0.3.0) y el registro de cadena normativo en docs/registro-de-cadena.md: 4 eslabones, identificador <SESIÓN>/<slug>, persistencia en ${CLAUDE_PLUGIN_DATA}.",
+      "pendientes": []
+    },
+    {
+      "id": "b03",
+      "nombre": "S03 · Fase analizar",
+      "zona": "Núcleo del loop — leer, entender, planificar",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-20 (PR #21). Lee docs/audits/<proyecto>-estado.json sin re-auditar; si falta o está viejo rutea a /audit-tracker para que lo produzca. Compuerta de lectura con freno verificado por corrida sembrada.",
+      "pendientes": []
+    },
+    {
+      "id": "b04",
+      "nombre": "S04 · Fase planificar",
+      "zona": "Núcleo del loop — leer, entender, planificar",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-21 (PR #25). Grafo de dependencias, distinción gated-por-EJECUCIÓN vs gated-por-FIRMA, pase adversarial delegado a workflow, banda angosta con cota híbrida K=5 (016) y rúbrica cualitativa (014). Cerrada por inspección del contrato; 4 corridas sembradas siguen en deuda de verificación.",
+      "pendientes": []
+    },
+    {
+      "id": "b05",
+      "nombre": "S05 · Externos y ruteo mínimos",
+      "zona": "Perímetro y firma — donde el contrato se vuelve exigible",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-21 (PR #28). Manifiesto de externos de cinco campos (QUÉ · POR QUÉ file:line · CÓMO · QUIÉN · ESTADO), estado binario REQUERIDO/PROVISTO que verifica presencia y jamás valor, cosecha sin detector propio, reentrancia que pausa solo su carril.",
+      "pendientes": []
+    },
+    {
+      "id": "b06",
+      "nombre": "S06 · Compuerta Cero",
+      "zona": "Perímetro y firma — donde el contrato se vuelve exigible",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-21 (PR #31). Una firma por horizonte presentada como diff, modelo de tres altitudes que elimina la doble-firma, canal de /orquestar reusado y autenticado por 009 (metadato de autor estructural, dueño anclado fuera de banda).",
+      "pendientes": []
+    },
+    {
+      "id": "b07",
+      "nombre": "S07 · Ejecutar con compuertas",
+      "zona": "Ejecución y cierre — donde se toca lo irreversible",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-22 (PR #33). Dos motores que no se mezclan, tres compuertas META, 012 firmada (umbral 0 · lista blanca firmada · historial N=5 que propone). Verificada con 4 rondas adversariales: 10 hallazgos mayores cerrados. «La compuerta AUTORIZA; no ejecuta» con sus tres cercas.",
+      "pendientes": []
+    },
+    {
+      "id": "b08",
+      "nombre": "S08 · Fase cerrar",
+      "zona": "Ejecución y cierre — donde se toca lo irreversible",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-22 (PR #34). Cadena exhibida entera, desvíos detectados cruzando cuatro fuentes de artefactos sin releer código, baseline liviano D3, 013 firmada. Regla de composición del asiento para piezas sin encargo.",
+      "pendientes": []
+    },
+    {
+      "id": "b09",
+      "nombre": "S09 · Batería de verificación sembrada",
+      "zona": "Verificación — donde las reglas dejan de ser intenciones",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-22 (PR #35) — la novena de nueve, obra v0 COMPLETA. Corridas headless reales 4/4 en verde (E2 faltante, E3 caído, E4 inyección doble, + refutador de delgadez). Transcripts en docs/audits/s09-corridas/.",
+      "pendientes": []
+    },
+    {
+      "id": "b10",
+      "nombre": "S10 · Mantenimiento del contrato de persistencia",
+      "zona": "Mantenimiento — después de la obra v0",
+      "estado": "curso",
+      "resumen": "Abierto por la re-auditoría 2026-07-24 (4). El contrato de persistencia del registro de cadena documenta UN solo modo de resolución de ${CLAUDE_PLUGIN_DATA} (marketplace) y omite el modo inline (--plugin-dir), que es justamente el que usan las corridas sembradas — el método de verificación del proyecto por decisiones/006. La omisión ya produjo dos lecturas erróneas reales.",
+      "pendientes": [
+        {
+          "id": "p-path-inline",
+          "txt": "Documentar en docs/registro-de-cadena.md §4 que ${CLAUDE_PLUGIN_DATA} resuelve según el MODO DE CARGA del plugin: batuta-<marketplace>/ instalado desde marketplace, batuta-inline/ con --plugin-dir. Hoy la línea 103 solo declara el primero. Los registros de las corridas sembradas de S09 viven legítimamente en batuta-inline/ y NO deben migrarse: son evidencia de verificación sobre repos prueba-s09-*, no historial de producción.",
+          "sesion": "S10"
+        },
+        {
+          "id": "p-s09h2",
+          "txt": "Asentar el cierre del hallazgo #2 de docs/audits/s09-bateria-2026-07-22.md ('CLAUDE_PLUGIN_DATA exportada no fue el path efectivo'). Verificado 2026-07-24: NO es defecto. El CLI fija la variable según el modo de carga; exportarla a mano desde el shell no la sobreescribe. Ambos paths observados eran correctos para su modo. Se cierra por explicación, no por reparación — y su explicación es el pendiente p-path-inline.",
+          "sesion": "S10"
+        }
+      ]
+    }
+  ],
+  "plan": [
+    { "sesion": "S05", "titulo": "Externos y ruteo mínimos (best-effort)", "estimacion": 1, "deps": [], "cierra": [] },
+    { "sesion": "S06", "titulo": "Compuerta Cero", "estimacion": 1, "deps": ["S05"], "cierra": [] },
+    { "sesion": "S07", "titulo": "Fase ejecutar-con-compuertas", "estimacion": 1, "deps": ["S06"], "cierra": [] },
+    { "sesion": "S08", "titulo": "Fase cerrar", "estimacion": 1, "deps": ["S07"], "cierra": [] },
+    { "sesion": "S09", "titulo": "Batería de verificación sembrada", "estimacion": 1, "deps": ["S08"], "cierra": [] },
+    { "sesion": "S10", "titulo": "Mantenimiento del contrato de persistencia", "estimacion": 1, "deps": [], "cierra": ["p-path-inline", "p-s09h2"] }
+  ],
+  "decisiones_pendientes": [],
+  "referencias": [
+    { "tema": "doc-arquitecto", "path": "docs/references/doc-arquitecto.md", "frescura": "fresca", "fecha": "2026-07-19" },
+    { "tema": "plugins-claude-code", "path": "docs/references/plugins-claude-code.md", "frescura": "fresca", "fecha": "2026-07-19" },
+    { "tema": "audit-tracker", "path": "docs/references/audit-tracker.md", "frescura": "fresca", "fecha": "2026-07-19" },
+    { "tema": "workflows-fan-out", "path": "docs/references/workflows-fan-out.md", "frescura": "fresca", "fecha": "2026-07-20" },
+    { "tema": "perimetro-de-confianza", "path": "docs/references/perimetro-de-confianza.md", "frescura": "fresca", "fecha": "2026-07-22" }
+  ],
+  "referencias_faltantes": [],
+  "deuda": [
+    "Techo doctrinal (identidad, no deuda): lo multi-fase con firmas no se automatiza — la Compuerta Cero con diff de 2 horizontes, el egreso GET+POST con lista blanca y las 4 corridas de fase 2 de S04 solo se verifican en corrida interactiva con el dueño firmando. Automatizarlo exigiría falsificar la firma (decisiones/018).",
+    "El contrato de persistencia (docs/registro-de-cadena.md §4) documenta un solo modo de resolución de ${CLAUDE_PLUGIN_DATA} y omite el modo inline. Abierto como bloque b10 / S10 en esta re-auditoría."
+  ]
+}
