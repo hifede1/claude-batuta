@@ -384,13 +384,16 @@
    DATOS — esto es lo único que se edita en una actualización normal.
    ========================================================================== */
 
-const LAST_AUDIT = '2026-07-24 (3)';
+const LAST_AUDIT = '2026-07-24 (4)';
 const CLOSED_COUNT = 41;             // pendientes cerrados (S01–S09 — LA OBRA v0 COMPLETA). S07/S08 por inspección + rondas adversariales; S09 con corridas sembradas REALES (transcripts en docs/audits/s09-corridas/)
 const REPO = 'hifede1/claude-batuta';
 
 /* Estimación ratificada: talle S / M / L por pendiente. */
 const EST = {
-  /* S01–S09 cerradas — el plan v0 no tiene pendientes abiertos. */
+  /* S01–S09 cerradas — la obra v0 no tiene pendientes abiertos.
+     S10 es mantenimiento post-v0, abierto por la re-auditoría 2026-07-24 (4). */
+  'p-path-inline': 'S',
+  'p-s09h2': 'S'
 };
 
 const DATA = [
@@ -543,11 +546,32 @@ const DATA = [
       pend:[],
       refs:['perimetro-de-confianza'], prereq:[]
     }]
+  },
+  {
+    zona: 'Mantenimiento — después de la obra v0',
+    bloques: [{
+      id:'b10', titulo:'S10 · Contrato de persistencia del registro', estado:'curso',
+      sesion:'S10', talle:'S', trat:'directo',
+      planteamiento:'🟠 <b>Abierto por la re-auditoría 2026-07-24 (4)</b>, disparada por la primera corrida real de <code>batuta</code> dirigiéndose <b>a sí misma</b>. El contrato de persistencia declara <b>un solo</b> modo de resolución de <code>${CLAUDE_PLUGIN_DATA}</code> —el de marketplace— y <b>omite el modo inline</b> (<code>--plugin-dir</code>), que es justamente el que usan las <b>corridas sembradas</b>: el método de verificación del proyecto por <code>decisiones/006</code> (markdown puro → sin tests unitarios → se verifica corriendo). <b>El contrato no documenta el path que usa su propio método de verificación.</b>',
+      hallazgo:'La omisión ya produjo <b>dos lecturas erróneas reales</b>, no hipotéticas. (1) El hallazgo #2 de <code>s09-bateria</code> la leyó como defecto del harness («<code>CLAUDE_PLUGIN_DATA</code> exportada no fue el path efectivo») cuando el CLI se estaba comportando bien: <b>fija la variable según el modo de carga</b>, y exportarla a mano desde el shell no la sobreescribe. (2) La corrida del 2026-07-24 leyó los 4 registros de <code>batuta-inline/</code> como «historial huérfano a migrar» cuando son <b>evidencia de verificación de S09</b> sobre repos <code>prueba-s09-*</code>. <b>Migrarlos habría destruido evidencia de auditoría</b> y mezclado corridas de prueba con corridas reales. El patrón <code>&lt;plugin&gt;-inline</code> + <code>&lt;plugin&gt;-&lt;marketplace&gt;</code> se repite en TODOS los plugins del perfil (<code>audit-tracker</code>, <code>engram</code>, <code>vercel</code>): es del CLI, no de batuta.',
+      metodo:[
+        'Precisar <code>docs/registro-de-cadena.md</code> §4: <code>${CLAUDE_PLUGIN_DATA}</code> resuelve <b>según el MODO DE CARGA</b> — <code>batuta-&lt;marketplace&gt;/</code> instalado desde marketplace, <code>batuta-inline/</code> con <code>--plugin-dir</code>. Hoy la línea 103 solo declara el primero.',
+        '<b>NO migrar</b> los registros de <code>batuta-inline/corridas/</code>. Son la evidencia primaria de S09 (E2 <code>prueba-s09-faltante</code> · E3 <code>prueba-s09-caido</code> · E4 <code>prueba-s09-inyeccion</code>) y su path es el correcto para el modo en que se corrieron. Mezclarlos con las corridas de producción corrompe las dos series.',
+        'Cerrar el hallazgo #2 de <code>s09-bateria-2026-07-22.md</code> <b>por explicación, no por reparación</b>: no había defecto que reparar.',
+        '<b>Consecuencia operativa a dejar escrita:</b> el registro de cadena NO es continuo entre modos. Una corrida headless de prueba y una corrida real instalada escriben en directorios distintos — por diseño, y está bien, pero el que lea un baseline tiene que saberlo.'
+      ],
+      pend:[
+        {id:'p-path-inline', t:'Documentar en <code>registro-de-cadena.md</code> §4 la resolución por modo de carga (marketplace vs <code>--plugin-dir</code>), con la nota explícita de que los registros de <code>batuta-inline/</code> son evidencia de S09 y no se migran'},
+        {id:'p-s09h2', t:'Asentar el cierre del hallazgo #2 de <code>s09-bateria-2026-07-22.md</code>: no es defecto — el CLI fija la variable según el modo de carga; ambos paths observados eran correctos'}
+      ],
+      refs:['plugins-claude-code'], prereq:[]
+    }]
   }
 ];
 
 const DEBT = [
   {t:'Deuda de verificación: saldada en lo automatizable; el resto tiene techo doctrinal', d:'<b>Actualización 2026-07-22:</b> la batería S09 corrió — E2/E3/E4 con corridas headless reales + refutador de delgadez, 4/4 en verde (transcripts en <code>s09-corridas/</code>). E3 además clavó de facto el baseline y la exhibición de cadena de S08. <b>Lo que queda sin corrida es lo multi-fase con firmas</b> (Compuerta Cero con diff de 2 horizontes, GET+POST con lista blanca, las 4 corridas de fase 2 de S04): solo se verifica en corrida interactiva con el dueño firmando — automatizarlo exigiría <b>falsificar la firma</b> (<code>018</code>). Ese techo quedó documentado como propiedad del producto. La próxima corrida interactiva real del comando es la oportunidad natural de clavarlo.', sev:'warn'},
+  {t:'El contrato de persistencia documenta un solo modo de carga', d:'<b>Abierta 2026-07-24 (4).</b> <code>registro-de-cadena.md:103</code> declara que <code>${CLAUDE_PLUGIN_DATA}</code> resuelve a <code>batuta-&lt;marketplace&gt;/</code> y <b>omite el modo inline</b> (<code>--plugin-dir</code> → <code>batuta-inline/</code>), que es el que usan las corridas sembradas — <b>el método de verificación del proyecto</b> (<code>006</code>). Ya causó <b>dos malas lecturas reales</b>: el hallazgo #2 de S09 lo tomó por defecto del harness, y la corrida del 24 tomó la evidencia de S09 en <code>batuta-inline/</code> por «historial huérfano a migrar» — migrarla habría <b>destruido evidencia de auditoría</b>. Va como <b>S10</b> (bloque <code>b10</code>), talle S. Nota: el par <code>-inline</code>/<code>-&lt;marketplace&gt;</code> existe en TODOS los plugins del perfil; es comportamiento del CLI.', sev:'warn'},
   {t:'✅ Tabla en su mínima expresión — registro del cierre', d:'La mesa chica del 2026-07-24 (PR #43) cerró CINCO deudas de un saque: nombre público corregido en la ficha (/batuta:batuta) · índice confirmado y refrescado (tools/README.md) · diseño del 07-18 declarado perdido · label externo como taxonomía propia · pregunta del ADR archivada por la práctica (addendum en 011). Y trajo el hallazgo de la jornada: la cabecera de la PROPIA FICHA decía «En diseño» — estampada VIGENTE con la línea de 011. Queda arriba el techo doctrinal, que es identidad, no deuda.', sev:'warn'}
 ];
 
@@ -556,7 +580,8 @@ const PLAN = [
   {s:'S06', o:'Compuerta Cero', b:'b06', issue:10, talle:'L', trat:'sdd', pre:'✅ CERRADA 2026-07-21 (PR #31)'},
   {s:'S07', o:'Fase ejecutar-con-compuertas', b:'b07', issue:11, talle:'L', trat:'sdd', pre:'✅ CERRADA 2026-07-22 (PR #33) · decisión 012 FIRMADA'},
   {s:'S08', o:'Fase cerrar', b:'b08', issue:12, talle:'M', trat:'directo', pre:'✅ CERRADA 2026-07-22 (PR #34) · decisión 013 FIRMADA'},
-  {s:'S09', o:'Batería de verificación sembrada', b:'b09', issue:13, talle:'L', trat:'sdd', pre:'✅ CERRADA 2026-07-22 (PR #35) — LA OBRA v0 COMPLETA: 9 de 9'}
+  {s:'S09', o:'Batería de verificación sembrada', b:'b09', issue:13, talle:'L', trat:'sdd', pre:'✅ CERRADA 2026-07-22 (PR #35) — LA OBRA v0 COMPLETA: 9 de 9'},
+  {s:'S10', o:'Contrato de persistencia del registro (mantenimiento post-v0)', b:'b10', talle:'S', trat:'directo', pre:'🟠 ABIERTA 2026-07-24 (4) — sin prerrequisitos: es precisión de documentación, no obra nueva'}
 ];
 
 /* Recorridos de un dato punta a punta. Compartidos por Stack y Tests. */
@@ -664,6 +689,7 @@ const REFS = [
 ];
 
 const CHANGELOG = [
+  {f:'2026-07-24 (4)', t:'🧭 Nace el <code>estado.json</code> de batuta — y la evidencia de S09 se salva de ser «migrada»', d:'Re-auditoría pedida por <b>batuta dirigiéndose a sí misma</b> (corrida <code>2026-07-24-arreglar-path-de-corridas</code>): su fase 1 frenó porque <code>claude-batuta</code> era <b>el único proyecto del taller sin <code>docs/audits/&lt;proyecto&gt;-estado.json</code></b> — el contrato que ella misma pidió construir en S03 (<code>audit-tracker#31</code>) y que su propio repo nunca tuvo. <b>Emitido</b> (schema 1.0, 10 bloques, 2 pendientes abiertos). <b>El hallazgo de la jornada:</b> el objetivo del dueño era «arreglar el path de corridas», pero el path <b>no estaba roto</b> — <code>batuta.md:66</code> usa la variable y coincide con el contrato. Lo que faltaba era que el contrato <b>documentara los DOS modos de carga</b>: instalado desde marketplace → <code>batuta-&lt;marketplace&gt;/</code>, con <code>--plugin-dir</code> → <code>batuta-inline/</code>. Y de ahí la joya: los 4 registros de <code>batuta-inline/corridas/</code> <b>no eran historial huérfano</b> sino <b>la evidencia primaria de la batería S09</b> (E2 <code>prueba-s09-faltante</code>, E3 <code>prueba-s09-caido</code>, E4 <code>prueba-s09-inyeccion</code>), en el path correcto para el modo en que se corrieron — <b>migrarlos habría destruido evidencia de auditoría</b> y mezclado corridas de prueba con corridas reales. Cierra además el <b>hallazgo #2 de <code>s09-bateria</code> por explicación, no por reparación</b>: el CLI fija la variable según el modo de carga, exportarla a mano no la sobreescribe; ambos paths observados eran correctos. Abre <b>S10</b> (<code>b10</code>, talle S): precisar <code>registro-de-cadena.md</code> §4. <code>CLOSED_COUNT</code> sin cambios (41): no se cerró ningún pendiente del plan v0.'},
   {f:'2026-07-24 (2)', t:'⚖️ Mesa chica + eje externo: CINCO deudas cerradas y el registro de decisiones COMPLETO', d:'Re-auditoría doble tras los PRs <b>#43</b> (mesa chica) y <b>#44</b> (eje externo), ambos mergeados por Fede. <b>La mesa chica</b> cerró cinco deudas por elección explícita: /batuta:batuta en la ficha · tools/README.md confirmado como EL índice (y refrescado — estaba stale hasta para batuta misma) · diseño del 07-18 declarado PERDIDO · label externo como taxonomía PROPIA con creación perezosa · pregunta del ADR archivada por la práctica. <b>Y el hallazgo de la jornada: la cabecera de la PROPIA FICHA decía «En diseño»</b> — el director sin la línea de 011 en su plano; estampada VIGENTE con Procedencia. <b>El eje externo</b> (paraguas 015, su protocolo exacto): <code>019</code> fuentes del PROVISTO · <code>020</code> salud como reporte · <code>021</code> lista negra de egreso — las tres firmadas, el contrato habla su idioma (v0.3.0). <b>El registro queda 21/21: TODAS las decisiones firmadas con Procedencia, CERO pendientes — primera vez en la historia del producto.</b> DEBT queda con un solo habitante: el techo doctrinal.'},
   {f:'2026-07-24 (2)', t:'✅ La 010 saldada: el delegado de gitleaks existe, ejecuta, y barrió la flota', d:'Re-auditoría puntual tras el cierre del plan de <code>claude-publicador</code> (5/5, PR #19 mergeado por Fede). <b>La deuda sev-stop más vieja del tracker sale de DEBT</b>: <code>decisiones/010</code> difirió el escaneo de secretos a un publicador que no existía — hoy publicador tiene pre-flight real con gitleaks como motor y corrió sobre la <b>historia completa de los 7 repos del taller: 270 commits, CERO leaks</b> (evidencia en <code>claude-publicador/docs/audits/s05-dogfooding-2026-07-24.md</code>). El STACK se actualiza: publicador y verificador dejan de BLOQUEAR — ambos con plan completo. De los 4 delegados que bloqueaban en la auditoría inicial, no queda ninguno.'},
   {f:'2026-07-24', t:'🖊️ Mesa de firmas: los ADR 001–008 y 011 re-ratificados — la grieta de los refutadores, cerrada', d:'Re-auditoría tras el <b>PR #40</b> (mergeado por Fede 2026-07-23 23:05 UTC — el segundo acto de la firma). <b>La deuda que los refutadores de S07/S08/S09 cazaron TRES veces sale de DEBT:</b> los ADR <code>001–008</code> ya no dicen «aceptada» a secas — llevan <code>✅ FIRMADA · re-ratificada 2026-07-23</code> con <b>Procedencia</b> completa. Y la joya: el propio <code>011</code> —la decisión que DEFINE la línea de firma— estaba sin firmar; ya no. El acto fue <b>re-ratificación en bloque por elección explícita</b> de Fede en sesión interactiva («En bloque, las 11», mecanismo <code>018</code>), y la estampa es doctrinalmente honesta: <b>no fabrica el acto original no registrado — registra el de hoy</b>, con fecha y mecanismo. En la misma mesa se firmaron las FICHAs de <code>publicador</code> (#7) y <code>verificador</code> (#6) con la línea exacta de 011: batuta ya puede dirigir esas dos obras. <code>015</code> sigue PENDIENTE deliberada (espera el modelo de S05). FICHA §10 y los archivos por fin dicen lo mismo.'},
