@@ -243,6 +243,51 @@
 
 ---
 
+# Mantenimiento — después de la obra v0
+
+> **Por qué existe esta sección.** `FICHA.md` declara la obra **v0 COMPLETA 9/9 · en
+> mantenimiento**, pero hasta el 2026-07-24 el plan terminaba en S09. Como `registro-de-cadena.md`
+> §6 marca eslabón roto todo encargo cuyo requisito no exista en `plano_version`, **el trabajo de
+> mantenimiento era estructuralmente indelegable**: `batuta` no podía dirigir su propio
+> mantenimiento. Detectado en la corrida `2026-07-24-arreglar-path-de-corridas` (hallazgos D4/D5).
+>
+> Las sesiones de acá abajo se numeran en la misma serie (S10, S11, …) y siguen las mismas reglas.
+> Un fix de campo sigue siendo válido, pero **necesita su requisito acá** para tener asiento.
+
+## S10 — Contrato de persistencia del registro
+
+🎯 **Planteamiento.** El contrato de persistencia (`registro-de-cadena.md` §4) declara **un solo**
+modo de resolución de `${CLAUDE_PLUGIN_DATA}` —el de marketplace— y **omite el modo inline**
+(`--plugin-dir`). Y el inline es, justamente, el que usan las **corridas sembradas**: el método de
+verificación del proyecto por `decisiones/006` (markdown puro → sin tests unitarios → se verifica
+corriendo). **El contrato no documenta el path que usa su propio método de verificación.** La
+omisión ya produjo **dos lecturas erróneas reales**: el hallazgo #2 de `s09-bateria` la tomó por
+defecto del harness, y la corrida del 2026-07-24 tomó la evidencia de S09 por «historial huérfano a
+migrar» — migrarla habría **destruido evidencia de auditoría**.
+
+🛠️ **Método.** Precisión de documentación, cero cambio de comportamiento.
+1. Corregir `registro-de-cadena.md` §4: la resolución depende del **modo de carga**.
+2. Dejar escrito que los registros de `<plugin>-inline/` de las corridas sembradas **no se
+   migran**: son evidencia primaria, y su path es el correcto para el modo en que corrieron.
+3. Asentar el cierre del hallazgo #2 de `s09-bateria-2026-07-22.md` **por explicación, no por
+   reparación**: no había defecto: el CLI fija la variable según el modo de carga y exportarla a
+   mano no la sobreescribe.
+4. Dejar escrita la consecuencia operativa: **el registro de cadena NO es continuo entre modos.**
+
+✅ **Criterios de aceptación.**
+- [ ] `registro-de-cadena.md` §4 declara **ambos** modos con su path resultante *(verificación: inspección — el texto nombra `--plugin-dir` → `<plugin>-inline/` y marketplace → `<plugin>-<marketplace>/`)*
+- [ ] La nota de no-migración de la evidencia de S09 está en §4, nombrando los tres repos sembrados *(verificación: inspección — `prueba-s09-faltante`, `prueba-s09-caido`, `prueba-s09-inyeccion` aparecen citados)*
+- [ ] El hallazgo #2 de `s09-bateria-2026-07-22.md` queda marcado como cerrado con su explicación *(verificación: inspección del archivo de la batería — el hallazgo lleva su resolución escrita, sin borrarse)*
+- [ ] La discontinuidad del registro entre modos queda declarada como límite conocido *(verificación: inspección — §4 lo dice junto al límite «local a la máquina» que ya declara)*
+
+📚 **Referencias.** [`references/plugins-claude-code.md`](references/) 🟢
+
+⛓️ **Prerrequisitos.** — *(ninguno: es precisión de documentación, no obra nueva)*
+
+**Estimación: S**
+
+---
+
 ## Resumen
 
 | Sesión | Objetivo | Talle | Bloqueada por decisión |
@@ -256,5 +301,8 @@
 | S07 | Fase `ejecutar-con-compuertas` | L | `012` umbral de egreso |
 | S08 | Fase `cerrar` | M | `013` retrospectiva |
 | S09 | Verificación sembrada | L | — |
+| **S10** | **Contrato de persistencia del registro** *(mantenimiento)* | **S** | — |
 
-**7 de 9 sesiones están bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
+**7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
+
+**Las 9 de v0 están cerradas** (2026-07-22). De **S10 en adelante**, la serie es de **mantenimiento**: misma numeración, mismas reglas, y —lo que importa— **requisito propio**, para que el trabajo posterior a v0 tenga asiento y sea delegable.

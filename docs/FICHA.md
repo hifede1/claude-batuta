@@ -1,7 +1,15 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-24 por Fede
+> Firmado: 2026-07-25 por Fede
+> *Procedencia de la firma (`decisiones/018`): re-estampa de versión por cambio del plano — el
+> plan incorpora la serie de **mantenimiento post-v0** (S10) y `registro-de-cadena.md` §6 suma el
+> **tercer salvo** de composición del asiento (`decisiones/022`). Como `011` fija que la fecha de
+> firma ES la versión, un plano modificado no puede conservar la versión anterior. Fede pidió
+> ambos cambios por elección explícita en sesión interactiva (2026-07-24, tras el hallazgo D10 de
+> la corrida `2026-07-24-arreglar-path-de-corridas`) y **ratifica esta estampa al mergear este
+> PR** — merge del dueño = acto autenticado (`009`, `merged_by` == dueño anclado). Hasta ese
+> merge, esta línea vive solo en la rama: es propuesta, no sello en `main`.*
 > *Procedencia de la firma (`decisiones/018`): hallazgo de la mesa chica del 2026-07-24 — la cabecera decía «En diseño» cuando la obra v0 estaba COMPLETA y cada decisión del §10 firmada con Procedencia; Fede ratifica esta estampa (que reconcilia la cabecera con la realidad ya firmada pieza por pieza) al mergear el PR de la mesa chica (merge del dueño = acto autenticado, `decisiones/009`).*
 > Diseñada: 2026-07-18 (workflow de 6 agentes; verbatim declarado PERDIDO — `references/workflows-fan-out.md` es la reconstrucción canónica) · Obra: **v0 COMPLETA 9/9 (2026-07-22) + fix #38 · en mantenimiento** · absorbe a `director-de-obra`
 
@@ -119,7 +127,8 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 
 ### Pendientes
 
-- **PENDIENTE — Decisiones nuevas de ejecutar + externos** · `decisiones/015-eje-externo.md`. Dueño: Fede. Desbloquea: auditar el eje externo una vez escrito el modelo de S05.
+- **PENDIENTE — Decisiones nuevas de ejecutar + externos** · `decisiones/015-eje-externo.md`. Dueño: Fede. Desbloquea: auditar el eje externo una vez escrito el modelo de S05. *(Nota de la re-auditoría 2026-07-24: el `CHANGELOG` del tracker declara este paraguas **CERRADO** el 2026-07-24 con sus tres ADRs firmados —`019`/`020`/`021`, ver §10 Firmadas—; esta entrada quedó sin mover. Drift menor de `§10`, fuera del alcance de este PR.)*
+- **PENDIENTE — Asiento del bookkeeping de apertura** · `decisiones/022-asiento-bookkeeping-de-apertura.md`. Dueño: Fede. Tercer salvo de la composición del asiento de `registro-de-cadena.md` §6: una re-auditoría que ABRE trabajo produce un PR de contabilidad que hoy no tiene asiento posible y nace como eslabón roto. Origen: hallazgo D10 de la corrida `2026-07-24-arreglar-path-de-corridas` (PR #46). Desbloquea: que las re-auditorías fértiles dejen de romper la cadena. **El acto de ratificación es el merge de este PR.**
 
 ## 11. Fuera de alcance (v0 y v1)
 
