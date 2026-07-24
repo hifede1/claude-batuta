@@ -550,24 +550,20 @@ necesita algo que nadie flageó antes. Cuando pasa:
 
 Eso es reentrancia: descubrir un externo tarde cuesta **un carril pausado**, no la corrida entera.
 
-### El hueco del label `externo` — hueco-a-construir, sin improvisar
+### El label `externo` — taxonomía PROPIA de batuta (decidido en la mesa chica 2026-07-24)
 
 El pedido de un externo faltante viaja como **prerrequisito ⛓️ en la cola de Issues, con label
-`externo`** (así lo declara `FICHA.md` §5). Pero **ese label NO existe en la taxonomía de
-`audit-tracker`** — su taxonomía es `encargo` / `sesion-NN` / `maquina/*`, verificado por grep
-(`docs/references/audit-tracker.md` §4).
+`externo`** (`FICHA.md` §5). Ese label **es taxonomía PROPIA de batuta**, no de `audit-tracker`
+(cuya taxonomía sigue siendo `encargo` / `sesion-NN` / `maquina/*`): la decisión del dueño
+(mesa chica, 2026-07-24) **supera** el hueco-a-construir que esta sección declaraba antes.
 
-Es un **hueco-a-construir**, y se maneja como tal (regla 1, y `FICHA.md` §6: *«handoff sin bus
-existente = hallazgo; jamás se improvisa un canal»*):
-
-- `batuta` **NO crea el label por su cuenta.** Crearlo sería inventar taxonomía en el bus de otro
-  cimiento — improvisar un canal, justo lo prohibido.
-- El pedido del externo se emite igual por el canal que SÍ existe (prerrequisito ⛓️ del Issue),
-  **marcando explícitamente que le falta su label**.
-- El label faltante se **reporta como hallazgo** en el cierre (Fase 4): *«se necesita el label
-  `externo` en el bus de `audit-tracker`; hay que crearlo ahí o coordinarlo — pendiente de S05»*.
-
-El hueco queda **visible, no tapado**. Ni se improvisa un bus, ni se finge que el canal existe.
+- **Creación perezosa**: la primera vez que la fase `ejecutar` necesite marcar un externo en un
+  repo, verificá si el label existe (`gh label list`) y si no, crealo:
+  `gh label create externo --color D93F0B --description "Prerrequisito externo: lo provee el humano"`.
+- Crear ESTE label no es improvisar un canal ajeno: el canal (Issues + labels de GitHub) existe
+  y es compartido; `externo` es la marca propia de batuta sobre ese canal, declarada acá y en
+  la ficha. La regla «jamás improvisar un bus» sigue intacta para todo lo demás.
+- En el cierre (Fase 4), si el label se creó en la corrida, se informa como parte del Manifiesto.
 
 ### El ruteo mínimo — partitura descriptiva, sin runtime
 
