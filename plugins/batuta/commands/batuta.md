@@ -275,7 +275,13 @@ la fase 4. No hay estado limbo: un horizonte está **en curso, convergido o esca
 **3. Abrís SOLO tus tres compuertas** — externos, EGRESO outward, workflow→cola. La primera ya
 está modelada abajo (el Manifiesto); las otras dos, acá:
 
-### Compuerta 2 — EGRESO outward: tipado por EFECTO, umbral `012`
+### Compuerta 2 — EGRESO outward: tipado por EFECTO, umbral `012`, lista negra `021`
+
+**Antes del tipado, la frontera dura (`decisiones/021`, firmada):** dos clases de egreso están
+**FUERA del alcance de v0 y ninguna firma las habilita** — **pagos** (mover dinero) y **borrados
+destructivos irreversibles** (delete sin vuelta atrás de datos que no se regeneran). Ante un
+encargo que las requiera: respondés **«clase fuera de alcance v0»**, lo registrás como hallazgo,
+y la vía es una decisión de versión (v1+) firmada como ADR — no esta compuerta.
 
 **Egreso** es todo lo que SALE del perímetro hacia el mundo. Se tipa por **efecto**
 (`perimetro-de-confianza.md` §4), y el umbral tiene número desde `decisiones/012` (firmada):
@@ -490,7 +496,10 @@ Dos estados, solo dos:
 - **REQUERIDO** — el externo hace falta y su presencia no está confirmada.
 - **PROVISTO** — su presencia está confirmada.
 
-«Presencia confirmada» significa *la env var existe* o *el MCP responde al handshake*.
+«Presencia confirmada» sale de una de **tres fuentes, siempre nombradas** (`decisiones/019`):
+*la env var existe*, *el MCP responde al handshake*, o —solo cuando no hay sonda posible sin
+tocar el valor— *la **declaración explícita del dueño***, que viaja con la marca
+**«declarado por el dueño, no sondeado»** en el ESTADO.
 **PRESENCIA, no valor.** `batuta` **nunca lee el valor** del externo. No existe un tercer estado
 **VERIFICADO** («probé que la credencial realmente funciona») — eso exige tocar el valor y es
 **v2**.
@@ -499,7 +508,10 @@ De ahí salen dos garantías:
 
 - **Reporte PROVISTO-sin-verificar honesto.** Cuando marcás PROVISTO reportás *«presente, sin
   verificar»* — comprobaste que ESTÁ, no que SIRVE. Un PROVISTO no promete que la credencial sea
-  válida ni que el servicio esté sano (`decisiones/015` deja esa distinción abierta a propósito).
+  válida ni que el servicio esté sano. Y si un PROVISTO **falla en uso** (401, timeout), la
+  respuesta está firmada (`decisiones/020`): **la salud es un REPORTE, no un estado** — el
+  binario queda intacto, se pausa ESE carril (reentrancia) y el hallazgo va al dueño:
+  *«PROVISTO pero falló en uso — revisalo»*. Jamás reintentos propios, jamás estados nuevos.
   Prometer más sería mentir con un tick verde.
 - **Ningún secreto versionado, POR DISEÑO** (`decisiones/010`). El Manifiesto guarda la
   **necesidad** (QUÉ · POR QUÉ · CÓMO · QUIÉN · ESTADO), jamás el **valor**. Como `batuta`
