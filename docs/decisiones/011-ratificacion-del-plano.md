@@ -117,3 +117,14 @@ decidida acá:
 - **VIGENTE exige plano completo**, y entonces no se puede firmar hasta cerrar las 6.
 
 Se registra como pendiente explícita, no se resuelve por omisión.
+
+---
+
+## Addendum (2026-07-24, mesa chica): la pregunta abierta, resuelta por la práctica
+
+Esta decisión hizo visible la pregunta *«¿un plano con decisiones pendientes puede estar
+VIGENTE?»*. **Respuesta empírica, ratificada por Fede en la mesa chica:** SÍ — v0 se construyó
+y cerró entera (9/9) con la `015` PENDIENTE, y ninguna decisión se resolvió por omisión.
+La condición que lo hace sano: **cada pendiente DECLARADA, con dueño y disparador explícitos**
+(la `015` espera «auditar el eje externo una vez escrito el modelo de S05»). Un plano VIGENTE
+convive con incógnitas declaradas; lo que no tolera son incógnitas ocultas.

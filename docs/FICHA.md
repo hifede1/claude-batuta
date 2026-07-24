@@ -1,7 +1,9 @@
 # Ficha de diseño: batuta
 
-> Estado: ⚪ En diseño · v0 MÍNIMA head-first (ver §0) · absorbe a `director-de-obra`
-> Diseñada: 2026-07-18 (workflow de diseño 6 agentes) · Construir v0 tras asentar `doc-arquitecto`
+> **Estado: VIGENTE**
+> Firmado: 2026-07-24 por Fede
+> *Procedencia de la firma (`decisiones/018`): hallazgo de la mesa chica del 2026-07-24 — la cabecera decía «En diseño» cuando la obra v0 estaba COMPLETA y cada decisión del §10 firmada con Procedencia; Fede ratifica esta estampa (que reconcilia la cabecera con la realidad ya firmada pieza por pieza) al mergear el PR de la mesa chica (merge del dueño = acto autenticado, `decisiones/009`).*
+> Diseñada: 2026-07-18 (workflow de 6 agentes; verbatim declarado PERDIDO — `references/workflows-fan-out.md` es la reconstrucción canónica) · Obra: **v0 COMPLETA 9/9 (2026-07-22) + fix #38 · en mantenimiento** · absorbe a `director-de-obra`
 
 ## 0. Estrategia: v0 MÍNIMA, head-first (decidido por Fede 2026-07-18)
 
@@ -32,7 +34,7 @@ Corrección al plan original ("construir última"): `batuta` NO tiene que espera
 
 ## 2. Tipo y forma
 
-Plugin de Claude Code, comando `/batuta`. Genérico (cualquier proyecto en GitHub). Mezcla `/orquestar` (loop determinístico con firma) con workflows (fan-out multi-agente).
+Plugin de Claude Code, comando **`/batuta:batuta`** (namespacing real de plugins: `plugin:comando`; ratificado en la mesa chica 2026-07-24 — la ficha se corrige, el comando no se renombra). Genérico (cualquier proyecto en GitHub). Mezcla `/orquestar` (loop determinístico con firma) con workflows (fan-out multi-agente).
 
 ## 3. Qué hace ELLA vs qué DELEGA (el antídoto god-object)
 
@@ -89,7 +91,7 @@ Partitura **descriptiva firmada** (grafo dirigido tipado), no un runtime. Nodos 
 
 ## 9. Absorción de director-de-obra
 
-`director-de-obra` **no se construye por separado ni se archiva: se pliega como la fase 2 (Planificación).** En el índice queda marcado "absorbida por batuta" (rastro de decisión, no se borra). Sus 4 capacidades entran intactas como maquinaria de la fase. Sus **4 decisiones firmadas (2026-07-18) viajan como invariantes** (D1 enumera-y-clasifica; D2 GitHub-first; D3 baseline liviano; D4 consume cartera) — pero son PISO, no techo: batuta EJECUTA y toca externos, y eso abre decisiones nuevas que ninguna de las 4 cubre (ver §10). La deferida "¿herramienta o capacidad?" se auto-resuelve: batuta ES la herramienta, la planificación es su fase.
+`director-de-obra` **no se construye por separado ni se archiva: se pliega como la fase 2 (Planificación).** En el índice —**`tools/README.md`, confirmado como EL índice del taller por Fede en la mesa chica 2026-07-24**— queda marcado "absorbida por batuta" (rastro de decisión, no se borra; verificado: ya lo está). Sus 4 capacidades entran intactas como maquinaria de la fase. Sus **4 decisiones firmadas (2026-07-18) viajan como invariantes** (D1 enumera-y-clasifica; D2 GitHub-first; D3 baseline liviano; D4 consume cartera) — pero son PISO, no techo: batuta EJECUTA y toca externos, y eso abre decisiones nuevas que ninguna de las 4 cubre (ver §10). La deferida "¿herramienta o capacidad?" se auto-resuelve: batuta ES la herramienta, la planificación es su fase.
 
 ## 10. Decisiones
 

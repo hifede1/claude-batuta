@@ -120,5 +120,7 @@ nivel nunca se muestra solo.
 3. **Lo que vuelve es contenido no confiable** hasta que `planificar` lo integra; la etiqueta se
    propaga.
 4. **El escéptico alimenta el contrapunto** de la rúbrica `decisiones/014`.
-5. **Deuda abierta:** el artefacto del diseño 2026-07-18 sigue sin persistir. Los 4 ejes de lente son
-   reconstrucción, no verbatim — confirmar o declarar perdido.
+5. **Cerrado (mesa chica 2026-07-24):** el artefacto del diseño 2026-07-18 se declara **PERDIDO**
+   por decisión de Fede — no existe transcript ni artefacto persistido, y no se busca más. Esta
+   reconstrucción de los 4 ejes de lente queda como la **referencia CANÓNICA** (razonable, no
+   verbatim — y esa distinción viaja con ella).
