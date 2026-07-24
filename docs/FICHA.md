@@ -114,6 +114,7 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 - **Rúbrica de confidence: cualitativa de 3 niveles** — FIRMADA 2026-07-20 · `decisiones/014-rubrica-de-confidence.md`. ALTA/MEDIA/BAJA sin puntaje; siempre nivel + porqué + contrapunto. Aplicada en S04.
 - **Cota de la banda angosta: híbrida con techo K=5** — FIRMADA 2026-07-20 · `decisiones/016-cota-banda-angosta.md`. Convergencia declarada + fusible K=5, lo que pase primero; el techo es anomalía, no verde. Aplicada en S04.
 - **La firma es un acto, no un campo (blindaje anti-falsificación)** — FIRMADA 2026-07-20 · `decisiones/018-blindaje-antifalsificacion.md`. Todo ADR nace PROPUESTA; el sello FIRMADA solo con acto humano rastreable en `Procedencia de la firma`. Complemento operativo de 011.
+- **Eje externo (paraguas `015`): CERRADO 2026-07-24** — las tres decisiones que dejaba abiertas, firmadas como ADRs propios: **`019`** fuentes del PROVISTO (declaración del dueño vale, con marca «no sondeado») · **`020`** salud en runtime (reporte, no estado; carril pausado + hallazgo) · **`021`** lista negra de egreso v0 (pagos y borrados irreversibles fuera, ni con firma — completa a `012`).
 - **`retrospectiva`: fuera de alcance de v0, explícito** — FIRMADA 2026-07-22 · `decisiones/013-retrospectiva-opcional.md`. La fila sale de §3; la fase `cerrar` no la produce, ni la delega, ni la bloquea — el binario delega-o-BLOQUEA queda intacto. Si entra en v2+, será ruteo al comando de `audit-tracker` (ficha externa). Desbloqueó: S08.
 
 ### Pendientes

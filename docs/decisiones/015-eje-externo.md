@@ -1,6 +1,7 @@
 # 015 — Decisiones nuevas del eje ejecutar + externos
 
-**Estado:** ⏳ **PENDIENTE** · Dueño: **Fede** · Desbloquea: **auditar el eje externo una vez escrito el modelo de S05**
+**Estado:** ✅ **CERRADA como paraguas** · 2026-07-24 · **Firmada por:** Fede
+**Procedencia de la firma:** el disparador se cumplió (el modelo de S05 está escrito desde el cierre de v0); la auditoría del eje externo se corrió el 2026-07-24 y enumeró TRES decisiones — Fede las firmó una por una vía elección explícita en sesión interactiva, cada una como su propio ADR (el protocolo exacto que este paraguas prescribía): **`019` fuentes del PROVISTO · `020` salud en runtime · `021` lista negra de egreso v0**. Ratifica este cierre al mergear su PR. Ver `018`.
 **superaA:** —
 **Origen:** `FICHA.md` §9 y §10
 
@@ -27,3 +28,16 @@ Estas decisiones dependen del modelo concreto de externos, que se escribe en **S
 ## Consecuencias de dejarla abierta
 
 Ninguna inmediata: es una pendiente **planificada**, no una omisión. El riesgo es olvidarla — por eso vive como archivo de primera clase y no como nota al pie.
+
+---
+
+## Cierre (2026-07-24)
+
+Las tres preguntas del contexto quedaron firmadas como ADRs propios, tal como este archivo
+prescribía («este archivo es el paraguas, no el registro final»):
+
+| Pregunta del paraguas | ADR | Decisión |
+|---|---|---|
+| Fuentes de estado de credenciales | `019` | Tres fuentes jerarquizadas; declaración del dueño vale CON marca «no sondeado» |
+| Salud de servicios externos | `020` | Reporte, no estado: binario intacto, carril pausado + hallazgo |
+| Egreso outward (política general) | `021` | Lista negra mínima: pagos y borrados irreversibles fuera de v0, ni con firma |
