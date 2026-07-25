@@ -100,8 +100,48 @@ como hallazgo.
 ${CLAUDE_PLUGIN_DATA}/corridas/<corrida-id>.md
 ```
 
-- `${CLAUDE_PLUGIN_DATA}` resuelve a `~/.claude/plugins/data/batuta-<marketplace>/`
 - `<corrida-id>` = `<fecha-de-inicio>-<slug-del-objetivo>` — p. ej. `2026-07-19-andamio-trazabilidad`
+
+### Los DOS modos de resolución de `${CLAUDE_PLUGIN_DATA}`
+
+**La variable no tiene un destino único.** Resuelve a `~/.claude/plugins/data/<id>/`, donde
+`<id>` depende del **modo de carga del plugin**:
+
+| Modo de carga | `<id>` | Path resultante del registro |
+|---|---|---|
+| Instalado desde marketplace | `batuta-<marketplace>` | `~/.claude/plugins/data/batuta-fede-tools/corridas/` |
+| Cargado con `--plugin-dir` | `batuta-inline` | `~/.claude/plugins/data/batuta-inline/corridas/` |
+
+No es una particularidad de `batuta`: el sufijo `-inline` lo recibe **todo** plugin cargado así,
+y convive con su par de marketplace en el mismo directorio (`audit-tracker-inline`,
+`engram-inline`, `vercel-inline`).
+
+`references/plugins-claude-code.md:70` ya declaraba la forma general —
+`~/.claude/plugins/data/{id}/`— y `:216` prescribe `--plugin-dir` como el modo de desarrollo de
+`batuta`. Este documento había especializado ese `{id}` a un solo modo, perdiendo justamente el
+que la referencia hermana recomienda para desarrollar.
+
+> **Una fase que busque el registro en un único path está leyendo medio contrato.** Antes de
+> concluir que una corrida «no existe», hay que mirar los dos.
+
+### La evidencia de S09 no migra
+
+Las cuatro corridas de la batería de S09 viven en `~/.claude/plugins/data/batuta-inline/corridas/`
+porque se ejecutaron en modo `--plugin-dir`. **No son archivos huérfanos de una migración
+fallida: son evidencia fechada**, y cada una declara en su cabecera el repo sembrado que la
+originó (los tres de `audits/s09-bateria-2026-07-22.md`):
+
+| Archivo | Repo sembrado |
+|---|---|
+| `2026-07-22-criterios-s01-a-tests.md` | `prueba-s09-faltante` |
+| `2026-07-21-construir-contador.md` | `prueba-s09-caido` |
+| `2026-07-21-construir-contador-baseline.md` | `prueba-s09-caido` (baseline — criterio `S08/baseline-persiste`) |
+| `2026-07-22-avanzar-segun-plano.md` | `prueba-s09-inyeccion` |
+
+**No se mueven, no se renombran, no se consolidan.** Moverlas rompería el pareo entre la batería
+y su evidencia, y una corrida de `batuta` del 2026-07-24 llegó a arrancar con la premisa de
+«arreglar el path roto» antes de que la re-auditoría desarmara la premisa. El registro se lee
+donde quedó, en el modo en que se escribió.
 
 ### Por qué ahí y no en el repo del usuario
 
@@ -114,11 +154,21 @@ Tres razones, en orden de peso:
 3. **Es markdown**, coherente con `decisiones/006`: inspeccionable con un editor, sin
    herramienta ni parser.
 
-### Consecuencia asumida
+### Consecuencias asumidas
 
-El registro es **local a la máquina**. Una corrida iniciada en una máquina no se puede
+**1. El registro es local a la máquina.** Una corrida iniciada en una máquina no se puede
 continuar en otra. Es aceptable en v0 (`decisiones/001`: mono-proyecto, una persona, una
 máquina) y queda anotado como límite conocido, no como olvido.
+
+**2. El registro es local al MODO DE CARGA.** De la tabla de dos modos se sigue que los dos
+paths son **directorios distintos y sin puente**: una corrida iniciada con el plugin instalado
+desde marketplace **no se continúa** con el plugin cargado por `--plugin-dir`, ni al revés. Para
+la fase que busca su corrida, cambiar de modo a mitad equivale a cambiar de máquina.
+
+Se asume igual que la anterior y por la misma razón: unificar los paths obligaría a `batuta` a
+adivinar cuál de los dos es «el bueno», y adivinar sobre el registro es exactamente lo que este
+documento existe para impedir. **Límite conocido, no olvido** — con una regla práctica: si una
+corrida parece no existir, mirá el otro modo antes de darla por perdida.
 
 ---
 
