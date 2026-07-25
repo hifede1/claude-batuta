@@ -2,15 +2,27 @@
 
 > **Estado: VIGENTE**
 > Firmado: 2026-07-25 por Fede
-> *Procedencia de la firma (`decisiones/018`): re-estampa de versión por cambio del plano — el
-> plan incorpora la serie de **mantenimiento post-v0** (S10) y `registro-de-cadena.md` §6 suma el
-> **tercer salvo** de composición del asiento (`decisiones/022`). Como `011` fija que la fecha de
-> firma ES la versión, un plano modificado no puede conservar la versión anterior. Fede pidió
-> ambos cambios por elección explícita en sesión interactiva (2026-07-24, tras el hallazgo D10 de
-> la corrida `2026-07-24-arreglar-path-de-corridas`) y **ratifica esta estampa al mergear este
-> PR** — merge del dueño = acto autenticado (`009`, `merged_by` == dueño anclado). Hasta ese
-> merge, esta línea vive solo en la rama: es propuesta, no sello en `main`.*
-> *Procedencia de la firma (`decisiones/018`): hallazgo de la mesa chica del 2026-07-24 — la cabecera decía «En diseño» cuando la obra v0 estaba COMPLETA y cada decisión del §10 firmada con Procedencia; Fede ratifica esta estampa (que reconcilia la cabecera con la realidad ya firmada pieza por pieza) al mergear el PR de la mesa chica (merge del dueño = acto autenticado, `decisiones/009`).*
+> *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En los tres
+> actos el acto de ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` ==
+> dueño anclado (`009`):*
+> 1. ***2026-07-24 · PR #43** (mesa chica) — la cabecera decía «En diseño» cuando la obra v0 estaba
+>    COMPLETA y cada decisión del §10 ya estaba firmada con su Procedencia. La estampa reconcilió la
+>    cabecera con una realidad ya firmada pieza por pieza.*
+> 2. ***2026-07-25 · PR #47** — re-estampa de versión por cambio del plano: se incorpora la serie de
+>    **mantenimiento post-v0** (S10) y `registro-de-cadena.md` §6 suma el **tercer salvo** de
+>    composición del asiento (`decisiones/022`). Como `011` fija que la fecha de firma ES la versión,
+>    un plano modificado no puede conservar la versión anterior. Pedido por Fede en sesión
+>    interactiva del 2026-07-24, tras el hallazgo D10 de la corrida `2026-07-24-arreglar-path-de-corridas`.*
+> 3. ***2026-07-25 · este PR** — se abre **S11** (contabilidad de la ficha) y se **consolida esta
+>    Procedencia**, que el propio PR #47 había dejado duplicada: dos bloques consecutivos sin decir
+>    cuál correspondía a la firma vigente. La consolidación se hace **en el mismo acto** que la
+>    re-estampa que `011` exige — hacerla después habría agregado un tercer bloque encima de los dos
+>    que S11 viene a arreglar.*
+>
+> ⚠️ *Límite conocido del versionado (`011`): la versión ES la fecha de firma, así que **dos cambios
+> de plano en el mismo día comparten `plano_version`**. Los actos 2 y 3 son ambos `2026-07-25` y
+> tienen contenido distinto. No es un error de esta estampa sino un hueco del contrato de
+> versionado; queda declarado acá y es candidato a ADR propio.*
 > Diseñada: 2026-07-18 (workflow de 6 agentes; verbatim declarado PERDIDO — `references/workflows-fan-out.md` es la reconstrucción canónica) · Obra: **v0 COMPLETA 9/9 (2026-07-22) + fix #38 · en mantenimiento** · absorbe a `director-de-obra`
 
 ## 0. Estrategia: v0 MÍNIMA, head-first (decidido por Fede 2026-07-18)
