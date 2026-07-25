@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "proyecto": "claude-batuta",
-  "last_audit": "2026-07-24 (4)",
-  "closed_count": 41,
+  "last_audit": "2026-07-25",
+  "closed_count": 43,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
     "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
@@ -86,20 +86,9 @@
       "id": "b10",
       "nombre": "S10 · Mantenimiento del contrato de persistencia",
       "zona": "Mantenimiento — después de la obra v0",
-      "estado": "curso",
-      "resumen": "Abierto por la re-auditoría 2026-07-24 (4). El contrato de persistencia del registro de cadena documenta UN solo modo de resolución de ${CLAUDE_PLUGIN_DATA} (marketplace) y omite el modo inline (--plugin-dir), que es justamente el que usan las corridas sembradas — el método de verificación del proyecto por decisiones/006. La omisión ya produjo dos lecturas erróneas reales.",
-      "pendientes": [
-        {
-          "id": "p-path-inline",
-          "txt": "Documentar en docs/registro-de-cadena.md §4 que ${CLAUDE_PLUGIN_DATA} resuelve según el MODO DE CARGA del plugin: batuta-<marketplace>/ instalado desde marketplace, batuta-inline/ con --plugin-dir. Hoy la línea 103 solo declara el primero. Los registros de las corridas sembradas de S09 viven legítimamente en batuta-inline/ y NO deben migrarse: son evidencia de verificación sobre repos prueba-s09-*, no historial de producción.",
-          "sesion": "S10"
-        },
-        {
-          "id": "p-s09h2",
-          "txt": "Asentar el cierre del hallazgo #2 de docs/audits/s09-bateria-2026-07-22.md ('CLAUDE_PLUGIN_DATA exportada no fue el path efectivo'). Verificado 2026-07-24: NO es defecto. El CLI fija la variable según el modo de carga; exportarla a mano desde el shell no la sobreescribe. Ambos paths observados eran correctos para su modo. Se cierra por explicación, no por reparación — y su explicación es el pendiente p-path-inline.",
-          "sesion": "S10"
-        }
-      ]
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-25 (PR #50, encargo #49, corrida 2026-07-25-ejecutar-s10) — primera sesión de la serie de mantenimiento post-v0 y primera cadena idea→plano→encargo→obra completa de batuta sobre sí misma. docs/registro-de-cadena.md §4 declara ahora los DOS modos de resolución de ${CLAUDE_PLUGIN_DATA} con su path resultante (:105-113), la no-migración de la evidencia de S09 con su mapeo a los tres repos sembrados (:127-139) y la discontinuidad entre modos como segunda consecuencia asumida (:157-171). El hallazgo #2 de s09-bateria-2026-07-22.md quedó cerrado con explicación en :47, con 19 inserciones y cero deleciones: la evidencia fechada se anota, no se reescribe. Hallazgo de la ejecución: references/plugins-claude-code.md:70 nunca se equivocó (declaraba {id} genérico) y :216 prescribía --plugin-dir como modo de desarrollo — fue el contrato el que especializó mal ese {id}. La contradicción vivía entre dos documentos del mismo repo que nadie había leído uno contra el otro.",
+      "pendientes": []
     }
   ],
   "plan": [
@@ -108,7 +97,7 @@
     { "sesion": "S07", "titulo": "Fase ejecutar-con-compuertas", "estimacion": 1, "deps": ["S06"], "cierra": [] },
     { "sesion": "S08", "titulo": "Fase cerrar", "estimacion": 1, "deps": ["S07"], "cierra": [] },
     { "sesion": "S09", "titulo": "Batería de verificación sembrada", "estimacion": 1, "deps": ["S08"], "cierra": [] },
-    { "sesion": "S10", "titulo": "Mantenimiento del contrato de persistencia", "estimacion": 1, "deps": [], "cierra": ["p-path-inline", "p-s09h2"] }
+    { "sesion": "S10", "titulo": "Mantenimiento del contrato de persistencia", "estimacion": 1, "deps": [], "cierra": [] }
   ],
   "decisiones_pendientes": [],
   "referencias": [
@@ -121,6 +110,7 @@
   "referencias_faltantes": [],
   "deuda": [
     "Techo doctrinal (identidad, no deuda): lo multi-fase con firmas no se automatiza — la Compuerta Cero con diff de 2 horizontes, el egreso GET+POST con lista blanca y las 4 corridas de fase 2 de S04 solo se verifican en corrida interactiva con el dueño firmando. Automatizarlo exigiría falsificar la firma (decisiones/018).",
-    "El contrato de persistencia (docs/registro-de-cadena.md §4) documenta un solo modo de resolución de ${CLAUDE_PLUGIN_DATA} y omite el modo inline. Abierto como bloque b10 / S10 en esta re-auditoría."
+    "SALDADA 2026-07-25 (PR #50): el contrato de persistencia (docs/registro-de-cadena.md §4) documentaba un solo modo de resolución de ${CLAUDE_PLUGIN_DATA} y omitía el modo inline. Ahora declara los dos con su path resultante, la no-migración de la evidencia de S09 y la discontinuidad entre modos como límite conocido. Queda como registro de que una omisión de contrato se cobra lecturas erróneas, no solo prolijidad.",
+    "Deuda de verificación estructural (no de un encargo): claude-batuta no tiene CI — .github/workflows no existe — y por decisiones/006 (sustrato markdown puro) no hay test que clave los criterios de una sesión de documentación. La verificación es por lectura contra el plano. Detectada al ejecutar S10, donde /orquestar prescribe esperar el CI y no había gate que esperar."
   ]
 }
