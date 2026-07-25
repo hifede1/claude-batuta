@@ -140,7 +140,15 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 
 ### Pendientes
 
-- **PENDIENTE — Decisiones nuevas de ejecutar + externos** · `decisiones/015-eje-externo.md`. Dueño: Fede. Desbloquea: auditar el eje externo una vez escrito el modelo de S05. *(Nota de la re-auditoría 2026-07-24: el `CHANGELOG` del tracker declara este paraguas **CERRADO** el 2026-07-24 con sus tres ADRs firmados —`019`/`020`/`021`, ver §10 Firmadas—; esta entrada quedó sin mover. Drift menor de `§10`, fuera del alcance de este PR.)*
+**Ninguna al 2026-07-25.** El paraguas `015` era la última y quedó **cerrado el 2026-07-24** con sus tres ADRs firmados (`019`/`020`/`021`) — su registro completo vive arriba, en Firmadas. Hasta S11 esta sección seguía listándolo como PENDIENTE mientras Firmadas lo declaraba CERRADO: la ficha se contradecía a sí misma dentro de la misma sección. Se eliminó la **contradicción**, no el historial.
+
+> Esta línea se sostiene sola: si aparece una decisión pendiente, se agrega acá con su dueño y qué la desbloquea. Una sección vacía y una sección borrada se leen distinto — la primera dice «no hay», la segunda no dice nada.
+
+### Nota de numeración: el hueco `017`
+
+`decisiones/` salta de `016` a `018`. **`017` nunca existió.** `016-cota-banda-angosta.md` y `018-blindaje-antifalsificacion.md` nacieron en el mismo commit (`9183665`, PR #24, junto con `014`); no hay archivo creado ni borrado en el historial, ni menciones en mensajes de commit, ni referencias en `docs/` o en el tracker. Fue un número **saltado al redactar tres ADRs de un saque**.
+
+**`017` queda declarado como número no usado y NO reutilizable.** Mismo principio que `registro-de-cadena.md` §2 regla 2 fija para los identificadores de requisito: un ID que no se usó no se recicla, porque reciclarlo rompe la trazabilidad de todo lo escrito antes. Se documenta acá para que el hueco no se investigue de cero cada vez que alguien lo nota — ya pasó una vez, en la serie de mantenimiento post-v0.
 
 ## 11. Fuera de alcance (v0 y v1)
 
