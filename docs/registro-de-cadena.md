@@ -206,11 +206,18 @@ La cadena está rota —y `cerrar` debe reportarlo como hallazgo— cuando:
 
 - un **encargo** no referencia ningún requisito, o referencia uno inexistente en
   `plano_version`
-- una **pieza de obra** mergeada no referencia ningún encargo — con dos salvos, cada uno con su
-  asiento propio: el **PR de decisión del dueño** (asiento: la decisión-a-firmar que
-  materializa, autenticada — FIRMADA con procedencia `018` y `merged_by` == dueño `009`) y el
-  **PR de bookkeeping del tracker** (asiento: el cierre firmado cuya contabilidad refleja,
-  `decisiones/005`). Un reclamo de salvo que no autentica es la causal, no la excepción
+- una **pieza de obra** mergeada no referencia ningún encargo — con **tres** salvos, cada uno con
+  su asiento propio:
+  1. el **PR de decisión del dueño** (asiento: la decisión-a-firmar que materializa, autenticada
+     — FIRMADA con procedencia `018` y `merged_by` == dueño `009`);
+  2. el **PR de bookkeeping de CIERRE del tracker** (asiento: el cierre firmado cuya contabilidad
+     refleja, `decisiones/005`);
+  3. el **PR de bookkeeping de APERTURA del tracker** (asiento: la re-auditoría cuya invocación
+     está asentada en el eslabón `obra` de una corrida, `decisiones/022`) — autentica **solo con
+     las tres**: toca exclusivamente `docs/audits/`, la invocación figura en un eslabón `obra`
+     con fecha y `last_audit`, y el `last_audit` declarado coincide con el del artefacto emitido.
+
+  Un reclamo de salvo que no autentica es la causal, no la excepción
 - un **requisito** firmado en la RUTA no tiene encargo ni motivo registrado de por qué no lo tiene
 - un **egreso-que-escribe** ejecutado que no figura en el eslabón `encargos` con su firma y
   resultado
