@@ -274,15 +274,60 @@ migrar» — migrarla habría **destruido evidencia de auditoría**.
    mano no la sobreescribe.
 4. Dejar escrita la consecuencia operativa: **el registro de cadena NO es continuo entre modos.**
 
-✅ **Criterios de aceptación.**
-- [ ] `registro-de-cadena.md` §4 declara **ambos** modos con su path resultante *(verificación: inspección — el texto nombra `--plugin-dir` → `<plugin>-inline/` y marketplace → `<plugin>-<marketplace>/`)*
-- [ ] La nota de no-migración de la evidencia de S09 está en §4, nombrando los tres repos sembrados *(verificación: inspección — `prueba-s09-faltante`, `prueba-s09-caido`, `prueba-s09-inyeccion` aparecen citados)*
-- [ ] El hallazgo #2 de `s09-bateria-2026-07-22.md` queda marcado como cerrado con su explicación *(verificación: inspección del archivo de la batería — el hallazgo lleva su resolución escrita, sin borrarse)*
-- [ ] La discontinuidad del registro entre modos queda declarada como límite conocido *(verificación: inspección — §4 lo dice junto al límite «local a la máquina» que ya declara)*
+✅ **Criterios de aceptación.** — **CERRADA 2026-07-25 (PR #50, encargo #49)**
+- [x] `registro-de-cadena.md` §4 declara **ambos** modos con su path resultante *(verificación: inspección — el texto nombra `--plugin-dir` → `<plugin>-inline/` y marketplace → `<plugin>-<marketplace>/`)* → `:105-113`
+- [x] La nota de no-migración de la evidencia de S09 está en §4, nombrando los tres repos sembrados *(verificación: inspección — `prueba-s09-faltante`, `prueba-s09-caido`, `prueba-s09-inyeccion` aparecen citados)* → `:127-139`
+- [x] El hallazgo #2 de `s09-bateria-2026-07-22.md` queda marcado como cerrado con su explicación *(verificación: inspección del archivo de la batería — el hallazgo lleva su resolución escrita, sin borrarse)* → `s09-bateria:47`, con 19 inserciones y **cero deleciones**
+- [x] La discontinuidad del registro entre modos queda declarada como límite conocido *(verificación: inspección — §4 lo dice junto al límite «local a la máquina» que ya declara)* → `:157-171`
 
 📚 **Referencias.** [`references/plugins-claude-code.md`](references/) 🟢
 
 ⛓️ **Prerrequisitos.** — *(ninguno: es precisión de documentación, no obra nueva)*
+
+**Estimación: S**
+
+---
+
+## S11 — Contabilidad de la ficha
+
+🎯 **Planteamiento.** La `FICHA.md` **se contradice a sí misma dentro de su propia §10**: la
+sección de firmadas declara el paraguas `015` **CERRADO 2026-07-24** con sus tres ADRs (`019`,
+`020`, `021`), y doce líneas más abajo la sección de pendientes lo sigue listando como
+**PENDIENTE**. La entrada pendiente ya lleva una nota que reconoce el drift y lo declara «fuera del
+alcance de este PR» — o sea, la contradicción está **documentada y sin resolver**.
+
+Aparte, `docs/decisiones/` salta de `016` a `018`. Diagnosticado en la corrida
+`2026-07-25-ejecutar-s10`: **`017` nunca existió**. `016` y `018` nacieron en el mismo commit
+(`9183665`, PR #24, junto con `014`); no hay archivo borrado, ni mención en ningún commit, ni en el
+tracker, ni en `docs/`. Es un número **saltado al redactar tres ADRs de un saque**.
+
+**Por qué importa y no es prolijidad.** La ficha es la **precondición que `batuta` lee en cada
+corrida**. Ya hubo un bug de campo por leer mal esta cabecera: en la primera corrida real contra
+`cartera`, `batuta` tomó una *mención* de «firmado» por la firma (fix #37/#38, que endureció la
+regla a la línea exacta de `011`). Un §10 que afirma y niega lo mismo es material para el próximo
+error de lectura, y un hueco de numeración sin explicar hace que cada lector nuevo lo investigue de
+cero — como pasó en esta misma serie.
+
+🛠️ **Método.** Contabilidad, cero cambio de comportamiento y cero decisión nueva.
+1. Resolver la contradicción de `015` en §10: la evidencia ya está del lado del cierre — el
+   CHANGELOG del tracker lo declara cerrado el 2026-07-24 y los tres ADRs (`019`/`020`/`021`)
+   están firmados y en disco. **No se re-decide nada**: se hace que la ficha diga lo que ya es.
+2. Declarar el hueco `017` **con su diagnóstico**, como número **no usado y no reutilizable** —
+   mismo principio que `registro-de-cadena.md` §2 fija para los IDs de requisito: un identificador
+   que no se usó no se recicla, porque reciclarlo rompe la trazabilidad de lo escrito antes.
+
+✅ **Criterios de aceptación.**
+- [ ] `FICHA.md` §10 **no** lista `015` simultáneamente como firmada y como pendiente *(verificación: inspección — una sola entrada de `015` en §10, del lado que corresponde, y la nota de drift ya no aplica)*
+- [ ] El hueco de numeración `017` queda declarado como número **no usado y no reutilizable**, con su diagnóstico *(verificación: inspección — la declaración nombra que `016` y `018` nacieron en el commit `9183665` y que `017` nunca existió)*
+
+> **Fuera de alcance, por diseño.** La consolidación de la doble `Procedencia` de la cabecera **no
+> es criterio de S11**: la hizo el PR que abrió esta sesión. Tenía que ser así — `011` obliga a
+> re-estampar la cabecera al tocar el plano, así que abrir S11 «para arreglar la cabecera» habría
+> agregado un tercer bloque encima de los dos a consolidar. El arreglo se mordía la cola.
+
+📚 **Referencias.** — *(ninguna nueva: se lee contra `FICHA.md` §10 y `docs/decisiones/`)*
+
+⛓️ **Prerrequisitos.** — *(ninguno)*
 
 **Estimación: S**
 
@@ -301,7 +346,8 @@ migrar» — migrarla habría **destruido evidencia de auditoría**.
 | S07 | Fase `ejecutar-con-compuertas` | L | `012` umbral de egreso |
 | S08 | Fase `cerrar` | M | `013` retrospectiva |
 | S09 | Verificación sembrada | L | — |
-| **S10** | **Contrato de persistencia del registro** *(mantenimiento)* | **S** | — |
+| **S10** | **Contrato de persistencia del registro** *(mantenimiento)* ✅ cerrada 2026-07-25 | **S** | — |
+| **S11** | **Contabilidad de la ficha** *(mantenimiento)* | **S** | — |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
