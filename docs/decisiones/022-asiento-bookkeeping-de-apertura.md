@@ -1,10 +1,13 @@
 # 022 — Asiento del bookkeeping de apertura: tercer salvo de la composición
 
-**Estado:** ⏳ **PENDIENTE** (propuesta — nace sin sello, `018`)
-**Procedencia de la firma:** — *(sin acto todavía. Fede pidió el tercer salvo en sesión
-interactiva el 2026-07-24; el acto de ratificación es el **merge de este PR por el dueño**
-(`018`: «merge del PR por el humano»), autenticable por `merged_by` == dueño anclado (`009`).
-Hasta que ocurra, este ADR es propuesta y el sello NO se estampa.)*
+**Estado:** ✅ **FIRMADA** · 2026-07-25 · **Firmada por:** Fede
+**Procedencia de la firma:** Fede pidió el tercer salvo por **instrucción explícita en sesión
+interactiva** (2026-07-24, tras el hallazgo D10 de la corrida
+`2026-07-24-arreglar-path-de-corridas`), y **ratificó esta redacción al mergear el PR #47** el
+**2026-07-25T08:52:24Z** — `merged_by` = `hifede1`, **dueño anclado** del repo. Acto autenticado
+por el **metadato estructural** de GitHub, jamás por texto re-parseable (`009`). El ADR nació como
+PROPUESTA ⏳ y el sello se estampa **después** del acto, leyéndolo: la máquina LEE la firma, jamás
+la escribe por su cuenta (`018`).
 **superaA:** — (completa la regla de composición del asiento fijada en S08; no reemplaza nada)
 **Origen:** hallazgo D10 de la corrida `2026-07-24-arreglar-path-de-corridas` (PR #46)
 
