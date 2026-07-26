@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "proyecto": "claude-batuta",
-  "last_audit": "2026-07-26",
-  "closed_count": 48,
+  "last_audit": "2026-07-26 (2)",
+  "closed_count": 52,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
     "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
@@ -105,6 +105,14 @@
       "estado": "hecho",
       "resumen": "Cerrada 2026-07-26 (PR #59, encargo #58, corrida 2026-07-26-ejecutar-s12). Primera sesión de la serie con prerrequisito real: exigía decisiones/023 FIRMADA, y ese prerrequisito bloqueó dos intentos de arranque (08:57 y 09:00) mientras el ADR seguía PENDIENTE — la fase 1 frenó las dos veces en vez de declararlo cumplido. El problema cerrado: 023 estaba firmada y no había cambiado el comportamiento de nadie, porque registro-de-cadena.md §3 —el documento que las fases LEEN para resolver plano_version— seguía con la fecha desnuda. Un ADR firmado que no baja al contrato operativo es una intención, no una regla. §3 declara ahora la regla del sufijo (:95-112) con su forma literal y la aclaración de que la primera ratificación del día no lo lleva, más el porqué (:114-120): sin sufijo la causal 7 de §6 es estructuralmente inauditable dentro del día. Se sumaron sin criterio que lo pidiera el límite conocido (incremento manual, sin gate) y el precedente de los cuatro PRs del 2026-07-25. Segundo frente: FICHA.md §10 pasa a reflejar el estado real de 011 (FIRMADA, re-ratificada 2026-07-23), conservando la mención histórica de aceptada entrecomillada — borrarla dejaría §10 sin poder explicar por qué hubo re-ratificación cuatro días después.",
       "pendientes": []
+    },
+    {
+      "id": "b13",
+      "nombre": "S13 · Cerrar el contrato de firma",
+      "zona": "Mantenimiento — después de la obra v0",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-26 (PR #63 para H1 + egreso firmado para H2; encargo #62, corrida 2026-07-26-ejecutar-s13). Cierra los TRES huecos del contrato de FIRMA descubiertos ejecutando S10-S12. Primera RUTA de dos horizontes del proyecto: H1 gated-por-EJECUCION (escritura de contrato) y H2 gated-por-FIRMA (egreso que cambia permisos del repo) — no se partió por tamaño sino porque se destraban con cosas distintas, y con eso se ejercitó en corrida real el diff de 2 horizontes que el tracker listaba como techo de verificación desde S04/S09. El hueco grande: 009 autenticaba por merged_by == dueño anclado mientras el agente operaba con esa credencial, así que el criterio no discriminaba lo que decía discriminar. Resuelto por aplicación, no por redacción: estebaproject con push=true admin=false, verificado por API. Los otros dos huecos eran uno solo: 024 unificó el sello en el patrón corto y disolvió la ventana propuesta-sello en vez de vigilarla. H2 no tuvo delegado y no se le inventó uno: nada en el taller administra permisos de GitHub, se declaró hueco y se ejecutó bajo firma directa.",
+      "pendientes": []
     }
   ],
   "plan": [
@@ -171,6 +179,13 @@
       "estimacion": 1,
       "deps": [],
       "cierra": []
+    },
+    {
+      "sesion": "S13",
+      "titulo": "Cerrar el contrato de firma",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
     }
   ],
   "decisiones_pendientes": [],
@@ -213,6 +228,6 @@
     "Deuda de verificación estructural (no de un encargo): claude-batuta no tiene CI — .github/workflows no existe — y por decisiones/006 (sustrato markdown puro) no hay test que clave los criterios de una sesión de documentación. La verificación es por lectura contra el plano. Detectada al ejecutar S10, donde /orquestar prescribe esperar el CI y no había gate que esperar.",
     "SALDADA 2026-07-26 (PR #59, S12): la 011 figuraba en FICHA.md §10 como aceptada 2026-07-19, estado que 018 no contempla, cuando el ADR estaba FIRMADA desde su re-ratificación del 2026-07-23. Resultó drift doc-ADR, no sello sin procedencia: el ADR estaba impecable y la ficha atrasada.",
     "SALDADA 2026-07-26 (023 FIRMADA por PR #56/#57 + bajada a contrato por PR #59): colisión de plano_version. El 2026-07-25 cuatro PRs de plano compartieron etiqueta con contenidos distintos y dos corridas reales arrancaron con la misma versión sobre planos distintos; la causal 7 de §6 quedaba estructuralmente inauditable dentro del día. Se adoptó sufijo incremental (N) y registro-de-cadena.md §3 lo declara con su porqué. Costo vivo: el incremento es manual y sin gate, un olvido reintroduce la colisión en silencio.",
-    "TRES huecos del contrato de FIRMA, abiertos 2026-07-26 — candidatos a S13 y los más caros que quedan, porque se pagan en cada sesión futura. (1) decisiones/009 no discrimina humano de agente: autentica por merged_by == dueño anclado, pero el agente opera con la credencial de hifede1, que ES el dueño anclado. Todos los registros de esta serie dicen autenticado por merged_by y es cierto de hecho, pero la única prueba es la traza del agente — justo lo que 009 rechaza como fuente de verdad. Mitigación posible sin ADR: que el agente opere con estebaproject (ya es la cuenta activa por defecto y no tiene push), con lo que merged_by vuelve a discriminar y el canal de firma puede volver a ser el review de PR. (2) Dos patrones de sello conviviendo: 022 y 023 nacieron PENDIENTE y exigieron un PR extra para el sello (3 PRs por sesión), mientras 012/015/019/020/021 se estamparon FIRMADA en el mismo PR; 018 admite ambas lecturas. (3) Ningún criterio obliga a listar un ADR PENDIENTE en FICHA §10: el PR #56 introdujo 023 como PENDIENTE dejando §10 diciendo Ninguna — la misma contradicción que S11 acababa de cerrar. Mientras un ADR está entre propuesta y sello, la ficha miente."
+    "SALDADOS 2026-07-26 (S13): los TRES huecos del contrato de FIRMA. (1) 009 no discriminaba humano de agente porque el agente operaba con la credencial del dueño; resuelto aplicando 025 — estebaproject con push=true admin=false, verificado por API, y el primer salvo de registro-de-cadena.md §6 ahora declara que merged_by autentica SOLO si el agente no comparte la credencial del dueño. (2) y (3) eran el mismo hueco: 024 unificó el sello en el patrón corto y disolvió la ventana propuesta-sello, así que la §10 no puede desincronizarse. Lo que queda vivo y anotado dentro del propio salvo: si el agente vuelve a compartir la credencial, el salvo deja de autenticar aunque su letra siga igual. El pasado no se re-autentica: los actos de S10-S12 son reales con prueba débil, tratables como no concluyentes, nunca como eslabón roto retroactivo."
   ]
 }
