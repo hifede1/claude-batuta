@@ -367,6 +367,45 @@ o sea la precondición de toda corrida.
 
 ---
 
+## S13 — Cerrar el contrato de firma
+
+🎯 **Planteamiento.** Los tres huecos que quedaron abiertos al ejecutar S10–S12 **no son deuda de una
+sesión: son peaje de todas las siguientes.** Y dos ya están decididos (`024`, `025`); lo que falta es
+bajarlos a los documentos que los usan y **aplicar** la separación de cuentas, que es lo único de
+toda la serie que no se resuelve escribiendo.
+
+El más grave es el de `009`: autentica la firma por `merged_by` == dueño anclado, **pero el agente
+opera con esa misma credencial**. Todos los registros de S10–S12 dicen «autenticado por `merged_by`»
+y es cierto de hecho —los mergeó Fede— pero la única prueba es la traza del agente, que es
+exactamente lo que `009` rechaza como fuente de verdad. **El modelo de firma descansaba en un
+metadato que no distingue lo que dice distinguir.**
+
+🛠️ **Método.** Bajar `024` y `025` a contrato, y aplicar la separación. Cero decisión nueva.
+1. Reflejar el patrón único de sello (`024`) donde se lee el procedimiento de firmar un ADR, sin
+   editar `018` —que sigue vigente y correcto— sino precisando su procedimiento.
+2. Reflejar en `registro-de-cadena.md` §6 que el valor probatorio de `merged_by` **depende** de la
+   separación de credenciales de `025`: el primer salvo lo invoca y hoy lo daba por sentado.
+3. **Aplicar `025`**: `estebaproject` con permiso de push en el repo, y el agente operando con esa
+   cuenta. Es cambio de configuración de GitHub, no documentación — **egreso-que-escribe con firma
+   propia** (`012`), no lo destraba el horizonte de la sesión.
+4. Dejar escrito que el pasado **no se re-autentica**: los merges de S10–S12 se hicieron con
+   credencial compartida y quedan como están.
+
+✅ **Criterios de aceptación.**
+- [ ] El patrón único de sello de `024` está escrito donde se lee el procedimiento de firmar un ADR *(verificación: inspección — un ADR nuevo se firma en el PR que lo propone; queda dicho cuándo sigue valiendo nacer PENDIENTE: solo si la elección humana todavía no ocurrió)*
+- [ ] `registro-de-cadena.md` §6 declara que el primer salvo depende de la separación de credenciales *(verificación: inspección — el salvo del PR de decisión del dueño remite a `025`, y dice que sin credenciales separadas `merged_by` no autentica)*
+- [ ] La separación está **aplicada y verificable** *(verificación: `gh api repos/hifede1/claude-batuta/collaborators` lista a `estebaproject` con push, y un PR abierto por el agente muestra autor `estebaproject`)*
+- [ ] Queda escrito que los merges de S10–S12 **no se re-autentican** *(verificación: inspección — la limitación está dicha donde alguien la buscaría, no solo en `025`)*
+
+📚 **Referencias.** [`references/perimetro-de-confianza.md`](references/) · [`references/audit-tracker.md`](references/)
+
+⛓️ **Prerrequisitos.** `decisiones/024` y `decisiones/025` **FIRMADAS**.
+
+**Estimación: M** — el criterio 3 es operativo y toca permisos del repositorio; los otros tres son
+escritura de contrato.
+
+---
+
 ## Resumen
 
 | Sesión | Objetivo | Talle | Bloqueada por decisión |
@@ -382,7 +421,8 @@ o sea la precondición de toda corrida.
 | S09 | Verificación sembrada | L | — |
 | **S10** | **Contrato de persistencia del registro** *(mantenimiento)* ✅ cerrada 2026-07-25 | **S** | — |
 | **S11** | **Contabilidad de la ficha** *(mantenimiento)* ✅ cerrada 2026-07-25 | **S** | — |
-| **S12** | **Versionado del plano + drift de `011`** *(mantenimiento)* | **S** | `023` versionado |
+| **S12** | **Versionado del plano + drift de `011`** *(mantenimiento)* ✅ cerrada 2026-07-26 | **S** | `023` versionado |
+| **S13** | **Cerrar el contrato de firma** *(mantenimiento)* | **M** | `024` sello · `025` credenciales |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
