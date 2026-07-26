@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-26 (4) por Fede
+> Firmado: 2026-07-26 (5) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -48,7 +48,16 @@
 >    verificarla. Lo detectó el dueño. Se conserva el principio de `025` —el agente no comparte la
 >    credencial del dueño— y se retira la cuenta; elegir la nueva es decisión abierta.*
 >
-> ℹ️ *Versionado: **cuarta ratificación del 2026-07-26**, sufijo `(4)`.*
+> 9. ***2026-07-26 (5) · PR #70** — **se retira un criterio de aceptación de S14** por decisión del
+>    dueño: `S14/canal-ejercitado` no se cumplió y **dejó de ser cumplible** cuando `027` revirtió la
+>    separación de cuentas — sin cuenta de agente, todos los PRs los abre el dueño y GitHub no permite
+>    aprobar el propio. El criterio **no fracasó por falta de trabajo: se quedó sin objeto**. S14
+>    cierra con 2 de 2. Es la primera vez que el plano **retira** un criterio en vez de cumplirlo, y
+>    por eso el motivo queda escrito en el propio criterio, tachado y no borrado.*
+>
+> ℹ️ *Versionado: **quinta ratificación del 2026-07-26**, sufijo `(5)`.*
+>
+> ℹ️ *Versionado (histórico): la **cuarta** llevó `(4)`.*
 >
 > ℹ️ *Versionado (histórico): la **tercera** llevó `(3)`.* Es la segunda
 > aplicación consecutiva de la regla de `023` en el mismo día — el mecanismo que resolvió la colisión
