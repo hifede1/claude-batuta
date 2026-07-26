@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "proyecto": "claude-batuta",
-  "last_audit": "2026-07-25 (2)",
-  "closed_count": 45,
+  "last_audit": "2026-07-26",
+  "closed_count": 48,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
     "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
@@ -97,31 +97,122 @@
       "estado": "hecho",
       "resumen": "Cerrada 2026-07-25 (PR #54, encargo #53, corrida 2026-07-25-ejecutar-s11). La FICHA.md se contradecía dentro de su propia §10: Firmadas declaraba el paraguas 015 CERRADO 2026-07-24 con sus tres ADRs (019/020/021) y Pendientes lo seguía listando como PENDIENTE, con una nota que ya reconocía el drift y lo difería. Como 015 era la única entrada de Pendientes, la sección quedaba vacía: se declara explícitamente 'Ninguna al 2026-07-25' con fecha en vez de borrarla — una sección vacía y una borrada se leen distinto. Segundo criterio: el hueco 017 declarado como número no usado y NO reutilizable, con diagnóstico cerrado (016 y 018 nacieron en el commit 9183665, PR #24, junto con 014; 017 nunca existió: cero archivo, cero menciones en commits, docs o tracker), anclado a registro-de-cadena.md §2 regla 2. Importa porque la ficha es la precondición que batuta lee en cada corrida, y es el terreno donde ya se rompió una vez (fix #37/#38). La cabecera NO se tocó: verificado sobre el diff, su consolidación la hizo el PR #52 y el plano la declaró fuera de alcance de S11.",
       "pendientes": []
+    },
+    {
+      "id": "b12",
+      "nombre": "S12 · Versionado del plano a contrato + drift de 011",
+      "zona": "Mantenimiento — después de la obra v0",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-26 (PR #59, encargo #58, corrida 2026-07-26-ejecutar-s12). Primera sesión de la serie con prerrequisito real: exigía decisiones/023 FIRMADA, y ese prerrequisito bloqueó dos intentos de arranque (08:57 y 09:00) mientras el ADR seguía PENDIENTE — la fase 1 frenó las dos veces en vez de declararlo cumplido. El problema cerrado: 023 estaba firmada y no había cambiado el comportamiento de nadie, porque registro-de-cadena.md §3 —el documento que las fases LEEN para resolver plano_version— seguía con la fecha desnuda. Un ADR firmado que no baja al contrato operativo es una intención, no una regla. §3 declara ahora la regla del sufijo (:95-112) con su forma literal y la aclaración de que la primera ratificación del día no lo lleva, más el porqué (:114-120): sin sufijo la causal 7 de §6 es estructuralmente inauditable dentro del día. Se sumaron sin criterio que lo pidiera el límite conocido (incremento manual, sin gate) y el precedente de los cuatro PRs del 2026-07-25. Segundo frente: FICHA.md §10 pasa a reflejar el estado real de 011 (FIRMADA, re-ratificada 2026-07-23), conservando la mención histórica de aceptada entrecomillada — borrarla dejaría §10 sin poder explicar por qué hubo re-ratificación cuatro días después.",
+      "pendientes": []
     }
   ],
   "plan": [
-    { "sesion": "S05", "titulo": "Externos y ruteo mínimos (best-effort)", "estimacion": 1, "deps": [], "cierra": [] },
-    { "sesion": "S06", "titulo": "Compuerta Cero", "estimacion": 1, "deps": ["S05"], "cierra": [] },
-    { "sesion": "S07", "titulo": "Fase ejecutar-con-compuertas", "estimacion": 1, "deps": ["S06"], "cierra": [] },
-    { "sesion": "S08", "titulo": "Fase cerrar", "estimacion": 1, "deps": ["S07"], "cierra": [] },
-    { "sesion": "S09", "titulo": "Batería de verificación sembrada", "estimacion": 1, "deps": ["S08"], "cierra": [] },
-    { "sesion": "S10", "titulo": "Mantenimiento del contrato de persistencia", "estimacion": 1, "deps": [], "cierra": [] },
-    { "sesion": "S11", "titulo": "Contabilidad de la ficha", "estimacion": 1, "deps": [], "cierra": [] }
+    {
+      "sesion": "S05",
+      "titulo": "Externos y ruteo mínimos (best-effort)",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
+    },
+    {
+      "sesion": "S06",
+      "titulo": "Compuerta Cero",
+      "estimacion": 1,
+      "deps": [
+        "S05"
+      ],
+      "cierra": []
+    },
+    {
+      "sesion": "S07",
+      "titulo": "Fase ejecutar-con-compuertas",
+      "estimacion": 1,
+      "deps": [
+        "S06"
+      ],
+      "cierra": []
+    },
+    {
+      "sesion": "S08",
+      "titulo": "Fase cerrar",
+      "estimacion": 1,
+      "deps": [
+        "S07"
+      ],
+      "cierra": []
+    },
+    {
+      "sesion": "S09",
+      "titulo": "Batería de verificación sembrada",
+      "estimacion": 1,
+      "deps": [
+        "S08"
+      ],
+      "cierra": []
+    },
+    {
+      "sesion": "S10",
+      "titulo": "Mantenimiento del contrato de persistencia",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
+    },
+    {
+      "sesion": "S11",
+      "titulo": "Contabilidad de la ficha",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
+    },
+    {
+      "sesion": "S12",
+      "titulo": "Versionado del plano a contrato + drift de 011",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
+    }
   ],
   "decisiones_pendientes": [],
   "referencias": [
-    { "tema": "doc-arquitecto", "path": "docs/references/doc-arquitecto.md", "frescura": "fresca", "fecha": "2026-07-19" },
-    { "tema": "plugins-claude-code", "path": "docs/references/plugins-claude-code.md", "frescura": "fresca", "fecha": "2026-07-19" },
-    { "tema": "audit-tracker", "path": "docs/references/audit-tracker.md", "frescura": "fresca", "fecha": "2026-07-19" },
-    { "tema": "workflows-fan-out", "path": "docs/references/workflows-fan-out.md", "frescura": "fresca", "fecha": "2026-07-20" },
-    { "tema": "perimetro-de-confianza", "path": "docs/references/perimetro-de-confianza.md", "frescura": "fresca", "fecha": "2026-07-22" }
+    {
+      "tema": "doc-arquitecto",
+      "path": "docs/references/doc-arquitecto.md",
+      "frescura": "fresca",
+      "fecha": "2026-07-19"
+    },
+    {
+      "tema": "plugins-claude-code",
+      "path": "docs/references/plugins-claude-code.md",
+      "frescura": "fresca",
+      "fecha": "2026-07-19"
+    },
+    {
+      "tema": "audit-tracker",
+      "path": "docs/references/audit-tracker.md",
+      "frescura": "fresca",
+      "fecha": "2026-07-19"
+    },
+    {
+      "tema": "workflows-fan-out",
+      "path": "docs/references/workflows-fan-out.md",
+      "frescura": "fresca",
+      "fecha": "2026-07-20"
+    },
+    {
+      "tema": "perimetro-de-confianza",
+      "path": "docs/references/perimetro-de-confianza.md",
+      "frescura": "fresca",
+      "fecha": "2026-07-22"
+    }
   ],
   "referencias_faltantes": [],
   "deuda": [
     "Techo doctrinal (identidad, no deuda): lo multi-fase con firmas no se automatiza — la Compuerta Cero con diff de 2 horizontes, el egreso GET+POST con lista blanca y las 4 corridas de fase 2 de S04 solo se verifican en corrida interactiva con el dueño firmando. Automatizarlo exigiría falsificar la firma (decisiones/018).",
     "SALDADA 2026-07-25 (PR #50): el contrato de persistencia (docs/registro-de-cadena.md §4) documentaba un solo modo de resolución de ${CLAUDE_PLUGIN_DATA} y omitía el modo inline. Ahora declara los dos con su path resultante, la no-migración de la evidencia de S09 y la discontinuidad entre modos como límite conocido. Queda como registro de que una omisión de contrato se cobra lecturas erróneas, no solo prolijidad.",
     "Deuda de verificación estructural (no de un encargo): claude-batuta no tiene CI — .github/workflows no existe — y por decisiones/006 (sustrato markdown puro) no hay test que clave los criterios de una sesión de documentación. La verificación es por lectura contra el plano. Detectada al ejecutar S10, donde /orquestar prescribe esperar el CI y no había gate que esperar.",
-    "La 011 figura como 'aceptada', un estado que 018 no contempla. Detectada 2026-07-25 (2) al ejecutar S11, reportada sin arreglar porque no estaba en los criterios firmados. FICHA.md §10 :132 describe a 011 como 'aceptada 2026-07-19' mientras todas las demás entradas de Firmadas dicen FIRMADA; 018 fija exactamente dos estados (PENDIENTE al nacer, FIRMADA con acto rastreable en Procedencia de la firma). Dos lecturas posibles y muy distintas: nomenclatura anterior a 018 (que es del 2026-07-20, un día después que 011), o un sello sin procedencia. Importa porque 011 es la decisión que define qué cuenta como plano firmado: la precondición de toda corrida. Candidata a S12.",
-    "Colisión de plano_version: dos planos distintos comparten fecha. Materializada 2026-07-25 en corrida real. decisiones/011 fija que la fecha de firma ES la versión del plano, y ese día se mergearon los PRs #47, #48 y #52 con contenidos distintos bajo plano_version 2026-07-25. Las corridas 2026-07-25-ejecutar-s10 y 2026-07-25-ejecutar-s11 arrancaron con la MISMA versión sobre planos distintos: los IDs S11/* no existían en el plano que leyó la primera. Un auditor que resuelva un requisito contra plano_version 2026-07-25 encuentra dos planos candidatos. Declarada en la cabecera de la ficha por el PR #52 y asentada con fecha en el eslabón plano de la corrida de S11. Candidata a ADR propio."
+    "SALDADA 2026-07-26 (PR #59, S12): la 011 figuraba en FICHA.md §10 como aceptada 2026-07-19, estado que 018 no contempla, cuando el ADR estaba FIRMADA desde su re-ratificación del 2026-07-23. Resultó drift doc-ADR, no sello sin procedencia: el ADR estaba impecable y la ficha atrasada.",
+    "SALDADA 2026-07-26 (023 FIRMADA por PR #56/#57 + bajada a contrato por PR #59): colisión de plano_version. El 2026-07-25 cuatro PRs de plano compartieron etiqueta con contenidos distintos y dos corridas reales arrancaron con la misma versión sobre planos distintos; la causal 7 de §6 quedaba estructuralmente inauditable dentro del día. Se adoptó sufijo incremental (N) y registro-de-cadena.md §3 lo declara con su porqué. Costo vivo: el incremento es manual y sin gate, un olvido reintroduce la colisión en silencio.",
+    "TRES huecos del contrato de FIRMA, abiertos 2026-07-26 — candidatos a S13 y los más caros que quedan, porque se pagan en cada sesión futura. (1) decisiones/009 no discrimina humano de agente: autentica por merged_by == dueño anclado, pero el agente opera con la credencial de hifede1, que ES el dueño anclado. Todos los registros de esta serie dicen autenticado por merged_by y es cierto de hecho, pero la única prueba es la traza del agente — justo lo que 009 rechaza como fuente de verdad. Mitigación posible sin ADR: que el agente opere con estebaproject (ya es la cuenta activa por defecto y no tiene push), con lo que merged_by vuelve a discriminar y el canal de firma puede volver a ser el review de PR. (2) Dos patrones de sello conviviendo: 022 y 023 nacieron PENDIENTE y exigieron un PR extra para el sello (3 PRs por sesión), mientras 012/015/019/020/021 se estamparon FIRMADA en el mismo PR; 018 admite ambas lecturas. (3) Ningún criterio obliga a listar un ADR PENDIENTE en FICHA §10: el PR #56 introdujo 023 como PENDIENTE dejando §10 diciendo Ninguna — la misma contradicción que S11 acababa de cerrar. Mientras un ADR está entre propuesta y sello, la ficha miente."
   ]
 }
