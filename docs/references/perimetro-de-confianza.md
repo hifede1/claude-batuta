@@ -167,8 +167,21 @@ desde estado que controla). El loop no se mueve por lo que la firma *dice*; se m
 
 De ahí la regla de la excepción, angosta a propósito:
 
-> **Un `✅ validado` mueve el loop si y solo si el AUTOR AUTENTICADO del comentario es el dueño
-> declarado.** No es «confiar en el canal del PR»; es «verificar la identidad del acto».
+> **Una firma mueve el loop si y solo si el AUTOR AUTENTICADO DEL ACTO es el dueño declarado** — sea
+> ese acto un **review aprobado** del PR o un comentario `✅ validado`. No es «confiar en el canal del
+> PR»; es «verificar la identidad del acto».
+
+**Los canales son ejemplos, no la regla.** `decisiones/009` lo fija así: lo que autentica es el
+**metadato-de-autor que GitHub liga al acto** (`review.user` / `comment.user`), **no una lista cerrada
+de canales**. Por eso la regla sobrevive a que el canal cambie — y ya cambió una vez:
+
+| Cuentas | Canal que prescribe `/orquestar` | Acto que se autentica |
+|---|---|---|
+| agente y dueño **comparten** cuenta | comentario `✅ validado` (GitHub no permite aprobar el propio PR) | `comment.user` |
+| agente y dueño **separados** (`decisiones/025`) | **review aprobado** del PR | `review.user` |
+
+La segunda fila es la vigente desde que `025` se aplicó. **El `si y solo si` no se movió:** cambió
+por dónde llega el acto, no qué lo hace válido.
 
 Consecuencias que la mantienen sin grietas:
 
@@ -227,3 +240,88 @@ autenticado del dueño**.
    fuentes de verdad son ADRs aparte.
 7. **Revalidar cada 3 meses:** técnicas de inyección y defensas cambian rápido. Si esta referencia
    pasó su ventana de frescura, releerla ANTES de apoyarse en ella.
+
+---
+
+## 7. Identidad del agente — cómo se opera sin contaminar la del dueño
+
+`decisiones/025` fija que **el agente nunca opera con la credencial del dueño anclado**: es lo que
+hace que `merged_by == dueño` vuelva a **probar** algo en vez de ser una afirmación. `025` es —a
+propósito— **agnóstica del mecanismo**: es una decisión, no un manual. Esta sección fija el mecanismo,
+porque **elegirlo mal rompe la decisión sin contradecir su letra**.
+
+### El principio, que vale más que el comando
+
+> **El cambio de identidad del agente debe ser POR OPERACIÓN, con estado propio. Jamás debe alterar
+> estado persistente del entorno del dueño.**
+
+Si mañana la herramienta no es `gh`, el principio sigue en pie y la tabla de abajo caduca.
+
+### Lo medido — dos mecanismos plausibles FALLAN
+
+No es teoría: los tres se probaron sobre este repo, y el criterio de éxito fue *¿la cuenta activa del
+dueño sigue siendo la suya después de una **escritura**?*
+
+| Mecanismo | Aísla en lectura | Aísla en **escritura** |
+|---|---|---|
+| `gh auth switch --user <agente>` | ❌ | ❌ — cambia la cuenta activa global; el dueño queda operando con la del agente |
+| `GH_TOKEN=$(gh auth token --user <agente>) gh …` | ✅ | ❌ — **la escritura deja la cuenta activa en la del agente** |
+| **`GH_CONFIG_DIR=<dir-del-agente> gh …`** | ✅ | ✅ en todo lo medido — **con una salvedad, abajo** |
+
+> ⚠️ **Salvedad honesta sobre la tercera fila.** `GH_CONFIG_DIR` aisló en todas las operaciones que se
+> midieron una por una: lecturas, `gh auth token`, y escrituras (`gh pr comment`). **Pero se observó
+> una contaminación de la cuenta del dueño inmediatamente después de un turno que solo usó este
+> mecanismo**, y el único comando de ese turno que no se pudo reproducir aislado fue `gh pr create`.
+> **La causa no quedó determinada.** Se deja escrito así —y no como «aísla siempre»— porque afirmar lo
+> segundo sería exactamente el error que esta sección documenta: concluir más de lo que se midió.
+
+**El mecanismo de elección es el tercero.** Se prepara una vez y se usa siempre:
+
+```bash
+# preparación (una vez)
+D=<dir-del-agente>; mkdir -p "$D"
+GH_CONFIG_DIR="$D" gh auth login --with-token <<< "$(gh auth token --user <agente>)"
+
+# operación (siempre)
+GH_CONFIG_DIR="$D" gh <comando>
+```
+
+Para `git push`, el credential helper del perfil apunta a la cuenta del dueño, así que la URL lleva el
+token explícito:
+
+```bash
+git push "https://x-access-token:${TOKEN}@github.com/<owner>/<repo>.git" HEAD:refs/heads/<rama>
+```
+
+### Por qué esta tabla está acá y no solo el comando ganador
+
+**Los dos mecanismos descartados son los que uno elige primero.** `gh auth switch` es el obvio, y fue
+el error original —detectado por el dueño, no por el agente, al ver su cuenta cambiada—. `GH_TOKEN`
+parece resolverlo y **se documentó como verificado tras probarlo con una sola lectura**: verificación
+insuficiente presentada como conclusión. Sin la evidencia escrita, la próxima implementación recorre
+el mismo camino.
+
+> **La lección general:** un mecanismo de aislamiento se verifica con la operación **más invasiva** que
+> va a soportar —una escritura—, no con la más cómoda de probar. Verificar con lecturas y concluir
+> sobre escrituras es exactamente cómo se cuela un defecto que la letra del ADR no puede atajar.
+
+### La defensa que NO depende del mecanismo
+
+Tres mecanismos se probaron y **dos fallaron; del tercero quedó una observación sin explicar**. La
+conclusión operativa no es «usá el bueno»: es que **la confianza en el mecanismo no alcanza**.
+
+> **Regla: después de cada bloque de operaciones con identidad de agente, VERIFICAR la cuenta activa
+> del dueño y restaurarla si cambió.**
+>
+> ```bash
+> gh api user --jq .login      # ¿sigue siendo la del dueño?
+> ```
+
+Es una línea, es barata, y **no depende de que el mecanismo cumpla**. El defecto original —el dueño
+operando con la cuenta del agente— lo detectó **el humano al ver su terminal**, no el agente al
+razonar sobre su herramienta. Esa asimetría es la que esta regla corrige: convierte una sorpresa del
+dueño en un chequeo del agente.
+
+**Y si la verificación falla, se restaura y se ASIENTA** — no en silencio. Contaminar el entorno del
+dueño es un efecto lateral sobre algo que no es del agente; queda en el registro de la corrida como
+desvío, igual que cualquier otro.
