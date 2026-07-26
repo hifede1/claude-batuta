@@ -406,6 +406,54 @@ escritura de contrato.
 
 ---
 
+## S14 — Cerrar la aplicación de `025`: mecanismo y canal ejercitado
+
+🎯 **Planteamiento.** S13 firmó y aplicó `025`, pero dejó dos cabos que la vuelven frágil.
+
+**El primero es un defecto de implementación del propio agente**, detectado por el dueño al cerrar la
+sesión del 2026-07-26: `025` es **agnóstica del mecanismo** —dice que el agente no opera con la
+credencial del dueño, y nada sobre cómo— y el agente lo implementó con `gh auth switch`, que cambia
+la **cuenta activa global del perfil del humano**. El dueño quedó operando con la cuenta del agente
+sin haberlo pedido. Se corrigió en el momento, y el mecanismo correcto quedó verificado:
+
+```
+GH_TOKEN=$(gh auth token --user <cuenta-agente>) gh <comando>   # por operación, no persiste
+```
+
+**Mientras eso no esté escrito, la próxima implementación puede repetir el error** — y `025` no lo va
+a impedir, porque hace bien en no ser un manual.
+
+**El segundo:** con las cuentas separadas, `/orquestar` prescribe el **review de PR** como canal de
+firma. El cambio ya ocurrió por contrato —`009` fijó el principio, «metadato-de-autor que GitHub
+liga», no una lista de canales— pero **nunca se ejercitó en corrida real**: es capacidad demostrada,
+no probada. Y `references/perimetro-de-confianza.md` §6 enuncia la regla (`:170`) hablando **solo del
+comentario**, aunque su detalle técnico (`:184`) ya contemple `review.user`. Un lector que busque
+cómo se autentica un **review aprobado** encuentra la regla escrita para otro canal.
+
+🛠️ **Método.** Escritura de referencia + ejercicio real. Cero decisión nueva: `009` y `025` ya
+decidieron.
+1. Documentar el mecanismo de credenciales **por operación** donde vive el detalle operativo del
+   perímetro, con el porqué: un cambio de identidad del agente **no debe alterar estado persistente
+   de la herramienta del humano**.
+2. Reformular la regla de §6 para que cubra **ambos** canales —review aprobado y comentario— sin
+   perder su filo: lo que autentica es el **autor del acto**, no el canal por el que llega.
+3. **Ejercitar el canal**: el PR de esta sesión se firma con **review aprobado** del dueño, no con
+   comentario. Es auto-verificante — si el canal no funciona, la sesión no cierra.
+
+✅ **Criterios de aceptación.**
+- [ ] El mecanismo de credenciales por operación está documentado, con su porqué *(verificación: inspección — el texto muestra la forma `GH_TOKEN=$(gh auth token --user …)` y dice explícitamente que `gh auth switch` es incorrecto por alterar el estado global del humano)*
+- [ ] La regla de `perimetro-de-confianza.md` §6 cubre el **review aprobado** además del comentario *(verificación: inspección — la regla destacada nombra ambos y sigue anclando la autenticación al autor del acto, no al canal)*
+- [ ] El canal de **review de PR** quedó ejercitado en corrida real *(verificación: `gh api repos/hifede1/claude-batuta/pulls/<n>/reviews` muestra un review `APPROVED` cuyo `user.login` == `hifede1`, sobre un PR abierto por la cuenta del agente)*
+
+📚 **Referencias.** [`references/perimetro-de-confianza.md`](references/) 🟢 · [`references/audit-tracker.md`](references/) 🟢
+
+⛓️ **Prerrequisitos.** `decisiones/025` **FIRMADA y aplicada** (S13) — el canal de review solo existe
+con cuentas separadas.
+
+**Estimación: S**
+
+---
+
 ## Resumen
 
 | Sesión | Objetivo | Talle | Bloqueada por decisión |
@@ -422,7 +470,8 @@ escritura de contrato.
 | **S10** | **Contrato de persistencia del registro** *(mantenimiento)* ✅ cerrada 2026-07-25 | **S** | — |
 | **S11** | **Contabilidad de la ficha** *(mantenimiento)* ✅ cerrada 2026-07-25 | **S** | — |
 | **S12** | **Versionado del plano + drift de `011`** *(mantenimiento)* ✅ cerrada 2026-07-26 | **S** | `023` versionado |
-| **S13** | **Cerrar el contrato de firma** *(mantenimiento)* | **M** | `024` sello · `025` credenciales |
+| **S13** | **Cerrar el contrato de firma** *(mantenimiento)* ✅ cerrada 2026-07-26 | **M** | `024` sello · `025` credenciales |
+| **S14** | **Mecanismo de credenciales + canal de review ejercitado** *(mantenimiento)* | **S** | — *(`025` ya aplicada)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
