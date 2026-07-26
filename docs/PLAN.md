@@ -333,6 +333,40 @@ cero — como pasó en esta misma serie.
 
 ---
 
+## S12 — Aplicar el versionado del plano y saldar el drift de `011`
+
+🎯 **Planteamiento.** `decisiones/023` fija el **sufijo incremental** como desambiguación de
+`plano_version` dentro del día. Falta bajarlo al contrato que lo usa: `registro-de-cadena.md` §3
+declara hoy que la versión es la fecha de firma, **sin decir qué pasa cuando hay dos el mismo día** —
+y esa omisión es la que dejó ciega a la causal 7 de §6.
+
+Aparte, un drift chico con consecuencia grande: `FICHA.md` §10 `:132` describe a `011` como
+**«aceptada 2026-07-19»**, que es su estado **anterior** a la mesa de firmas. El ADR está
+`✅ FIRMADA` desde la re-ratificación del **2026-07-23**, con Procedencia completa. **La ficha
+quedó atrasada respecto del ADR** — y `011` es la decisión que define qué cuenta como plano firmado,
+o sea la precondición de toda corrida.
+
+🛠️ **Método.** Contabilidad y precisión de contrato. Cero decisión nueva: `023` ya decidió.
+1. `registro-de-cadena.md` §3: declarar la regla del sufijo con su forma literal y la aclaración de
+   que la primera ratificación del día **no** lo lleva.
+2. Dejar dicho en §3 —o donde se lea junto a la causal— **por qué** existe: sin sufijo, la causal 7
+   de §6 no puede disparar dentro del día.
+3. `FICHA.md` §10 `:132`: que la entrada de `011` refleje la re-ratificación del 2026-07-23 y su
+   estado real, con el mismo formato que las demás.
+
+✅ **Criterios de aceptación.**
+- [ ] `registro-de-cadena.md` §3 declara la regla del sufijo incremental, incluyendo que la primera ratificación del día no lo lleva *(verificación: inspección — el texto muestra la forma `AAAA-MM-DD (N)` y remite a `decisiones/023`)*
+- [ ] Queda escrito que sin el sufijo la causal 7 de §6 es inauditable dentro del día *(verificación: inspección — la consecuencia está dicha donde se lee el contrato de versión, no solo en el ADR)*
+- [ ] `FICHA.md` §10 refleja el estado real de `011`: `FIRMADA`, re-ratificada 2026-07-23 *(verificación: inspección — la entrada ya no dice «aceptada 2026-07-19» y coincide con `decisiones/011-ratificacion-del-plano.md:3`)*
+
+📚 **Referencias.** — *(ninguna nueva)*
+
+⛓️ **Prerrequisitos.** `decisiones/023` **FIRMADA** — sin el ADR ratificado no hay regla que bajar.
+
+**Estimación: S**
+
+---
+
 ## Resumen
 
 | Sesión | Objetivo | Talle | Bloqueada por decisión |
@@ -347,7 +381,8 @@ cero — como pasó en esta misma serie.
 | S08 | Fase `cerrar` | M | `013` retrospectiva |
 | S09 | Verificación sembrada | L | — |
 | **S10** | **Contrato de persistencia del registro** *(mantenimiento)* ✅ cerrada 2026-07-25 | **S** | — |
-| **S11** | **Contabilidad de la ficha** *(mantenimiento)* | **S** | — |
+| **S11** | **Contabilidad de la ficha** *(mantenimiento)* ✅ cerrada 2026-07-25 | **S** | — |
+| **S12** | **Versionado del plano + drift de `011`** *(mantenimiento)* | **S** | `023` versionado |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
