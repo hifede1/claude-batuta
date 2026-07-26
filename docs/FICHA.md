@@ -1,10 +1,12 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-26 (2) por Fede
-> *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En los tres
-> actos el acto de ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` ==
-> dueño anclado (`009`):*
+> Firmado: 2026-07-26 (3) por Fede
+> *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
+> actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
+> anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
+> compartía esa credencial, así que los actos 1-6 son verdaderos con **prueba débil**, tratables como
+> no concluyentes y nunca reescribibles (`018`, y `registro-de-cadena.md` §6 al cierre de los salvos):*
 > 1. ***2026-07-24 · PR #43** (mesa chica) — la cabecera decía «En diseño» cuando la obra v0 estaba
 >    COMPLETA y cada decisión del §10 ya estaba firmada con su Procedencia. La estampa reconcilió la
 >    cabecera con una realidad ya firmada pieza por pieza.*
@@ -13,24 +15,34 @@
 >    composición del asiento (`decisiones/022`). Como `011` fija que la fecha de firma ES la versión,
 >    un plano modificado no puede conservar la versión anterior. Pedido por Fede en sesión
 >    interactiva del 2026-07-24, tras el hallazgo D10 de la corrida `2026-07-24-arreglar-path-de-corridas`.*
-> 3. ***2026-07-25 · este PR** — se abre **S11** (contabilidad de la ficha) y se **consolida esta
+> 3. ***2026-07-25 · PR #52** — se abre **S11** (contabilidad de la ficha) y se **consolida esta
 >    Procedencia**, que el propio PR #47 había dejado duplicada: dos bloques consecutivos sin decir
 >    cuál correspondía a la firma vigente. La consolidación se hace **en el mismo acto** que la
 >    re-estampa que `011` exige — hacerla después habría agregado un tercer bloque encima de los dos
 >    que S11 viene a arreglar.*
 > 4. ***2026-07-25 · PR #54** — S11 ejecutada: la §10 deja de listar `015` como firmada y pendiente a
 >    la vez, y se declara el hueco `017`. La cabecera **no se tocó** en ese PR, por diseño.*
-> 5. ***2026-07-26 · este PR** — se propone `decisiones/023` (versionado del plano con sufijo
+> 5. ***2026-07-26 · PR #56** — se propone `decisiones/023` (versionado del plano con sufijo
 >    incremental), se abre **S12** y se re-estampa la versión por cambio del plano. Fede eligió el
 >    sufijo incremental entre cuatro opciones con tradeoffs, en sesión interactiva del 2026-07-26.*
 >
-> 6. ***2026-07-26 (2) · este PR** — se firman `decisiones/024` (patrón único de sello) y
+> 6. ***2026-07-26 (2) · PR #61** — se firman `decisiones/024` (patrón único de sello) y
 >    `decisiones/025` (separación de credenciales agente/dueño) y se abre **S13**, la sesión que baja
 >    ambas a contrato y aplica la separación. Fede eligió cada una entre opciones con tradeoffs, en
 >    sesión interactiva del 2026-07-26. **Primeros ADRs firmados bajo el patrón de `024`**: sello en
 >    el PR que los propone.*
 >
-> ℹ️ *Versionado: **segunda ratificación del 2026-07-26**, de ahí el sufijo `(2)` — `023` regla 1.
+> 7. ***2026-07-26 (3) · PR #65** — se abre **S14**, que cierra los dos cabos que S13 dejó sueltos al
+>    aplicar `025`: el **mecanismo** de credenciales (el agente lo implementó con `gh auth switch`,
+>    que altera la cuenta activa global del humano — corregido en el momento, pero sin documentar) y
+>    el **canal de review de PR**, que ya rige por contrato y nunca se ejercitó. **Sin ADR nuevo:**
+>    `009` y `025` ya decidieron; S14 baja y ejercita.*
+>
+> ℹ️ *Versionado: **tercera ratificación del 2026-07-26**, de ahí el sufijo `(3)`. Es la segunda
+> aplicación consecutiva de la regla de `023` en el mismo día — el mecanismo que resolvió la colisión
+> ahora se usa de rutina.*
+>
+> ℹ️ *Versionado (histórico): la **segunda** ratificación del 2026-07-26 llevó `(2)` — `023` regla 1.
 > **Primera aplicación real de esa regla**, no un ejemplo: el acto 5 fue la primera del día y por eso
 > va sin sufijo. El hueco que motivó `023` sigue visible en esta misma cabecera — los actos **2, 3 y
 > 4 comparten `2026-07-25`** con contenidos distintos. `023` **no re-versiona el pasado**: reescribir
