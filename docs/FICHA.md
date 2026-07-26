@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-25 por Fede
+> Firmado: 2026-07-26 por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En los tres
 > actos el acto de ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` ==
 > dueño anclado (`009`):*
@@ -18,11 +18,16 @@
 >    cuál correspondía a la firma vigente. La consolidación se hace **en el mismo acto** que la
 >    re-estampa que `011` exige — hacerla después habría agregado un tercer bloque encima de los dos
 >    que S11 viene a arreglar.*
+> 4. ***2026-07-25 · PR #54** — S11 ejecutada: la §10 deja de listar `015` como firmada y pendiente a
+>    la vez, y se declara el hueco `017`. La cabecera **no se tocó** en ese PR, por diseño.*
+> 5. ***2026-07-26 · este PR** — se propone `decisiones/023` (versionado del plano con sufijo
+>    incremental), se abre **S12** y se re-estampa la versión por cambio del plano. Fede eligió el
+>    sufijo incremental entre cuatro opciones con tradeoffs, en sesión interactiva del 2026-07-26.*
 >
-> ⚠️ *Límite conocido del versionado (`011`): la versión ES la fecha de firma, así que **dos cambios
-> de plano en el mismo día comparten `plano_version`**. Los actos 2 y 3 son ambos `2026-07-25` y
-> tienen contenido distinto. No es un error de esta estampa sino un hueco del contrato de
-> versionado; queda declarado acá y es candidato a ADR propio.*
+> ℹ️ *Versionado: **primera ratificación del 2026-07-26**, así que la fecha va sin sufijo — `023`
+> regla 1. El hueco que motivó ese ADR sigue visible en la historia de esta misma cabecera: los
+> actos **2, 3 y 4 comparten `2026-07-25`** con contenidos distintos. `023` **no re-versiona el
+> pasado** — reescribir firmas pasadas sería fabricar actos que no ocurrieron así (`018`).*
 > Diseñada: 2026-07-18 (workflow de 6 agentes; verbatim declarado PERDIDO — `references/workflows-fan-out.md` es la reconstrucción canónica) · Obra: **v0 COMPLETA 9/9 (2026-07-22) + fix #38 · en mantenimiento** · absorbe a `director-de-obra`
 
 ## 0. Estrategia: v0 MÍNIMA, head-first (decidido por Fede 2026-07-18)
