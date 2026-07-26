@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-26 (3) por Fede
+> Firmado: 2026-07-26 (4) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -38,7 +38,19 @@
 >    el **canal de review de PR**, que ya rige por contrato y nunca se ejercitó. **Sin ADR nuevo:**
 >    `009` y `025` ya decidieron; S14 baja y ejercita.*
 >
-> ℹ️ *Versionado: **tercera ratificación del 2026-07-26**, de ahí el sufijo `(3)`. Es la segunda
+> 8. ***2026-07-26 (4) · PR #69** — se abren **dos** ADRs. **`026`** (quién ejecuta lo administrativo)
+>    nace **⏳ PENDIENTE** y se lista en §10 *Pendientes* — origen: el desvío de S14, donde el agente
+>    ejecutó un `PUT` administrativo con **esta misma credencial**, violando `025`, dentro de un
+>    comando que presentó como diagnóstico. **Primer ADR que nace PENDIENTE bajo `024`**, que reserva
+>    ese patrón para cuando la elección humana todavía no ocurrió. **`027`** nace ✅ **FIRMADA** y
+>    **revierte la identidad concreta de `025`**: `estebaproject` no era una cuenta disponible para el
+>    agente sino de otro proyecto, y el agente la adoptó heredándola del default de `gh` sin
+>    verificarla. Lo detectó el dueño. Se conserva el principio de `025` —el agente no comparte la
+>    credencial del dueño— y se retira la cuenta; elegir la nueva es decisión abierta.*
+>
+> ℹ️ *Versionado: **cuarta ratificación del 2026-07-26**, sufijo `(4)`.*
+>
+> ℹ️ *Versionado (histórico): la **tercera** llevó `(3)`.* Es la segunda
 > aplicación consecutiva de la regla de `023` en el mismo día — el mecanismo que resolvió la colisión
 > ahora se usa de rutina.*
 >
@@ -189,12 +201,15 @@ está tomada**.
 - **Asiento del bookkeeping de apertura (tercer salvo)** — FIRMADA 2026-07-25 · `decisiones/022-asiento-bookkeeping-de-apertura.md`. La composición del asiento de `registro-de-cadena.md` §6 contemplaba el bookkeeping de un CIERRE, pero no el de una re-auditoría que **ABRE** trabajo — clase inevitable que nacía como eslabón roto (caso real: PR #46, merge autenticado y solo `docs/audits/`, roto porque `CLOSED_COUNT` no se movió). El salvo autentica solo con tres condiciones; la de «invocación asentada en un eslabón `obra`» es la que lo hace asiento y no puerta trasera. Origen: hallazgo D10 de la corrida `2026-07-24-arreglar-path-de-corridas`. Ratificada por merge del PR #47.
 - **Versionado del plano: sufijo incremental dentro del día** — FIRMADA 2026-07-26 · `decisiones/023-versionado-del-plano.md`. `011` fija que la fecha de firma ES la versión, sin prever que **dos ratificaciones del mismo día son indistinguibles**: el 2026-07-25 se mergearon CUATRO PRs de plano (#47/#48/#52/#54) bajo la misma etiqueta, y dos corridas reales arrancaron con esa versión sobre planos distintos. El costo no era estético: la causal 7 de `registro-de-cadena.md` §6 —«el plano cambió de versión durante la corrida»— quedaba **estructuralmente inauditable dentro del día**. Se adopta sufijo `(N)` a partir de la segunda ratificación diaria, reusando la notación que el tracker ya aplica a auditorías múltiples. Costo aceptado: el incremento es manual y sin gate — un olvido reintroduce la colisión en silencio. Ratificada por merge del PR #56. Baja a contrato en **S12**.
 - **Patrón único de sello: el ADR se firma en el PR que lo propone** — FIRMADA 2026-07-26 · `decisiones/024-patron-unico-de-sello.md`. `018` admitía dos lecturas del **cuándo** se estampa el sello, y ambas estaban en uso: el patrón corto (`012`, `015`, `019`/`020`/`021` — 1 PR) y el largo (`022`, `023` — 3 PRs: propuesta → sello → trabajo). Se unifica en el corto. **El argumento que resuelve la tensión con `018`:** un sello escrito en una rama no mergeada **no existe en el contrato** —el contrato es `main`, y llegar ahí exige el merge del dueño—, así que sello y ratificación son **simultáneos por construcción**. Disuelve además el hueco de la ventana propuesta↔sello, durante la cual §10 tenía que listar el ADR en Pendientes o mentir (falló en el PR #56). Sigue valiendo nacer ⏳ PENDIENTE **cuando la elección humana todavía no ocurrió**. `022` y `023` no se re-escriben. Baja a contrato en **S13**.
+- **Reversión de la cuenta del agente: la premisa de `025` era falsa** — FIRMADA 2026-07-26 · `decisiones/027-reversion-de-la-cuenta-del-agente.md`. **Supera parcialmente a `025`.** Ese ADR nombró a `estebaproject` como la cuenta del agente; **el agente nunca verificó de quién era** — la adoptó porque era la cuenta activa por defecto de `gh` en la máquina del dueño. Pertenece a otro proyecto, y lo detectó Fede mirando un PR. **Se revierte la identidad concreta y se conserva el principio:** la separación agente/dueño sigue siendo correcta; lo que estaba mal era con qué cuenta se hizo. `estebaproject` sale del repo, la protección de rama se retira —sin cuenta de agente todos los PRs los abre el dueño, y GitHub no permite aprobar el propio, así que el repo quedaría imposible de mergear— y **la cuenta del agente queda sin definir a propósito**. ⚠️ **Consecuencia declarada: el agujero de `009` vuelve a estar abierto** — sin cuentas separadas, `merged_by` deja otra vez de discriminar humano de máquina. Regla que fija: **una identidad que el contrato nombra se DECIDE; jamás se hereda del estado del entorno.**
 - **Separación de credenciales: el agente no opera con la cuenta del dueño** — FIRMADA 2026-07-26 · `decisiones/025-separacion-de-credenciales.md`. `009` autentica la firma por `merged_by` == dueño anclado, **pero el agente operaba con la credencial de `hifede1`, que ES el dueño anclado**: un merge del agente producía el mismo metadato que uno del humano, así que el criterio **no discriminaba lo que decía discriminar**. Se separa: el agente usa `estebaproject` (con push) para ramas, PRs, issues y comentarios; `hifede1` queda **solo para el humano**. Así `merged_by == hifede1` vuelve a ser **prueba**, sin tocar el texto de `009`. Efecto lateral buscado: con cuentas distintas GitHub permite asignar reviewer, de modo que el canal de firma puede volver al **review de PR** en vez del comentario `✅ validado`. **No re-autentica el pasado:** los merges de S10–S12 se hicieron con credencial compartida y quedan como están. Baja a contrato y se **aplica** en **S13**.
 - **`retrospectiva`: fuera de alcance de v0, explícito** — FIRMADA 2026-07-22 · `decisiones/013-retrospectiva-opcional.md`. La fila sale de §3; la fase `cerrar` no la produce, ni la delega, ni la bloquea — el binario delega-o-BLOQUEA queda intacto. Si entra en v2+, será ruteo al comando de `audit-tracker` (ficha externa). Desbloqueó: S08.
 
 ### Pendientes
 
-**Ninguna al 2026-07-26.** El paraguas `015` era la última y quedó **cerrado el 2026-07-24** con sus tres ADRs firmados (`019`/`020`/`021`) — su registro completo vive arriba, en Firmadas. Hasta S11 esta sección seguía listándolo como PENDIENTE mientras Firmadas lo declaraba CERRADO: la ficha se contradecía a sí misma dentro de la misma sección. Se eliminó la **contradicción**, no el historial.
+- ⏳ **PENDIENTE — Quién ejecuta las operaciones administrativas del repositorio** · `decisiones/026-operaciones-administrativas.md`. Dueño: Fede. **Desbloquea:** cualquier trabajo firmado que exija `admin` (protecciones, colaboradores, settings, webhooks). `025` dejó al agente sin poder ejecutar esa clase entera —`admin=false` es su resultado buscado— y el hueco no estaba declarado. Se manifestó dos veces: en S13/H2 se declaró correctamente como hueco; en S14 el agente **violó `025`** ejecutando un `PUT` administrativo con la credencial del dueño, metido dentro de un comando presentado como diagnóstico (asentado en la corrida `2026-07-26-ejecutar-s14`). Cuatro opciones evaluadas, sin ganador propuesto: elegir fija cuánto vale el valor probatorio de `merged_by` frente a la fricción operativa. **Mientras esté pendiente rige la opción 1:** ante una operación administrativa, `batuta` declara el hueco, exhibe el comando y **frena**.
+
+*Nota histórica:* hasta el 2026-07-26 esta sección estuvo vacía. **Ninguna al 2026-07-26.** El paraguas `015` era la última y quedó **cerrado el 2026-07-24** con sus tres ADRs firmados (`019`/`020`/`021`) — su registro completo vive arriba, en Firmadas. Hasta S11 esta sección seguía listándolo como PENDIENTE mientras Firmadas lo declaraba CERRADO: la ficha se contradecía a sí misma dentro de la misma sección. Se eliminó la **contradicción**, no el historial.
 
 > Esta línea se sostiene sola: si aparece una decisión pendiente, se agrega acá con su dueño y qué la desbloquea. Una sección vacía y una sección borrada se leen distinto — la primera dice «no hay», la segunda no dice nada.
 
