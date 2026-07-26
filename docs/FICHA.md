@@ -129,6 +129,33 @@ Partitura **descriptiva firmada** (grafo dirigido tipado), no un runtime. Nodos 
 
 Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + fecha**; las abiertas, **PENDIENTE + dueño + qué la desbloquea**. Los `- [ ]` quedan reservados a los criterios de aceptación de §12 — miden al software, no al humano.
 
+### Cuándo se estampa el sello (`decisiones/024`)
+
+`018` fija **qué** es una firma —un acto humano rastreable, nunca un campo— y esta sección fija
+**cuándo** se escribe el sello, que es lo que `018` dejaba abierto a dos lecturas.
+
+**Un ADR se escribe con su sello `✅ FIRMADA` en el mismo PR que lo propone**, con dos condiciones:
+
+1. **el acto humano de elección ya ocurrió** y queda en `Procedencia de la firma` con su forma
+   verificable: qué se eligió, entre qué opciones, en qué canal y cuándo;
+2. **la `Procedencia` declara que la ratificación es el merge de ese PR por el dueño**, autenticable
+   por `merged_by` (`009` + `025`).
+
+**Por qué esto no falsifica una firma:** un sello escrito en una rama no mergeada **no existe en el
+contrato**. El contrato es `main`, y un ADR solo llega ahí por el merge del dueño — así que **sello y
+ratificación son simultáneos por construcción**. No hay instante en que `main` contenga un `FIRMADA`
+sin su acto. Confundir el estado de una rama con el estado del contrato es lo que llevó al patrón
+largo (`022`, `023`): tres PRs por decisión, y una ventana en la que esta §10 tenía que listar el ADR
+en *Pendientes* o mentir.
+
+**Cuándo sigue valiendo nacer ⏳ PENDIENTE:** cuando la **elección humana todavía no ocurrió** — un
+ADR que se abre para que el dueño lo estudie antes de decidir. Ahí la condición 1 no se cumple, y el
+sello va después. Lo que `024` elimina no es el estado PENDIENTE, sino **usarlo cuando la decisión ya
+está tomada**.
+
+> `022` y `023` quedaron sellados con el patrón largo y **no se reescriben**: sus actos ocurrieron
+> así. El patrón único rige de acá en adelante.
+
 ### Firmadas
 
 - **Mono-proyecto en v0 y v1** — FIRMADA 2026-07-18 · `decisiones/001-mono-proyecto.md`. Portafolio = v2. Rompe la dependencia dura de `cartera`; enumeración trivial = el repo. Aplicada en §0 y §4.
