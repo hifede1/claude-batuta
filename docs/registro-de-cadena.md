@@ -300,7 +300,11 @@ La cadena está rota —y `cerrar` debe reportarlo como hallazgo— cuando:
 - una **pieza de obra** mergeada no referencia ningún encargo — con **tres** salvos, cada uno con
   su asiento propio:
   1. el **PR de decisión del dueño** (asiento: la decisión-a-firmar que materializa, autenticada
-     — FIRMADA con procedencia `018` y `merged_by` == dueño `009`);
+     — FIRMADA con procedencia `018` y `merged_by` == dueño `009`). ⚠️ **Este salvo autentica SOLO si
+     el agente no comparte la credencial del dueño** (`decisiones/025`): si la comparte, un merge de
+     la máquina produce el mismo `merged_by` que uno del humano y **el metadato deja de probar
+     nada**. La condición es parte del asiento, no una nota al pie — si vuelve a compartirse la
+     cuenta, este salvo deja de autenticar aunque la letra siga igual;
   2. el **PR de bookkeeping de CIERRE del tracker** (asiento: el cierre firmado cuya contabilidad
      refleja, `decisiones/005`);
   3. el **PR de bookkeeping de APERTURA del tracker** (asiento: la re-auditoría cuya invocación
@@ -309,6 +313,17 @@ La cadena está rota —y `cerrar` debe reportarlo como hallazgo— cuando:
      con fecha y `last_audit`, y el `last_audit` declarado coincide con el del artefacto emitido.
 
   Un reclamo de salvo que no autentica es la causal, no la excepción
+
+  > **Los actos anteriores a la aplicación de `025` NO se re-autentican.** Durante la serie de
+  > mantenimiento (S10–S12, 2026-07-25/26) el agente operaba con la credencial del dueño, así que los
+  > registros de corrida y varias `Procedencia` de ADRs invocan «`merged_by` == dueño» en una época en
+  > que ese metadato **no podía discriminar**. Los merges fueron reales —los hizo el humano— pero su
+  > única prueba era la traza del agente, que es lo que `009` rechaza como fuente de verdad.
+  >
+  > Quedan **como están**: son actos verdaderos con prueba débil, y reescribir sus procedencias sería
+  > fabricar una autenticación que no existió — exactamente lo que `018` prohíbe. Un auditor que lea
+  > un asiento de esa ventana debe tratar la autenticación por `merged_by` como **no concluyente**, y
+  > eso es todo: no es un eslabón roto retroactivo.
 - un **requisito** firmado en la RUTA no tiene encargo ni motivo registrado de por qué no lo tiene
 - un **egreso-que-escribe** ejecutado que no figura en el eslabón `encargos` con su firma y
   resultado
