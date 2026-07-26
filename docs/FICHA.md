@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-26 por Fede
+> Firmado: 2026-07-26 (2) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En los tres
 > actos el acto de ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` ==
 > dueño anclado (`009`):*
@@ -24,10 +24,17 @@
 >    incremental), se abre **S12** y se re-estampa la versión por cambio del plano. Fede eligió el
 >    sufijo incremental entre cuatro opciones con tradeoffs, en sesión interactiva del 2026-07-26.*
 >
-> ℹ️ *Versionado: **primera ratificación del 2026-07-26**, así que la fecha va sin sufijo — `023`
-> regla 1. El hueco que motivó ese ADR sigue visible en la historia de esta misma cabecera: los
-> actos **2, 3 y 4 comparten `2026-07-25`** con contenidos distintos. `023` **no re-versiona el
-> pasado** — reescribir firmas pasadas sería fabricar actos que no ocurrieron así (`018`).*
+> 6. ***2026-07-26 (2) · este PR** — se firman `decisiones/024` (patrón único de sello) y
+>    `decisiones/025` (separación de credenciales agente/dueño) y se abre **S13**, la sesión que baja
+>    ambas a contrato y aplica la separación. Fede eligió cada una entre opciones con tradeoffs, en
+>    sesión interactiva del 2026-07-26. **Primeros ADRs firmados bajo el patrón de `024`**: sello en
+>    el PR que los propone.*
+>
+> ℹ️ *Versionado: **segunda ratificación del 2026-07-26**, de ahí el sufijo `(2)` — `023` regla 1.
+> **Primera aplicación real de esa regla**, no un ejemplo: el acto 5 fue la primera del día y por eso
+> va sin sufijo. El hueco que motivó `023` sigue visible en esta misma cabecera — los actos **2, 3 y
+> 4 comparten `2026-07-25`** con contenidos distintos. `023` **no re-versiona el pasado**: reescribir
+> firmas pasadas sería fabricar actos que no ocurrieron así (`018`).*
 > Diseñada: 2026-07-18 (workflow de 6 agentes; verbatim declarado PERDIDO — `references/workflows-fan-out.md` es la reconstrucción canónica) · Obra: **v0 COMPLETA 9/9 (2026-07-22) + fix #38 · en mantenimiento** · absorbe a `director-de-obra`
 
 ## 0. Estrategia: v0 MÍNIMA, head-first (decidido por Fede 2026-07-18)
@@ -142,6 +149,8 @@ Registro completo en `decisiones/`. Notación: las firmadas llevan **FIRMADA + f
 - **Eje externo (paraguas `015`): CERRADO 2026-07-24** — las tres decisiones que dejaba abiertas, firmadas como ADRs propios: **`019`** fuentes del PROVISTO (declaración del dueño vale, con marca «no sondeado») · **`020`** salud en runtime (reporte, no estado; carril pausado + hallazgo) · **`021`** lista negra de egreso v0 (pagos y borrados irreversibles fuera, ni con firma — completa a `012`).
 - **Asiento del bookkeeping de apertura (tercer salvo)** — FIRMADA 2026-07-25 · `decisiones/022-asiento-bookkeeping-de-apertura.md`. La composición del asiento de `registro-de-cadena.md` §6 contemplaba el bookkeeping de un CIERRE, pero no el de una re-auditoría que **ABRE** trabajo — clase inevitable que nacía como eslabón roto (caso real: PR #46, merge autenticado y solo `docs/audits/`, roto porque `CLOSED_COUNT` no se movió). El salvo autentica solo con tres condiciones; la de «invocación asentada en un eslabón `obra`» es la que lo hace asiento y no puerta trasera. Origen: hallazgo D10 de la corrida `2026-07-24-arreglar-path-de-corridas`. Ratificada por merge del PR #47.
 - **Versionado del plano: sufijo incremental dentro del día** — FIRMADA 2026-07-26 · `decisiones/023-versionado-del-plano.md`. `011` fija que la fecha de firma ES la versión, sin prever que **dos ratificaciones del mismo día son indistinguibles**: el 2026-07-25 se mergearon CUATRO PRs de plano (#47/#48/#52/#54) bajo la misma etiqueta, y dos corridas reales arrancaron con esa versión sobre planos distintos. El costo no era estético: la causal 7 de `registro-de-cadena.md` §6 —«el plano cambió de versión durante la corrida»— quedaba **estructuralmente inauditable dentro del día**. Se adopta sufijo `(N)` a partir de la segunda ratificación diaria, reusando la notación que el tracker ya aplica a auditorías múltiples. Costo aceptado: el incremento es manual y sin gate — un olvido reintroduce la colisión en silencio. Ratificada por merge del PR #56. Baja a contrato en **S12**.
+- **Patrón único de sello: el ADR se firma en el PR que lo propone** — FIRMADA 2026-07-26 · `decisiones/024-patron-unico-de-sello.md`. `018` admitía dos lecturas del **cuándo** se estampa el sello, y ambas estaban en uso: el patrón corto (`012`, `015`, `019`/`020`/`021` — 1 PR) y el largo (`022`, `023` — 3 PRs: propuesta → sello → trabajo). Se unifica en el corto. **El argumento que resuelve la tensión con `018`:** un sello escrito en una rama no mergeada **no existe en el contrato** —el contrato es `main`, y llegar ahí exige el merge del dueño—, así que sello y ratificación son **simultáneos por construcción**. Disuelve además el hueco de la ventana propuesta↔sello, durante la cual §10 tenía que listar el ADR en Pendientes o mentir (falló en el PR #56). Sigue valiendo nacer ⏳ PENDIENTE **cuando la elección humana todavía no ocurrió**. `022` y `023` no se re-escriben. Baja a contrato en **S13**.
+- **Separación de credenciales: el agente no opera con la cuenta del dueño** — FIRMADA 2026-07-26 · `decisiones/025-separacion-de-credenciales.md`. `009` autentica la firma por `merged_by` == dueño anclado, **pero el agente operaba con la credencial de `hifede1`, que ES el dueño anclado**: un merge del agente producía el mismo metadato que uno del humano, así que el criterio **no discriminaba lo que decía discriminar**. Se separa: el agente usa `estebaproject` (con push) para ramas, PRs, issues y comentarios; `hifede1` queda **solo para el humano**. Así `merged_by == hifede1` vuelve a ser **prueba**, sin tocar el texto de `009`. Efecto lateral buscado: con cuentas distintas GitHub permite asignar reviewer, de modo que el canal de firma puede volver al **review de PR** en vez del comentario `✅ validado`. **No re-autentica el pasado:** los merges de S10–S12 se hicieron con credencial compartida y quedan como están. Baja a contrato y se **aplica** en **S13**.
 - **`retrospectiva`: fuera de alcance de v0, explícito** — FIRMADA 2026-07-22 · `decisiones/013-retrospectiva-opcional.md`. La fila sale de §3; la fase `cerrar` no la produce, ni la delega, ni la bloquea — el binario delega-o-BLOQUEA queda intacto. Si entra en v2+, será ruteo al comando de `audit-tracker` (ficha externa). Desbloqueó: S08.
 
 ### Pendientes
