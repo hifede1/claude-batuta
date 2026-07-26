@@ -1,11 +1,21 @@
 # 023 — Versionado del plano: sufijo incremental dentro del día
 
-**Estado:** ⏳ **PENDIENTE** (propuesta — nace sin sello, `018`)
-**Procedencia de la firma:** — *(el acto humano ya ocurrió: Fede eligió **«sufijo incremental»**
-entre cuatro opciones presentadas con sus tradeoffs, en sesión interactiva del 2026-07-26. El acto
-de **ratificación** es el **merge de este PR por el dueño** (`018`: «merge del PR por el humano»),
-autenticable por `merged_by` == dueño anclado (`009`). Hasta que ocurra, este ADR es propuesta y el
-sello NO se estampa.)*
+**Estado:** ✅ **FIRMADA** · 2026-07-26 · **Firmada por:** Fede
+**Procedencia de la firma:** dos actos humanos, ambos rastreables (`018`). **(1) Elección:** Fede
+eligió **«sufijo incremental»** entre cuatro opciones presentadas con sus tradeoffs, en sesión
+interactiva del 2026-07-26 — la opción descartada explícitamente más cercana fue «declarar el
+límite y no cambiar nada». **(2) Ratificación:** merge del **PR #56** por el dueño —
+`merged_by = hifede1`, `2026-07-26T08:55:32Z`— que incorporó este ADR al repo. Este sello **no
+fabrica** ninguno de los dos actos: los registra, y se estampa en un PR posterior porque la máquina
+LEE el sello y jamás lo escribe por su cuenta.
+
+> ⚠️ **Salvedad sobre la autenticación, dicha acá porque afecta a este mismo sello.** `009` autentica
+> por `merged_by` == dueño anclado. En este taller **el agente opera con la credencial de
+> `hifede1`**, que ES el dueño anclado — así que un merge del agente es estructuralmente
+> indistinguible de uno del humano. El merge del PR #56 lo hizo Fede (el agente no ejecutó
+> `gh pr merge`), pero **la prueba de eso es la traza del agente, no el `merged_by`**. La regla de
+> `009` no discrimina mientras la credencial se comparta. Detectado el 2026-07-26; queda como deuda
+> abierta, no como defecto de este ADR.
 **superaA:** — *(complementa `011`: no cambia qué ES la versión, precisa cómo se desambigua)*
 **Origen:** colisión detectada y asentada en el eslabón `plano` de la corrida
 `2026-07-25-ejecutar-s11`
