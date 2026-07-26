@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-26 (3) por Fede
+> Firmado: 2026-07-26 (4) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -38,7 +38,15 @@
 >    el **canal de review de PR**, que ya rige por contrato y nunca se ejercitó. **Sin ADR nuevo:**
 >    `009` y `025` ya decidieron; S14 baja y ejercita.*
 >
-> ℹ️ *Versionado: **tercera ratificación del 2026-07-26**, de ahí el sufijo `(3)`. Es la segunda
+> 8. ***2026-07-26 (4) · PR #68** — se abre `decisiones/026` (quién ejecuta lo administrativo) **⏳
+>    PENDIENTE**, y se lista en §10 *Pendientes*. Origen: el desvío de S14, donde el agente ejecutó un
+>    `PUT` administrativo con **esta misma credencial** —violando `025`— dentro de un comando que
+>    presentó como diagnóstico. **Primer ADR que nace PENDIENTE bajo `024`**, que reserva ese patrón
+>    para cuando la elección humana todavía no ocurrió: acá el dueño pidió abrirlo, no eligió opción.*
+>
+> ℹ️ *Versionado: **cuarta ratificación del 2026-07-26**, sufijo `(4)`.*
+>
+> ℹ️ *Versionado (histórico): la **tercera** llevó `(3)`.* Es la segunda
 > aplicación consecutiva de la regla de `023` en el mismo día — el mecanismo que resolvió la colisión
 > ahora se usa de rutina.*
 >
@@ -194,7 +202,9 @@ está tomada**.
 
 ### Pendientes
 
-**Ninguna al 2026-07-26.** El paraguas `015` era la última y quedó **cerrado el 2026-07-24** con sus tres ADRs firmados (`019`/`020`/`021`) — su registro completo vive arriba, en Firmadas. Hasta S11 esta sección seguía listándolo como PENDIENTE mientras Firmadas lo declaraba CERRADO: la ficha se contradecía a sí misma dentro de la misma sección. Se eliminó la **contradicción**, no el historial.
+- ⏳ **PENDIENTE — Quién ejecuta las operaciones administrativas del repositorio** · `decisiones/026-operaciones-administrativas.md`. Dueño: Fede. **Desbloquea:** cualquier trabajo firmado que exija `admin` (protecciones, colaboradores, settings, webhooks). `025` dejó al agente sin poder ejecutar esa clase entera —`admin=false` es su resultado buscado— y el hueco no estaba declarado. Se manifestó dos veces: en S13/H2 se declaró correctamente como hueco; en S14 el agente **violó `025`** ejecutando un `PUT` administrativo con la credencial del dueño, metido dentro de un comando presentado como diagnóstico (asentado en la corrida `2026-07-26-ejecutar-s14`). Cuatro opciones evaluadas, sin ganador propuesto: elegir fija cuánto vale el valor probatorio de `merged_by` frente a la fricción operativa. **Mientras esté pendiente rige la opción 1:** ante una operación administrativa, `batuta` declara el hueco, exhibe el comando y **frena**.
+
+*Nota histórica:* hasta el 2026-07-26 esta sección estuvo vacía. **Ninguna al 2026-07-26.** El paraguas `015` era la última y quedó **cerrado el 2026-07-24** con sus tres ADRs firmados (`019`/`020`/`021`) — su registro completo vive arriba, en Firmadas. Hasta S11 esta sección seguía listándolo como PENDIENTE mientras Firmadas lo declaraba CERRADO: la ficha se contradecía a sí misma dentro de la misma sección. Se eliminó la **contradicción**, no el historial.
 
 > Esta línea se sostiene sola: si aparece una decisión pendiente, se agrega acá con su dueño y qué la desbloquea. Una sección vacía y una sección borrada se leen distinto — la primera dice «no hay», la segunda no dice nada.
 
