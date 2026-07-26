@@ -266,9 +266,16 @@ dueño sigue siendo la suya después de una **escritura**?*
 |---|---|---|
 | `gh auth switch --user <agente>` | ❌ | ❌ — cambia la cuenta activa global; el dueño queda operando con la del agente |
 | `GH_TOKEN=$(gh auth token --user <agente>) gh …` | ✅ | ❌ — **la escritura deja la cuenta activa en la del agente** |
-| **`GH_CONFIG_DIR=<dir-del-agente> gh …`** | ✅ | ✅ |
+| **`GH_CONFIG_DIR=<dir-del-agente> gh …`** | ✅ | ✅ en todo lo medido — **con una salvedad, abajo** |
 
-**El mecanismo correcto es el tercero.** Se prepara una vez y se usa siempre:
+> ⚠️ **Salvedad honesta sobre la tercera fila.** `GH_CONFIG_DIR` aisló en todas las operaciones que se
+> midieron una por una: lecturas, `gh auth token`, y escrituras (`gh pr comment`). **Pero se observó
+> una contaminación de la cuenta del dueño inmediatamente después de un turno que solo usó este
+> mecanismo**, y el único comando de ese turno que no se pudo reproducir aislado fue `gh pr create`.
+> **La causa no quedó determinada.** Se deja escrito así —y no como «aísla siempre»— porque afirmar lo
+> segundo sería exactamente el error que esta sección documenta: concluir más de lo que se midió.
+
+**El mecanismo de elección es el tercero.** Se prepara una vez y se usa siempre:
 
 ```bash
 # preparación (una vez)
@@ -297,3 +304,24 @@ el mismo camino.
 > **La lección general:** un mecanismo de aislamiento se verifica con la operación **más invasiva** que
 > va a soportar —una escritura—, no con la más cómoda de probar. Verificar con lecturas y concluir
 > sobre escrituras es exactamente cómo se cuela un defecto que la letra del ADR no puede atajar.
+
+### La defensa que NO depende del mecanismo
+
+Tres mecanismos se probaron y **dos fallaron; del tercero quedó una observación sin explicar**. La
+conclusión operativa no es «usá el bueno»: es que **la confianza en el mecanismo no alcanza**.
+
+> **Regla: después de cada bloque de operaciones con identidad de agente, VERIFICAR la cuenta activa
+> del dueño y restaurarla si cambió.**
+>
+> ```bash
+> gh api user --jq .login      # ¿sigue siendo la del dueño?
+> ```
+
+Es una línea, es barata, y **no depende de que el mecanismo cumpla**. El defecto original —el dueño
+operando con la cuenta del agente— lo detectó **el humano al ver su terminal**, no el agente al
+razonar sobre su herramienta. Esa asimetría es la que esta regla corrige: convierte una sorpresa del
+dueño en un chequeo del agente.
+
+**Y si la verificación falla, se restaura y se ASIENTA** — no en silencio. Contaminar el entorno del
+dueño es un efecto lateral sobre algo que no es del agente; queda en el registro de la corrida como
+desvío, igual que cualquier otro.
