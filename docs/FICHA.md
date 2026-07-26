@@ -32,7 +32,7 @@
 >    sesión interactiva del 2026-07-26. **Primeros ADRs firmados bajo el patrón de `024`**: sello en
 >    el PR que los propone.*
 >
-> 7. ***2026-07-26 (3) · este PR** — se abre **S14**, que cierra los dos cabos que S13 dejó sueltos al
+> 7. ***2026-07-26 (3) · PR #65** — se abre **S14**, que cierra los dos cabos que S13 dejó sueltos al
 >    aplicar `025`: el **mecanismo** de credenciales (el agente lo implementó con `gh auth switch`,
 >    que altera la cuenta activa global del humano — corregido en el momento, pero sin documentar) y
 >    el **canal de review de PR**, que ya rige por contrato y nunca se ejercitó. **Sin ADR nuevo:**
