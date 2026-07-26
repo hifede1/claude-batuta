@@ -1,11 +1,18 @@
 # 026 — Quién ejecuta las operaciones administrativas del repositorio
 
-**Estado:** ⏳ **PENDIENTE** (propuesta — nace sin sello, `018`)
-**Procedencia de la firma:** — *(sin acto todavía. Fede pidió abrir este ADR en sesión interactiva del
-2026-07-26, tras el desvío asentado en la corrida `2026-07-26-ejecutar-s14`, pero **no eligió opción**:
-el ADR se abre para que la estudie. Este es el caso que `024` reserva expresamente para el patrón
-largo — «sigue valiendo nacer ⏳ PENDIENTE cuando la elección humana todavía no ocurrió». El sello se
-estampa cuando la elección exista, en un PR posterior.)*
+**Estado:** ✅ **FIRMADA** · 2026-07-26 · **Firmada por:** Fede
+**Procedencia de la firma:** dos actos rastreables (`018`). **(1) Apertura sin decisión:** Fede pidió
+abrir este ADR en sesión interactiva del 2026-07-26 tras el desvío de la corrida
+`2026-07-26-ejecutar-s14`, **sin elegir opción** — nació ⏳ PENDIENTE, el caso que `024` reserva para
+el patrón largo, y se listó en `FICHA.md` §10 *Pendientes* mientras duró la ventana. **(2) Elección:**
+en la misma sesión, Fede eligió **«opción 2: lista blanca + asiento»** entre tres opciones presentadas
+con sus tradeoffs, **después** de resolver la decisión acoplada de la cuenta del agente (`028`).
+**Ratifica al mergear este PR.**
+
+> **El agente no propuso ganador hasta que la decisión dejó de ser sobre su propio poder.** La opción
+> 2 le otorga capacidad, así que recomendarla era conflicto de interés — y se declaró como tal al
+> hacerlo. Lo que destrabó la recomendación fue descubrir que `026` estaba **acoplada** a la decisión
+> de cuenta: sin cuenta de agente, la opción 1 no protege nada.
 **superaA:** — *(complementa `025`; no cambia la separación de credenciales, resuelve el hueco que abrió)*
 **Origen:** desvío grave de la corrida `2026-07-26-ejecutar-s14` — egreso administrativo ejecutado por
 el agente con la credencial del dueño, sin compuerta propia
@@ -67,10 +74,46 @@ camino legítimo se rompe sola.
 
 ## Decisión
 
-**⏳ Sin decidir.** Este ADR se abre para que el dueño elija; el agente no propone ganador porque las
-opciones 1 y 2 tienen un tradeoff genuino —cumplimiento literal con vía frágil, o vía robusta con la
-puerta reabierta— y elegirlo es fijar cuánto vale el valor probatorio de `merged_by` frente a la
-fricción operativa. **Eso es del dueño, no del director.**
+**Se adopta la opción 2: excepción acotada por lista blanca, con firma individual y asiento
+obligatorio.**
+
+> **Lo que destrabó la decisión no estaba en este ADR.** Al abrirse, el costo de la opción 2 era
+> «reabre la puerta que `025` cerró y degrada `merged_by`». **`027` revirtió `025`**, así que hoy no
+> hay cuenta de agente y `merged_by` **ya no discrimina**: la opción 2 no degrada nada que no esté
+> degradado, y la opción 1 no protege nada que no esté expuesto. **Esta decisión estaba acoplada a la
+> de la cuenta del agente y el ADR no lo declaraba** — se descubrió al ir a decidirla. Fede resolvió
+> primero la cuenta (sin cuenta, agujero aceptado — `028`) y recién entonces esta.
+
+### La lista blanca inicial
+
+| Operación | Endpoint |
+|---|---|
+| Branch protection | `PUT` / `DELETE` `…/branches/{branch}/protection` |
+| Colaboradores | `PUT` / `DELETE` `…/collaborators/{user}` |
+
+**Nada más está en la lista.** Settings del repositorio, webhooks, secrets, transferencias, borrados y
+cualquier otra operación administrativa **quedan fuera**: ante ellas el agente **declara el hueco y
+frena**, que es la opción 1 aplicada a todo lo no listado.
+
+### Condiciones — las tres, o no autentica
+
+1. **Compuerta individual por uso.** Régimen de `012`, umbral 0: la lista blanca **no batchea**. Cada
+   ejecución se exhibe con su operación exacta, su destino y su efecto, y se firma por separado.
+2. **Verificación previa contra `021`.** Antes de pedir la firma, el agente comprueba que la operación
+   no cae en la lista negra (pagos, borrados destructivos irreversibles). **Pedir firma para algo
+   prohibido es ofrecer una compuerta que no existe.**
+3. **Asiento obligatorio en el eslabón `encargos`**, con la operación, la credencial usada y el
+   resultado verificado. **Un uso sin asiento es la causal 4 de §6, no una excepción.**
+
+### Y la regla que hizo falta escribir
+
+> **La lista blanca solo cambia como decisión-a-firmar de tercera altitud** (`012`), materializada por
+> PR del dueño. Una entrada agregada dentro de un PR de encargo es **inválida**, aunque el PR se
+> mergee.
+
+**Lo que la lista blanca NO hace:** no convierte al agente en administrador. Sigue sin tener `admin`;
+lo que tiene es **permiso acotado para pedir que se firme el uso de la credencial del dueño en dos
+operaciones nombradas**. La diferencia importa: fuera de esas dos, el hueco se declara.
 
 ## Consecuencias
 

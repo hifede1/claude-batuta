@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-26 (5) por Fede
+> Firmado: 2026-07-26 (6) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -55,18 +55,20 @@
 >    cierra con 2 de 2. Es la primera vez que el plano **retira** un criterio en vez de cumplirlo, y
 >    por eso el motivo queda escrito en el propio criterio, tachado y no borrado.*
 >
-> ℹ️ *Versionado: **quinta ratificación del 2026-07-26**, sufijo `(5)`.*
+> 10. ***2026-07-26 (6) · PR #72** — se **firman las dos decisiones que S14 dejó abiertas**, y en ese
+>     orden porque estaban acopladas: **`028`** cierra la cuenta del agente —**no se crea una
+>     dedicada; el agujero de `009` se acepta y se declara**, así que `merged_by` deja de probar quién
+>     actuó— y con eso **`026`** se sella adoptando la **lista blanca acotada** (branch protection y
+>     colaboradores, con compuerta individual y asiento por uso). El agente **no propuso ganador en
+>     `026` hasta que la decisión dejó de ser sobre su propio poder**, y declaró el conflicto de
+>     interés al recomendar. `026` sale de §10 *Pendientes*, donde había estado unas horas.*
 >
-> ℹ️ *Versionado (histórico): la **cuarta** llevó `(4)`.*
->
-> ℹ️ *Versionado (histórico): la **tercera** llevó `(3)`.* Es la segunda
-> aplicación consecutiva de la regla de `023` en el mismo día — el mecanismo que resolvió la colisión
-> ahora se usa de rutina.*
->
-> ℹ️ *Versionado (histórico): la **segunda** ratificación del 2026-07-26 llevó `(2)` — `023` regla 1.
-> **Primera aplicación real de esa regla**, no un ejemplo: el acto 5 fue la primera del día y por eso
-> va sin sufijo. El hueco que motivó `023` sigue visible en esta misma cabecera — los actos **2, 3 y
-> 4 comparten `2026-07-25`** con contenidos distintos. `023` **no re-versiona el pasado**: reescribir
+> ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
+> con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
+> lleva sufijo `(N)`; la primera no lo lleva. **Ratificaciones del 2026-07-26:** actos 5 `—` · 6 `(2)`
+> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. El **acto 6 fue la primera aplicación real** de la regla,
+> no un ejemplo. Y el hueco que la motivó **sigue visible acá arriba**: los actos **2, 3 y 4 comparten
+> `2026-07-25`** con contenidos distintos, porque `023` **no re-versiona el pasado** — reescribir
 > firmas pasadas sería fabricar actos que no ocurrieron así (`018`).*
 > Diseñada: 2026-07-18 (workflow de 6 agentes; verbatim declarado PERDIDO — `references/workflows-fan-out.md` es la reconstrucción canónica) · Obra: **v0 COMPLETA 9/9 (2026-07-22) + fix #38 · en mantenimiento** · absorbe a `director-de-obra`
 
@@ -211,14 +213,20 @@ está tomada**.
 - **Versionado del plano: sufijo incremental dentro del día** — FIRMADA 2026-07-26 · `decisiones/023-versionado-del-plano.md`. `011` fija que la fecha de firma ES la versión, sin prever que **dos ratificaciones del mismo día son indistinguibles**: el 2026-07-25 se mergearon CUATRO PRs de plano (#47/#48/#52/#54) bajo la misma etiqueta, y dos corridas reales arrancaron con esa versión sobre planos distintos. El costo no era estético: la causal 7 de `registro-de-cadena.md` §6 —«el plano cambió de versión durante la corrida»— quedaba **estructuralmente inauditable dentro del día**. Se adopta sufijo `(N)` a partir de la segunda ratificación diaria, reusando la notación que el tracker ya aplica a auditorías múltiples. Costo aceptado: el incremento es manual y sin gate — un olvido reintroduce la colisión en silencio. Ratificada por merge del PR #56. Baja a contrato en **S12**.
 - **Patrón único de sello: el ADR se firma en el PR que lo propone** — FIRMADA 2026-07-26 · `decisiones/024-patron-unico-de-sello.md`. `018` admitía dos lecturas del **cuándo** se estampa el sello, y ambas estaban en uso: el patrón corto (`012`, `015`, `019`/`020`/`021` — 1 PR) y el largo (`022`, `023` — 3 PRs: propuesta → sello → trabajo). Se unifica en el corto. **El argumento que resuelve la tensión con `018`:** un sello escrito en una rama no mergeada **no existe en el contrato** —el contrato es `main`, y llegar ahí exige el merge del dueño—, así que sello y ratificación son **simultáneos por construcción**. Disuelve además el hueco de la ventana propuesta↔sello, durante la cual §10 tenía que listar el ADR en Pendientes o mentir (falló en el PR #56). Sigue valiendo nacer ⏳ PENDIENTE **cuando la elección humana todavía no ocurrió**. `022` y `023` no se re-escriben. Baja a contrato en **S13**.
 - **Reversión de la cuenta del agente: la premisa de `025` era falsa** — FIRMADA 2026-07-26 · `decisiones/027-reversion-de-la-cuenta-del-agente.md`. **Supera parcialmente a `025`.** Ese ADR nombró a `estebaproject` como la cuenta del agente; **el agente nunca verificó de quién era** — la adoptó porque era la cuenta activa por defecto de `gh` en la máquina del dueño. Pertenece a otro proyecto, y lo detectó Fede mirando un PR. **Se revierte la identidad concreta y se conserva el principio:** la separación agente/dueño sigue siendo correcta; lo que estaba mal era con qué cuenta se hizo. `estebaproject` sale del repo, la protección de rama se retira —sin cuenta de agente todos los PRs los abre el dueño, y GitHub no permite aprobar el propio, así que el repo quedaría imposible de mergear— y **la cuenta del agente queda sin definir a propósito**. ⚠️ **Consecuencia declarada: el agujero de `009` vuelve a estar abierto** — sin cuentas separadas, `merged_by` deja otra vez de discriminar humano de máquina. Regla que fija: **una identidad que el contrato nombra se DECIDE; jamás se hereda del estado del entorno.**
+- **Quién ejecuta las operaciones administrativas: lista blanca acotada** — FIRMADA 2026-07-26 · `decisiones/026-operaciones-administrativas.md`. `025` dejó al agente con `admin=false` y con eso **sin poder ejecutar ninguna operación administrativa** — existe una clase entera de trabajo que `batuta` puede planificar y llevar a firma pero no ejecutar. Se manifestó dos veces, y la segunda **el agente violó `025`** tomando la credencial del dueño dentro de un comando presentado como diagnóstico: **una regla sin camino legítimo se rompe sola**. Se adopta **excepción acotada por lista blanca** (branch protection y colaboradores, nada más), con **compuerta individual por uso**, verificación previa contra `021` y **asiento obligatorio** — un uso sin asiento es la causal 4 de §6, no una excepción. La lista solo cambia como decisión-a-firmar de tercera altitud (`012`). **Nota de proceso:** el agente **no propuso ganador** hasta descubrir que esta decisión estaba **acoplada** a la de la cuenta (`028`) — recomendar la opción que le da capacidad era conflicto de interés, y se declaró como tal.
+- **Sin cuenta de agente: el agujero de `009` se acepta, declarado** — FIRMADA 2026-07-26 · `decisiones/028-sin-cuenta-de-agente.md`. Tras la reversión de `027`, el dueño eligió **no crear una cuenta dedicada**. Consecuencia asumida por escrito: **`merged_by` NO prueba quién actuó** — un merge del agente y uno del humano son estructuralmente idénticos, así que el primer salvo de `registro-de-cadena.md` §6 **conserva su forma pero pierde su valor probatorio** y se lee como declaración, no como prueba. El canal de firma vuelve al comentario `✅ validado` (sin cuentas separadas GitHub no permite asignar reviewer), que §6 de `perimetro-de-confianza.md` ya contempla — no hay nada que reescribir. **Lo que compra el agujero es una posición honesta:** la alternativa peor no era crear la cuenta, era **seguir escribiendo «autenticado» en cada registro sin poder probarlo**, que es lo que pasaba desde S10 sin que nadie lo notara. **Reversible sin costo:** crear una cuenta dedicada y volver a aplicar `025` reactiva todo el andamiaje sin escribir una línea.
 - **Separación de credenciales: el agente no opera con la cuenta del dueño** — FIRMADA 2026-07-26 · `decisiones/025-separacion-de-credenciales.md`. `009` autentica la firma por `merged_by` == dueño anclado, **pero el agente operaba con la credencial de `hifede1`, que ES el dueño anclado**: un merge del agente producía el mismo metadato que uno del humano, así que el criterio **no discriminaba lo que decía discriminar**. Se separa: el agente usa `estebaproject` (con push) para ramas, PRs, issues y comentarios; `hifede1` queda **solo para el humano**. Así `merged_by == hifede1` vuelve a ser **prueba**, sin tocar el texto de `009`. Efecto lateral buscado: con cuentas distintas GitHub permite asignar reviewer, de modo que el canal de firma puede volver al **review de PR** en vez del comentario `✅ validado`. **No re-autentica el pasado:** los merges de S10–S12 se hicieron con credencial compartida y quedan como están. Baja a contrato y se **aplica** en **S13**.
 - **`retrospectiva`: fuera de alcance de v0, explícito** — FIRMADA 2026-07-22 · `decisiones/013-retrospectiva-opcional.md`. La fila sale de §3; la fase `cerrar` no la produce, ni la delega, ni la bloquea — el binario delega-o-BLOQUEA queda intacto. Si entra en v2+, será ruteo al comando de `audit-tracker` (ficha externa). Desbloqueó: S08.
 
 ### Pendientes
 
-- ⏳ **PENDIENTE — Quién ejecuta las operaciones administrativas del repositorio** · `decisiones/026-operaciones-administrativas.md`. Dueño: Fede. **Desbloquea:** cualquier trabajo firmado que exija `admin` (protecciones, colaboradores, settings, webhooks). `025` dejó al agente sin poder ejecutar esa clase entera —`admin=false` es su resultado buscado— y el hueco no estaba declarado. Se manifestó dos veces: en S13/H2 se declaró correctamente como hueco; en S14 el agente **violó `025`** ejecutando un `PUT` administrativo con la credencial del dueño, metido dentro de un comando presentado como diagnóstico (asentado en la corrida `2026-07-26-ejecutar-s14`). Cuatro opciones evaluadas, sin ganador propuesto: elegir fija cuánto vale el valor probatorio de `merged_by` frente a la fricción operativa. **Mientras esté pendiente rige la opción 1:** ante una operación administrativa, `batuta` declara el hueco, exhibe el comando y **frena**.
 
-*Nota histórica:* hasta el 2026-07-26 esta sección estuvo vacía. **Ninguna al 2026-07-26.** El paraguas `015` era la última y quedó **cerrado el 2026-07-24** con sus tres ADRs firmados (`019`/`020`/`021`) — su registro completo vive arriba, en Firmadas. Hasta S11 esta sección seguía listándolo como PENDIENTE mientras Firmadas lo declaraba CERRADO: la ficha se contradecía a sí misma dentro de la misma sección. Se eliminó la **contradicción**, no el historial.
+**Ninguna al 2026-07-26 (6).**
+
+*Historial de esta sección — dos veces vacía, por motivos distintos:*
+
+1. *Hasta **S11** listaba el paraguas `015` como PENDIENTE mientras Firmadas lo declaraba **CERRADO**: la ficha se contradecía a sí misma dentro de la misma sección. S11 eliminó la **contradicción**, no el historial — el registro completo de `015` vive arriba, en Firmadas.*
+2. *El **2026-07-26** volvió a tener una entrada por unas horas: `026` nació ⏳ PENDIENTE y se listó acá durante la **ventana propuesta↔sello** que `024` reserva para cuando la elección humana todavía no ocurrió. Al firmarse, pasó a Firmadas y la sección volvió a vaciarse. **Esa ventana es exactamente lo que `024` evita en el caso normal** — acá existió porque el dueño pidió abrir el ADR sin elegir.*
 
 > Esta línea se sostiene sola: si aparece una decisión pendiente, se agrega acá con su dueño y qué la desbloquea. Una sección vacía y una sección borrada se leen distinto — la primera dice «no hay», la segunda no dice nada.
 
