@@ -92,6 +92,47 @@ Si el plano cambia a mitad de la corrida, `batuta` **no cambia de contrato en el
 registra como desvío y sigue con el contrato con que arrancó. Ese desvío aparece en `cerrar`
 como hallazgo.
 
+### El sufijo dentro del día
+
+La fecha sola no alcanza: **un plano puede ratificarse más de una vez el mismo día**, y entonces
+dos planos distintos comparten etiqueta. Por `decisiones/023`, la segunda ratificación diaria y las
+siguientes llevan **sufijo incremental `(N)`**:
+
+```yaml
+plano_version: 2026-07-26        # primera ratificación de ese día — SIN sufijo
+plano_version: 2026-07-26 (2)    # segunda del mismo día
+plano_version: 2026-07-26 (3)    # tercera, y así
+```
+
+- **La primera del día no lleva sufijo.** `(1)` no se escribe: una fecha desnuda **es** la primera.
+  Así el caso común no paga costo y las versiones históricas siguen siendo válidas sin reescribirse.
+- **El sufijo cuenta ratificaciones, no PRs.** Un PR que no cambia el plano no lo mueve.
+- **La corrida copia la etiqueta literal**, sufijo incluido.
+
+`decisiones/023` **decide** la regla; esta sección la **aplica**. Es acá donde las fases la leen.
+
+#### Por qué existe — no es preferencia de formato
+
+Sin el sufijo, **la causal 7 de §6 —«el plano cambió de versión durante la corrida»— es
+estructuralmente inauditable dentro del día**: un cambio de plano a mitad de corrida no mueve la
+etiqueta, así que la causal no puede disparar.
+
+**Un control que no puede fallar tampoco puede detectar nada**, y es peor que no tenerlo: figura en
+la lista de causales y da falsa cobertura. Por eso `023` regla 4 fija que **un cambio de plano sin
+incremento es una violación del contrato, no un descuido de estilo** — deja ciega a la causal
+justamente cuando hacía falta.
+
+> **Límite conocido:** el incremento es **manual y sin gate**. El proyecto no tiene CI y por
+> `decisiones/006` (markdown puro) no hay test que lo clave, así que **un olvido reintroduce la
+> colisión en silencio**. Se asumió a conciencia en `023`: automatizarlo exigía renunciar a que la
+> versión se lea a ojo, y esa legibilidad es lo que hace auditable el contrato por una persona.
+
+**Precedente que lo motivó:** el **2026-07-25** se mergearon cuatro PRs de plano (`#47`, `#48`,
+`#52`, `#54`) bajo la misma etiqueta, y dos corridas reales —`2026-07-25-ejecutar-s10` y
+`2026-07-25-ejecutar-s11`— arrancaron con esa misma `plano_version` sobre planos distintos: los
+identificadores `S11/*` no existían en el plano que leyó la primera. `023` **no re-versiona esa
+historia**; queda como caso documentado.
+
 ---
 
 ## 4. Dónde se persiste
