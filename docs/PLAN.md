@@ -440,15 +440,24 @@ decidieron.
 3. **Ejercitar el canal**: el PR de esta sesión se firma con **review aprobado** del dueño, no con
    comentario. Es auto-verificante — si el canal no funciona, la sesión no cierra.
 
-✅ **Criterios de aceptación.**
-- [ ] El mecanismo de credenciales por operación está documentado, con su porqué *(verificación: inspección — el texto muestra la forma `GH_TOKEN=$(gh auth token --user …)` y dice explícitamente que `gh auth switch` es incorrecto por alterar el estado global del humano)*
-- [ ] La regla de `perimetro-de-confianza.md` §6 cubre el **review aprobado** además del comentario *(verificación: inspección — la regla destacada nombra ambos y sigue anclando la autenticación al autor del acto, no al canal)*
-- [ ] El canal de **review de PR** quedó ejercitado en corrida real *(verificación: `gh api repos/hifede1/claude-batuta/pulls/<n>/reviews` muestra un review `APPROVED` cuyo `user.login` == `hifede1`, sobre un PR abierto por la cuenta del agente)*
+✅ **Criterios de aceptación.** — **CERRADA 2026-07-26 (PR #67)**, con un criterio **retirado**.
+- [x] El mecanismo de credenciales por operación está documentado, con su porqué *(verificación: inspección — el texto muestra la forma no invasiva y dice explícitamente que `gh auth switch` es incorrecto por alterar el estado global del humano)* → `perimetro-de-confianza.md` §7
+- [x] La regla de `perimetro-de-confianza.md` §6 cubre el **review aprobado** además del comentario *(verificación: inspección — la regla destacada nombra ambos y sigue anclando la autenticación al autor del acto, no al canal)* → `:170-180`
+- [~] ~~El canal de **review de PR** quedó ejercitado en corrida real~~ — **RETIRADO 2026-07-26 por decisión del dueño.** No se cumplió y **dejó de ser cumplible**: su precondición era la separación de cuentas de `025`, que `decisiones/027` revirtió al descubrirse que la cuenta del agente pertenecía a otro proyecto. Sin cuentas separadas todos los PRs los abre el dueño, y **GitHub no permite aprobar el PR propio** — no hay review posible. *(El criterio no fracasó por falta de trabajo: se quedó sin objeto. Mantenerlo abierto simularía un pendiente que nadie puede tomar.)*
+
+> **Lo que sí se ejercitó, y queda como evidencia:** la branch protection activada en S14 **bloqueó un
+> merge de verdad** (`Merging is blocked · At least 1 approving review is required`). Eso probó que el
+> canal **puede** volverse exigible — lo que no se probó es la firma por review, porque la cuenta que
+> la hacía posible resultó ser ajena. Ambas cosas se revirtieron con `027`.
+>
+> **Queda pendiente de la decisión de cuenta de agente** (ver `026` y las consecuencias de `027`): si
+> se elige una cuenta dedicada, el canal de review vuelve a ser posible y este criterio puede
+> reabrirse como sesión propia.
 
 📚 **Referencias.** [`references/perimetro-de-confianza.md`](references/) 🟢 · [`references/audit-tracker.md`](references/) 🟢
 
-⛓️ **Prerrequisitos.** `decisiones/025` **FIRMADA y aplicada** (S13) — el canal de review solo existe
-con cuentas separadas.
+⛓️ **Prerrequisitos.** `decisiones/025` **FIRMADA y aplicada** (S13) — *nota: `027` revirtió su parte
+de identidad concreta; el principio que S14 documentó sigue vigente.*
 
 **Estimación: S**
 
@@ -471,7 +480,7 @@ con cuentas separadas.
 | **S11** | **Contabilidad de la ficha** *(mantenimiento)* ✅ cerrada 2026-07-25 | **S** | — |
 | **S12** | **Versionado del plano + drift de `011`** *(mantenimiento)* ✅ cerrada 2026-07-26 | **S** | `023` versionado |
 | **S13** | **Cerrar el contrato de firma** *(mantenimiento)* ✅ cerrada 2026-07-26 | **M** | `024` sello · `025` credenciales |
-| **S14** | **Mecanismo de credenciales + canal de review ejercitado** *(mantenimiento)* | **S** | — *(`025` ya aplicada)* |
+| **S14** | **Mecanismo de credenciales** *(mantenimiento)* ✅ cerrada 2026-07-26 · 1 criterio retirado (`027`) | **S** | — *(`025` ya aplicada)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
