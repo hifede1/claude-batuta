@@ -31,10 +31,49 @@ etiqueta su salida y esa etiqueta se propaga aguas arriba.
 
 ---
 
+## Precondición — con qué IDENTIDAD estás operando
+
+**Primera de las dos, y va primero por una razón:** si no sabés quién sos, leer el plano no te
+sirve — una corrida con plano vigente leída por el actor equivocado no es una corrida válida, es
+una corrida cuyo actor nadie decidió.
+
+Antes de la fase 1, y antes de leer el plano:
+
+```
+gh api user --jq .login
+```
+
+Cotejá contra el **dueño anclado FUERA DE BANDA** (`decisiones/009`): el owner del repo en GitHub o
+la config del plugin —**nunca un archivo que un PR del loop pueda editar**, porque entonces un PR
+podría redefinir al dueño y auto-autorizarse—. Resuelve **siempre a un login puntual**, jamás a un
+rol o permiso: un colaborador con admin **no** es el dueño.
+
+- **Coincide** → seguí a la precondición del plano.
+- **NO coincide** → **FRENÁ y reportá.** Decí las dos identidades —la activa y la anclada— y **esperá**.
+
+**No restaures la cuenta por tu cuenta.** El estado del entorno es del humano: puede estar así a
+propósito, porque estaba trabajando en otro proyecto con otra identidad. Cambiárselo sin que lo pida
+es decidir por él sobre algo que no es tuyo. Es la misma disciplina que la precondición de abajo:
+ante un plano sin firmar **no firmás vos** — reportás y frenás. **La identidad se verifica, no se
+suple.**
+
+> ⚠️ **Hallazgo real que fija esta regla** (2026-07-28): dos comandos completos del taller corrieron
+> con la cuenta de otro proyecto —la que `decisiones/027` había descartado por eso mismo y que `028`
+> decidió no usar—. **Se detectó por accidente**, porque un comando devolvió otro login; no hubo
+> chequeo que se disparara. La regla de `perimetro-de-confianza.md` §7 no lo cubría: su disparador es
+> *«después de operaciones con identidad de agente»*, y con `028` no hay identidad de agente, así que
+> **nunca ocurre**. El riesgo no estaba en el cierre; estaba en el arranque.
+>
+> Y por qué **frenar** en vez de restaurar: ese mismo día la cuenta se restauró, se verificó en el
+> acto, y **volvió a cambiar sola en menos de 25 minutos** (causa no determinada, ver §7). Una
+> restauración no es estable — verificar al arrancar es lo único cierto cuando importa.
+
+---
+
 ## Precondición — el plano tiene que estar VIGENTE
 
-Antes de la fase 1, leé el documento raíz del plano del proyecto y buscá su **línea de firma**
-(`decisiones/011`):
+**Segunda.** Con la identidad ya verificada, leé el documento raíz del plano del proyecto y buscá su
+**línea de firma** (`decisiones/011`):
 
 ```
 > **Estado: VIGENTE**
