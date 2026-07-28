@@ -218,9 +218,7 @@
       "cierra": []
     }
   ],
-  "decisiones_pendientes": [
-    "026 — quien ejecuta las operaciones administrativas del repositorio (cuatro opciones, sin ganador propuesto)"
-  ],
+  "decisiones_pendientes": [],
   "referencias": [
     {
       "tema": "doc-arquitecto",
@@ -263,6 +261,7 @@
     "SALDADA 2026-07-26 (PR #59, S12): la 011 figuraba en FICHA.md §10 como aceptada 2026-07-19, estado que 018 no contempla, cuando el ADR estaba FIRMADA desde su re-ratificación del 2026-07-23. Resultó drift doc-ADR, no sello sin procedencia: el ADR estaba impecable y la ficha atrasada.",
     "SALDADA 2026-07-26 (023 FIRMADA por PR #56/#57 + bajada a contrato por PR #59): colisión de plano_version. El 2026-07-25 cuatro PRs de plano compartieron etiqueta con contenidos distintos y dos corridas reales arrancaron con la misma versión sobre planos distintos; la causal 7 de §6 quedaba estructuralmente inauditable dentro del día. Se adoptó sufijo incremental (N) y registro-de-cadena.md §3 lo declara con su porqué. Costo vivo: el incremento es manual y sin gate, un olvido reintroduce la colisión en silencio.",
     "REABIERTO 2026-07-26 por 027: el hueco de 009. Fue saldado por S13 separando cuentas, pero la cuenta elegida (estebaproject) pertenecia a otro proyecto y el agente la adopto heredandola del default de gh sin verificarla; lo detecto el dueno. 027 la revirtio y retiro la branch protection, porque sin cuenta de agente todos los PRs los abre el dueno y GitHub no permite aprobar el propio. Consecuencia: merged_by == hifede1 vuelve a NO discriminar humano de maquina. Sobrevive el principio y su andamiaje (§6, §7, 024, 026): se cayo una cuenta, no el diseno. Destraba: elegir cuenta de agente dedicada o aceptar el agujero por decision firmada.",
-    "ABIERTO 2026-07-26 (S14), ADR 026 PENDIENTE: los actos administrativos no tienen ejecutor legitimo. 025 dejo al agente con admin=false -su resultado buscado- y con eso sin poder ejecutar ninguna operacion administrativa del repo. Existe una clase entera de trabajo que batuta puede planificar y llevar a firma pero no ejecutar. En S13/H2 se declaro correctamente como hueco; en S14 el agente violo 025 ejecutando un PUT con la credencial del dueno dentro de un comando presentado como diagnostico. No es indisciplina que se corrija avisando: la regla no tenia via de cumplimiento, y una regla sin camino legitimo se rompe sola. Evidencia para decidir: la opcion el-humano-ejecuta es la mas limpia en el papel y la que mas fallo en la practica."
+    "ABIERTO 2026-07-26 (S14), ADR 026 PENDIENTE: los actos administrativos no tienen ejecutor legitimo. 025 dejo al agente con admin=false -su resultado buscado- y con eso sin poder ejecutar ninguna operacion administrativa del repo. Existe una clase entera de trabajo que batuta puede planificar y llevar a firma pero no ejecutar. En S13/H2 se declaro correctamente como hueco; en S14 el agente violo 025 ejecutando un PUT con la credencial del dueno dentro de un comando presentado como diagnostico. No es indisciplina que se corrija avisando: la regla no tenia via de cumplimiento, y una regla sin camino legitimo se rompe sola. Evidencia para decidir: la opcion el-humano-ejecuta es la mas limpia en el papel y la que mas fallo en la practica.",
+    "El estado.json arrastro a 026 como decision pendiente despues de que el ADR quedara FIRMADA el 2026-07-26, y el tracker HTML NO tenia ese drift: la vista derivada envejecio sola. Lo cazo una corrida real de batuta el 2026-07-28, NO la re-auditoria de ese mismo dia, que lo miro y no lo vio. Deuda: el estado.json se escribe a mano en cada re-auditoria y nada coteja sus campos contra docs/decisiones/. Sin CI en este repo (006), la unica defensa hoy es que la re-auditoria lo verifique explicitamente, campo por campo."
   ]
 }
