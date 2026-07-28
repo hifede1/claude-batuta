@@ -325,3 +325,39 @@ dueño en un chequeo del agente.
 **Y si la verificación falla, se restaura y se ASIENTA** — no en silencio. Contaminar el entorno del
 dueño es un efecto lateral sobre algo que no es del agente; queda en el registro de la corrida como
 desvío, igual que cualquier otro.
+
+### DOS momentos, DOS respuestas — el cierre y el ARRANQUE
+
+La regla de arriba cubre **un** momento: el cierre, después de que el agente operó. Su premisa es que
+**la contaminación es del agente**, y por eso la respuesta es restaurar: se limpia lo que uno ensució.
+
+**Falta el otro momento, y es el que más duele: el ARRANQUE.** Ahí la cuenta activa puede no ser la
+del dueño **sin que el agente haya hecho nada** — porque el humano estaba trabajando en otro proyecto
+con otra identidad, que es su derecho y no un defecto. Si el agente arranca sin mirar, **hereda** esa
+identidad, y opera con un actor que nadie decidió para él. Es literalmente lo que `decisiones/027`
+prohíbe: *«una identidad se DECIDE explícitamente; jamás se hereda del estado del entorno»*.
+
+> **Regla de arranque: ANTES de la primera operación, verificar la cuenta activa contra el dueño
+> anclado. Si no coincide: FRENAR y reportar. NO restaurar por cuenta propia.**
+
+**Por qué la respuesta es distinta, y no es una inconsistencia.** Lo que cambia es **de quién es el
+estado**:
+
+| Momento | Quién dejó la cuenta así | Respuesta | Porqué |
+|---|---|---|---|
+| **Cierre** | el agente, operando | **restaurar + asentar** | ensució él; limpiar es su obligación |
+| **Arranque** | el humano, o algo que no es el agente | **frenar + reportar** | el estado es del dueño; cambiárselo es decidir por él |
+
+Restaurar al arrancar parece lo servicial, y es lo contrario: el agente le tocaría al humano una
+configuración que el humano puso a propósito, sin pedírselo. La simetría correcta es con la
+**precondición del plano**: ahí el agente tampoco firma por su cuenta cuando falta la firma — reporta
+y frena. **La identidad se trata igual que la firma: se verifica, no se suple.**
+
+> **Lo medido el 2026-07-28 — y la razón por la que «restaurar» no alcanzaría igual.** Se detectó la
+> cuenta activa en la del otro proyecto, se restauró a la del dueño y se verificó en el acto. **Menos
+> de 25 minutos después había vuelto a cambiar**, con el config en disco (`~/.config/gh/hosts.yml`)
+> apuntando otra vez a la ajena. **La causa no quedó determinada** y no se le inventa una — igual que
+> con la salvedad de `GH_CONFIG_DIR` de más arriba. Lo que sí queda medido: **una restauración no es
+> estable**, así que apoyarse en ella para seguir operando es apoyarse en algo que puede haberse
+> deshecho para cuando llegue la escritura. Verificar al arrancar **no es redundante con restaurar al
+> cerrar**: es lo único que sigue siendo cierto en el momento en que importa.
