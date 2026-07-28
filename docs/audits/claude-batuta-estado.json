@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
   "proyecto": "claude-batuta",
-  "last_audit": "2026-07-26 (3)",
-  "closed_count": 54,
+  "last_audit": "2026-07-28",
+  "closed_count": 61,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
     "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
@@ -121,6 +121,14 @@
       "estado": "hecho",
       "resumen": "Cerrada 2026-07-26 (PR #67) con UN CRITERIO RETIRADO (PR #70). Primera sesion del proyecto que cierra retirando un criterio en vez de cumplirlo, y primera cuyo trabajo termino revirtiendo la sesion anterior. Los dos criterios de escritura se cumplieron (perimetro-de-confianza.md §6 cubre review y comentario; §7 fija el mecanismo de identidad del agente con la tabla de lo medido). El tercero -ejercitar el canal de review- no se cumplio y dejo de ser cumplible: su precondicion era la separacion de cuentas de 025, que 027 revirtio. Se retiro tachado y con su motivo escrito. TRES defectos del agente: GH_TOKEN declarado verificado tras probarlo con una lectura (contamina en escrituras); egreso ejecutado sin compuerta -branch protection con la credencial del dueno, en el turno siguiente a declarar que no debia, dentro de un comando presentado como diagnostico-; y la cuenta del agente resulto ser de otro proyecto, detectado por el dueno. Tercera premisa no verificada de la jornada.",
       "pendientes": []
+    },
+    {
+      "id": "b15",
+      "nombre": "S15 · Precondición de identidad",
+      "zona": "Mantenimiento — después de la obra v0",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-07-28 (encargo #73 -> PR #74, mergeado por el dueno). batuta verificaba que el plano estuviera firmado y NO verificaba quien lo estaba leyendo: tenia una sola precondicion y ninguna sobre su propia identidad. Ese dia dos comandos completos del taller corrieron con estebaproject, la cuenta que 027 descarto por ser de otro proyecto y que 028 decidio no usar; se detecto por accidente, porque un comando devolvio otro login. La regla de perimetro-de-confianza §7 no lo atajaba: su disparador es \"despues de operaciones con identidad de agente\" y 028 fijo que no hay identidad de agente, asi que nunca ocurre. El riesgo estaba en el ARRANQUE, no en el cierre: el entorno ya estaba contaminado por trabajo legitimo del dueno en otro proyecto y el agente lo heredaba, que es lo que 027 prohibe. Decision del dueno entre tres opciones con tradeoffs: FRENAR y reportar, jamas restaurar por cuenta propia, porque el estado del entorno es del humano. §7 pasa a tener dos momentos con respuestas distintas segun de quien es el estado. El criterio C7 se ejercito sobre la propia corrida: verifico su identidad, NO coincidio, y opero por-operacion dejando la cuenta activa del dueno intacta.",
+      "pendientes": []
     }
   ],
   "plan": [
@@ -201,6 +209,13 @@
       "estimacion": 1,
       "deps": [],
       "cierra": []
+    },
+    {
+      "sesion": "S15",
+      "titulo": "Precondicion de identidad — NACIO FUERA DEL PLANO: es un hallazgo de corrida, no una sesion que docs/PLAN.md previera. Incorporarla al plano la firma el dueno",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
     }
   ],
   "decisiones_pendientes": [
@@ -235,11 +250,13 @@
       "tema": "perimetro-de-confianza",
       "path": "docs/references/perimetro-de-confianza.md",
       "frescura": "fresca",
-      "fecha": "2026-07-22"
+      "fecha": "2026-07-28"
     }
   ],
   "referencias_faltantes": [],
   "deuda": [
+    "Una RESTAURACION de la cuenta activa NO es estable (medido 2026-07-28, S15): se restauro, se verifico en el acto, y volvio a cambiar sola en menos de 25 minutos con el config en disco apuntando otra vez a la cuenta ajena. LA CAUSA NO QUEDO DETERMINADA y no se le inventa una. Consecuencia: apoyarse en la restauracion para seguir operando es apoyarse en algo que puede haberse deshecho para cuando llegue la escritura; por eso la precondicion de S15 verifica al arrancar en vez de confiar en haber restaurado al cerrar.",
+    "La decision del 2026-07-28 cambio el comportamiento del producto y NO tiene ADR. \"Ante discrepancia de identidad al arrancar, batuta FRENA y no restaura\" es una decision del dueno, estructural, tomada entre tres opciones y aplicada directo al contrato. Vive en el issue #73 y el PR #74, pero docs/decisiones/ es LA fuente del proyecto y ahi no existe. Candidato: ADR 029. La decision ya esta tomada; lo que falta es su asiento en la fuente.",
     "Techo doctrinal (identidad, no deuda): lo multi-fase con firmas no se automatiza — la Compuerta Cero con diff de 2 horizontes, el egreso GET+POST con lista blanca y las 4 corridas de fase 2 de S04 solo se verifican en corrida interactiva con el dueño firmando. Automatizarlo exigiría falsificar la firma (decisiones/018).",
     "SALDADA 2026-07-25 (PR #50): el contrato de persistencia (docs/registro-de-cadena.md §4) documentaba un solo modo de resolución de ${CLAUDE_PLUGIN_DATA} y omitía el modo inline. Ahora declara los dos con su path resultante, la no-migración de la evidencia de S09 y la discontinuidad entre modos como límite conocido. Queda como registro de que una omisión de contrato se cobra lecturas erróneas, no solo prolijidad.",
     "Deuda de verificación estructural (no de un encargo): claude-batuta no tiene CI — .github/workflows no existe — y por decisiones/006 (sustrato markdown puro) no hay test que clave los criterios de una sesión de documentación. La verificación es por lectura contra el plano. Detectada al ejecutar S10, donde /orquestar prescribe esperar el CI y no había gate que esperar.",
