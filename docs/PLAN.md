@@ -6,7 +6,7 @@
 >
 > ⛔ **Toda sesión salvo S01 está bloqueada por la compuerta de precondición** (ver `ALCANCE.md`).
 >
-> **Cómo se verifica en este proyecto:** al ser markdown puro no hay tests unitarios. Los criterios se verifican con **corridas sembradas** — un repo de prueba preparado a propósito con la condición que se quiere probar — más inspección del `.md`.
+> **Cómo se verifica en este proyecto:** al ser markdown puro no hay tests unitarios. Los criterios se verifican con **corridas sembradas** — un repo de prueba preparado a propósito con la condición que se quiere probar — más inspección del `.md`. **Alcance precisado por `decisiones/030` (2026-07-30):** «markdown puro» fija el sustrato del **producto** —el comando es `.md`, sin build ni dependencias de instalación— y **no** impide infraestructura de **verificación** del repo. Los criterios de aceptación de una sesión siguen verificándose con corridas sembradas, como dice esta línea; lo que `030` habilita es verificar **coherencia entre documentos** (`.github/workflows/coherencia.yml`).
 
 ---
 
@@ -522,14 +522,15 @@ ya decidió.
 6. **Gotcha:** la tentación acá es escribir un chequeo grande. Un cable mal puesto es peor que el
    cartel, porque el cartel no promete nada. Tres chequeos, y cada uno visto fallar.
 
-✅ **Criterios de aceptación.**
-- [ ] Las tres vistas derivadas se declaran como tales y fijan la precedencia *(verificación: inspección — `FICHA.md` §10, el artefacto de estado y `PLAN.md` remiten a `decisiones/` y dicen qué manda ante divergencia)*
-- [ ] `FICHA.md` §10 quedó reducida a punteros *(verificación: inspección — cada entrada lleva ADR, estado, fecha y path; cero duplicación del cuerpo del ADR)*
-- [ ] El alcance precisado de `006` está escrito donde hoy se lo invoca como impedimento, con lo que NO habilita *(verificación: inspección — el texto distingue sustrato del producto de infraestructura de verificación, y deja dicho que los criterios de sesión siguen verificándose con corridas sembradas)*
-- [ ] El chequeo corre **sin que nadie lo pida** *(verificación: `.github/workflows/` existe y un PR de prueba muestra el check ejecutado)*
-- [ ] **El chequeo FALLA cuando debe** *(verificación: corrida sembrada — un drift plantado en `decisiones_pendientes` del artefacto de estado lo pone en rojo, señalando el ADR; y un ADR sin línea de sello también. Un chequeo que nunca se vio fallar es una intención con formato de comando)*
-- [ ] El chequeo **frena distinto de fallar** *(verificación: corrida sembrada sin `jq` o sin el artefacto de estado; salida explícita de precondición, jamás silencio ni verde)*
-- [ ] Los dos casos de drift vivos quedaron cerrados *(verificación: inspección — el label `externo` tiene un solo estado en las cinco menciones de `batuta.md`, y el título de §4 no describe v1)*
+✅ **Criterios de aceptación.** — **6 de 7 cumplidos**; el 4 cierra cuando el workflow corra en el PR.
+Evidencia completa en [`audits/s16-cable-2026-07-30.md`](audits/s16-cable-2026-07-30.md).
+- [x] Las tres vistas derivadas se declaran como tales y fijan la precedencia *(verificación: inspección — `FICHA.md` §10 y esta tabla de Resumen remiten a `decisiones/` y declaran qué manda; el artefacto de estado queda declarado en `references/audit-tracker.md` **con hueco-a-construir**: su schema es de `audit-tracker`, y agregarle un campo sería cambiar el contrato de un delegado)* → `FICHA.md` §10 · `PLAN.md` §Resumen · `references/audit-tracker.md`
+- [x] `FICHA.md` §10 quedó reducida a punteros *(verificación: inspección — 28 filas con ADR, título, sello, fecha y path; los 24 párrafos de prosa duplicada salieron. Se detectaron y cerraron dos drifts al convertir: `019`/`020`/`021` no tenían entrada propia —vivían dentro de la de `015`— y `CERRADA` es un tercer sello legítimo que el binario FIRMADA/PENDIENTE no contemplaba)*
+- [x] El alcance precisado de `006` está escrito donde hoy se lo invoca como impedimento, con lo que NO habilita *(verificación: inspección — `PLAN.md:9` y `decisiones/006` §«Alcance precisado». Distingue sustrato del producto de infraestructura de verificación, invoca el precedente del artefacto de estado —ya no es markdown—, y subraya que los criterios de sesión siguen verificándose con corridas sembradas)* ⚠️ **deja una tensión declarada sin resolver, para firma del dueño**: la consecuencia 3 de `006` pide un ADR que lo **supere** para agregar código, y `030` declara `superaA: —`
+- [ ] El chequeo corre **sin que nadie lo pida** *(verificación: `.github/workflows/coherencia.yml` existe y el PR de esta sesión muestra el check ejecutado — **el archivo está; la corrida se verifica en el PR**, que es la única forma honesta de comprobarlo)*
+- [x] **El chequeo FALLA cuando debe** *(verificación: `bateria-sembrada.sh` — 5 escenarios de drift plantados, 5 en rojo con el ADR señalado: artefacto que lista un firmado como pendiente · ADR que pasa a PENDIENTE sin que el artefacto lo sepa · ADR sin sello · §10 declarando otro estado · ADR huérfano de §10. **La batería corre en cada PR**, así la garantía es vigente y no histórica)*
+- [x] El chequeo **frena distinto de fallar** *(verificación: 2 escenarios sembrados — sin artefacto de estado y con §10 sin filas evaluables → `exit 2` con el motivo dicho, jamás verde ni silencio. Más un noveno escenario que prueba que **no** hay falso positivo: `PENDIENTE` mencionado en la prosa de un ADR sigue en verde. 9/9)*
+- [x] Los dos casos de drift vivos quedaron cerrados *(verificación: inspección — `batuta.md` ya no tiene ninguna mención de «label `externo` faltante»; las líneas `:632`, `:637`, `:658` y `:729` se propagaron a la decisión de la mesa chica, y el autochequeo de `:658` dejó de frenar por hacer lo que `:613` ordena. `FICHA.md` §4 pasa a «4 activas en v0, 6 en v1» con la aclaración de qué corre hoy)*
 
 📚 **Referencias.** — *(ninguna nueva: se lee contra `decisiones/030`, `registro-de-cadena.md` §6 y la deuda de verificación estructural del artefacto de estado)*
 
@@ -543,6 +544,11 @@ superficie de CI del proyecto y su corrida sembrada. El chequeo ya está prototi
 ---
 
 ## Resumen
+
+> ⚠️ **Esta tabla es una VISTA DERIVADA** (`decisiones/030`). La columna *Bloqueada por decisión*
+> refleja un estado cuya **fuente es `docs/decisiones/`**; ante divergencia **manda la fuente, no esta
+> tabla**. Lo mismo vale para el estado de cada sesión: la obra la pinta la re-auditoría de
+> `audit-tracker`, no este documento.
 
 | Sesión | Objetivo | Talle | Bloqueada por decisión |
 |---|---|---|---|

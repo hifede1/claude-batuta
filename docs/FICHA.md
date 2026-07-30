@@ -129,7 +129,16 @@ Plugin de Claude Code, comando **`/batuta:batuta`** (namespacing real de plugins
 
 **Lo que batuta hace por sí misma (y nada más):** análisis-de-orquestación (sintetiza la RUTA), selección condicional de tools, mapeo de externos, diseño del ruteo, y el loop de ejecución abriendo SOLO los gates META que ninguna tool posee.
 
-## 4. Las 6 fases de una corrida
+## 4. Las fases de una corrida — **4 activas en v0**, 6 en v1
+
+> ⚠️ **Lo que corre hoy son CUATRO** (`ALCANCE.md`, `decisiones/007`): analizar → planificar →
+> ejecutar-con-compuertas → cerrar. Las fases **3 y 4** de la lista de abajo —`mapear-externos` y
+> `definir-ruteo`— son **v1**: en v0 viven en forma MÍNIMA dentro de `planificar` y
+> `ejecutar-con-compuertas`, sin fase propia y sin campo estructurado. El comando implementa cuatro.
+>
+> El título de esta sección decía «Las 6 fases» sin la distinción, y **ésta es la sección que `batuta`
+> lee como precondición en cada corrida** — una lista de v1 leída como v0 es el terreno donde ya se
+> rompió una vez (fix #37/#38). Corregido en **S16** como aplicación de `decisiones/030`.
 
 1. **analizar** — entender el objetivo. Con plano firmado → LEE el estado (audit-tracker). Sin plano → rutea a `/documentar` + `/auditar-docs` y frena. **Compuerta:** devuelve al humano su lectura del objetivo ("esto entendí que querés y por qué") — un objetivo mal leído envenena las 5 fases.
 2. **planificar** (`director-de-obra` plegado, mono-proyecto) — grafo de dependencias + inversiones; horizontes tipo Gantt distinguiendo *gated-por-EJECUCIÓN* vs *gated-por-FIRMA* (esa distinción ES el ruteador de la fase ejecutar); pase adversarial contra estado FRESCO (vía workflow); recomendaciones rankeadas con contrapunto + decisiones-a-firmar.
@@ -201,31 +210,59 @@ está tomada**.
 
 ### Firmadas
 
-- **Mono-proyecto en v0 y v1** — FIRMADA 2026-07-18 · `decisiones/001-mono-proyecto.md`. Portafolio = v2. Rompe la dependencia dura de `cartera`; enumeración trivial = el repo. Aplicada en §0 y §4.
-- **Granularidad: Compuerta Cero** — FIRMADA 2026-07-19 · `decisiones/002-granularidad-de-compuertas.md`. Fases 1-4 colapsan en UNA firma de «plan aprobado por horizonte», con diff; gates duros individuales solo en ejecutar y cerrar. Aplicada en §4 y §11.
-- **Modo boceto greenfield: no existe** — FIRMADA 2026-07-19 · `decisiones/003-modo-boceto-greenfield.md`. Sin plano se rutea siempre a `/documentar`; un plano-borrador ratificable roza fabricar contrato. Aplicada en §11 y §12.
-- **Detección de externos: campo estructurado, jamás detector propio** — FIRMADA 2026-07-19 · `decisiones/004-deteccion-de-externos.md`. v0 cosecha best-effort lo que los cimientos flaguean; v1 agrega el campo `externos` a `doc-arquitecto` Y `audit-tracker`. El mini-detector queda descartado por §8.
-- **Clase «micro»: no existe** — FIRMADA 2026-07-19 · `decisiones/005-clase-micro.md`. Todo cambio de código va a `/orquestar`, sin excepción por tamaño.
-- **Sustrato: markdown puro** — FIRMADA 2026-07-19 · `decisiones/006-sustrato-markdown-puro.md`. Comando `.md`, sin código, sin build, sin dependencias. Consecuencia: los criterios de §12 se verifican con **corridas sembradas**, no con tests unitarios.
-- **Corte de versiones v0/v1/v2** — FIRMADA 2026-07-19 · `decisiones/007-corte-de-versiones.md`. Ver §0.
-- **Absorción de `director-de-obra` como fase 2** — FIRMADA 2026-07-18 · `decisiones/008-absorcion-director-de-obra.md`. Ver §9.
-- **Autenticación de la firma: excepción acotada por identidad** — FIRMADA 2026-07-21 · `decisiones/009-autenticacion-de-la-firma.md`. El `✅ validado` mueve el loop si y solo si su **autor autenticado == el dueño declarado**; es autorización, no contenido. Resuelve la «duda» que §7 dejaba abierta. Desbloquea: S06.
-- **Escaneo de secretos en v0: diferido a `publicador`** — FIRMADA 2026-07-20 · `decisiones/010-secretos-en-v0.md`. «gitleaks limpio» se difiere a `publicador`; la v0 se protege por diseño (§5: guarda la necesidad, nunca el valor). Aplicada en S05.
-- **Acto de ratificación del plano** — FIRMADA 2026-07-19 · **re-ratificada 2026-07-23** · `decisiones/011-ratificacion-del-plano.md`. Línea de firma explícita en cabecera; sin ella el plano es borrador. Aplicada en S02. La original quedó «aceptada» el 2026-07-19 **sin procedencia registrada**; la mesa de firmas del 2026-07-23 la re-ratificó en bloque —Fede eligió «En bloque, las 11» vía elección explícita en sesión— y esa estampa **no fabrica el acto de 2026-07-19: registra el del 23** (ver `018`). Su desambiguación dentro del día la fija `023`.
-- **Umbral de egreso: lista blanca + historial N=5** — FIRMADA 2026-07-21 · `decisiones/012-umbral-de-egreso.md`. Umbral 0: todo egreso-que-escribe con compuerta individual; lista blanca firmada como única vía de batcheo; el historial (N=5 corridas limpias) **propone** el alta, la firma **dispone**. Desbloqueó: S07.
-- **Rúbrica de confidence: cualitativa de 3 niveles** — FIRMADA 2026-07-20 · `decisiones/014-rubrica-de-confidence.md`. ALTA/MEDIA/BAJA sin puntaje; siempre nivel + porqué + contrapunto. Aplicada en S04.
-- **Cota de la banda angosta: híbrida con techo K=5** — FIRMADA 2026-07-20 · `decisiones/016-cota-banda-angosta.md`. Convergencia declarada + fusible K=5, lo que pase primero; el techo es anomalía, no verde. Aplicada en S04.
-- **La firma es un acto, no un campo (blindaje anti-falsificación)** — FIRMADA 2026-07-20 · `decisiones/018-blindaje-antifalsificacion.md`. Todo ADR nace PROPUESTA; el sello FIRMADA solo con acto humano rastreable en `Procedencia de la firma`. Complemento operativo de 011.
-- **Eje externo (paraguas `015`): CERRADO 2026-07-24** — las tres decisiones que dejaba abiertas, firmadas como ADRs propios: **`019`** fuentes del PROVISTO (declaración del dueño vale, con marca «no sondeado») · **`020`** salud en runtime (reporte, no estado; carril pausado + hallazgo) · **`021`** lista negra de egreso v0 (pagos y borrados irreversibles fuera, ni con firma — completa a `012`).
-- **Asiento del bookkeeping de apertura (tercer salvo)** — FIRMADA 2026-07-25 · `decisiones/022-asiento-bookkeeping-de-apertura.md`. La composición del asiento de `registro-de-cadena.md` §6 contemplaba el bookkeeping de un CIERRE, pero no el de una re-auditoría que **ABRE** trabajo — clase inevitable que nacía como eslabón roto (caso real: PR #46, merge autenticado y solo `docs/audits/`, roto porque `CLOSED_COUNT` no se movió). El salvo autentica solo con tres condiciones; la de «invocación asentada en un eslabón `obra`» es la que lo hace asiento y no puerta trasera. Origen: hallazgo D10 de la corrida `2026-07-24-arreglar-path-de-corridas`. Ratificada por merge del PR #47.
-- **Versionado del plano: sufijo incremental dentro del día** — FIRMADA 2026-07-26 · `decisiones/023-versionado-del-plano.md`. `011` fija que la fecha de firma ES la versión, sin prever que **dos ratificaciones del mismo día son indistinguibles**: el 2026-07-25 se mergearon CUATRO PRs de plano (#47/#48/#52/#54) bajo la misma etiqueta, y dos corridas reales arrancaron con esa versión sobre planos distintos. El costo no era estético: la causal 7 de `registro-de-cadena.md` §6 —«el plano cambió de versión durante la corrida»— quedaba **estructuralmente inauditable dentro del día**. Se adopta sufijo `(N)` a partir de la segunda ratificación diaria, reusando la notación que el tracker ya aplica a auditorías múltiples. Costo aceptado: el incremento es manual y sin gate — un olvido reintroduce la colisión en silencio. Ratificada por merge del PR #56. Baja a contrato en **S12**.
-- **Patrón único de sello: el ADR se firma en el PR que lo propone** — FIRMADA 2026-07-26 · `decisiones/024-patron-unico-de-sello.md`. `018` admitía dos lecturas del **cuándo** se estampa el sello, y ambas estaban en uso: el patrón corto (`012`, `015`, `019`/`020`/`021` — 1 PR) y el largo (`022`, `023` — 3 PRs: propuesta → sello → trabajo). Se unifica en el corto. **El argumento que resuelve la tensión con `018`:** un sello escrito en una rama no mergeada **no existe en el contrato** —el contrato es `main`, y llegar ahí exige el merge del dueño—, así que sello y ratificación son **simultáneos por construcción**. Disuelve además el hueco de la ventana propuesta↔sello, durante la cual §10 tenía que listar el ADR en Pendientes o mentir (falló en el PR #56). Sigue valiendo nacer ⏳ PENDIENTE **cuando la elección humana todavía no ocurrió**. `022` y `023` no se re-escriben. Baja a contrato en **S13**.
-- **Reversión de la cuenta del agente: la premisa de `025` era falsa** — FIRMADA 2026-07-26 · `decisiones/027-reversion-de-la-cuenta-del-agente.md`. **Supera parcialmente a `025`.** Ese ADR nombró a `estebaproject` como la cuenta del agente; **el agente nunca verificó de quién era** — la adoptó porque era la cuenta activa por defecto de `gh` en la máquina del dueño. Pertenece a otro proyecto, y lo detectó Fede mirando un PR. **Se revierte la identidad concreta y se conserva el principio:** la separación agente/dueño sigue siendo correcta; lo que estaba mal era con qué cuenta se hizo. `estebaproject` sale del repo, la protección de rama se retira —sin cuenta de agente todos los PRs los abre el dueño, y GitHub no permite aprobar el propio, así que el repo quedaría imposible de mergear— y **la cuenta del agente queda sin definir a propósito**. ⚠️ **Consecuencia declarada: el agujero de `009` vuelve a estar abierto** — sin cuentas separadas, `merged_by` deja otra vez de discriminar humano de máquina. Regla que fija: **una identidad que el contrato nombra se DECIDE; jamás se hereda del estado del entorno.**
-- **Quién ejecuta las operaciones administrativas: lista blanca acotada** — FIRMADA 2026-07-26 · `decisiones/026-operaciones-administrativas.md`. `025` dejó al agente con `admin=false` y con eso **sin poder ejecutar ninguna operación administrativa** — existe una clase entera de trabajo que `batuta` puede planificar y llevar a firma pero no ejecutar. Se manifestó dos veces, y la segunda **el agente violó `025`** tomando la credencial del dueño dentro de un comando presentado como diagnóstico: **una regla sin camino legítimo se rompe sola**. Se adopta **excepción acotada por lista blanca** (branch protection y colaboradores, nada más), con **compuerta individual por uso**, verificación previa contra `021` y **asiento obligatorio** — un uso sin asiento es la causal 4 de §6, no una excepción. La lista solo cambia como decisión-a-firmar de tercera altitud (`012`). **Nota de proceso:** el agente **no propuso ganador** hasta descubrir que esta decisión estaba **acoplada** a la de la cuenta (`028`) — recomendar la opción que le da capacidad era conflicto de interés, y se declaró como tal.
-- **Sin cuenta de agente: el agujero de `009` se acepta, declarado** — FIRMADA 2026-07-26 · `decisiones/028-sin-cuenta-de-agente.md`. Tras la reversión de `027`, el dueño eligió **no crear una cuenta dedicada**. Consecuencia asumida por escrito: **`merged_by` NO prueba quién actuó** — un merge del agente y uno del humano son estructuralmente idénticos, así que el primer salvo de `registro-de-cadena.md` §6 **conserva su forma pero pierde su valor probatorio** y se lee como declaración, no como prueba. El canal de firma vuelve al comentario `✅ validado` (sin cuentas separadas GitHub no permite asignar reviewer), que §6 de `perimetro-de-confianza.md` ya contempla — no hay nada que reescribir. **Lo que compra el agujero es una posición honesta:** la alternativa peor no era crear la cuenta, era **seguir escribiendo «autenticado» en cada registro sin poder probarlo**, que es lo que pasaba desde S10 sin que nadie lo notara. **Reversible sin costo:** crear una cuenta dedicada y volver a aplicar `025` reactiva todo el andamiaje sin escribir una línea.
-- **Separación de credenciales: el agente no opera con la cuenta del dueño** — FIRMADA 2026-07-26 · `decisiones/025-separacion-de-credenciales.md`. `009` autentica la firma por `merged_by` == dueño anclado, **pero el agente operaba con la credencial de `hifede1`, que ES el dueño anclado**: un merge del agente producía el mismo metadato que uno del humano, así que el criterio **no discriminaba lo que decía discriminar**. Se separa: el agente usa `estebaproject` (con push) para ramas, PRs, issues y comentarios; `hifede1` queda **solo para el humano**. Así `merged_by == hifede1` vuelve a ser **prueba**, sin tocar el texto de `009`. Efecto lateral buscado: con cuentas distintas GitHub permite asignar reviewer, de modo que el canal de firma puede volver al **review de PR** en vez del comentario `✅ validado`. **No re-autentica el pasado:** los merges de S10–S12 se hicieron con credencial compartida y quedan como están. Baja a contrato y se **aplica** en **S13**.
-- **Coherencia del contrato: fuente única + verificación mecánica** — FIRMADA 2026-07-30 · `decisiones/030-coherencia-del-contrato.md`. Las seis sesiones de mantenimiento **S10–S15 arreglaron el mismo defecto seis veces**: divergencia entre documentos que declaran lo mismo, todas autodescritas como «contabilidad» o «cero cambio de comportamiento». Causa raíz estructural: el estado de un ADR vive en **cuatro** lugares y **tres son copias que no se declaran copias ni apuntan a la fuente**, con propagación manual y sin gate. Fede eligió la **opción 2 —doctrina + verificación mecánica—** entre tres, descartando «solo doctrina» por insuficiente y «delegar a la re-auditoría» porque **ya falló con fecha**: el 2026-07-28 la re-auditoría miró el drift de `026` en el artefacto de estado y no lo vio; lo cazó una corrida real. Decide tres cosas: (1) `decisiones/` es LA fuente y esta §10, el artefacto de estado y `PLAN.md` son **vistas derivadas** con precedencia declarada; (2) **el alcance de `006` queda PRECISADO** —fija el sustrato del *producto*, y un chequeo de coherencia entre documentos es verificación, no producto; precedente: el artefacto de estado ya no es markdown— sin habilitar build del comando ni tests unitarios para criterios de sesión, que siguen verificándose con corridas sembradas; (3) el criterio de aceptación es **que el chequeo FALLE cuando debe**, porque un cable mal puesto es peor que el cartel: al prototiparlo el 2026-07-30 murió en silencio por `set -e` + `grep` sin match, y un `grep PENDIENTE` a lo bruto marcaba `026` como pendiente por una mención en prosa. Ratificada por merge del PR #77. Baja a contrato en **S16**.
-- **`retrospectiva`: fuera de alcance de v0, explícito** — FIRMADA 2026-07-22 · `decisiones/013-retrospectiva-opcional.md`. La fila sale de §3; la fase `cerrar` no la produce, ni la delega, ni la bloquea — el binario delega-o-BLOQUEA queda intacto. Si entra en v2+, será ruteo al comando de `audit-tracker` (ficha externa). Desbloqueó: S08.
+> ⚠️ **Esta sección es una VISTA DERIVADA** (`decisiones/030`). **La fuente del estado de un ADR es
+> `docs/decisiones/`**, y ante cualquier divergencia **manda la fuente, no esta tabla.** Acá viven el
+> puntero, el sello y el mapeo a dónde se aplica; **el porqué vive en el ADR**, que es donde ya está.
+>
+> Hasta S16 esta sección duplicaba en prosa el cuerpo de cada ADR —~25 párrafos— y **esa duplicación
+> era la fuente del drift, no su síntoma**: dos de las seis sesiones de mantenimiento (S11 y S12) se
+> gastaron corrigiéndola. El chequeo de `.github/workflows/coherencia.yml` verifica en cada PR que
+> cada fila de acá coincida con el sello de su ADR y que ningún ADR quede sin fila.
+
+| ADR | Decisión | Sello | Fecha | Baja / aplica en |
+|---|---|---|---|---|
+| [`001`](decisiones/001-mono-proyecto.md) | Mono-proyecto en v0 y v1 | ✅ FIRMADA | 2026-07-18 | §0 · §4 |
+| [`002`](decisiones/002-granularidad-de-compuertas.md) | Granularidad de compuertas: Compuerta Cero | ✅ FIRMADA | 2026-07-19 | §4 · §11 |
+| [`003`](decisiones/003-modo-boceto-greenfield.md) | Modo boceto greenfield: no existe | ✅ FIRMADA | 2026-07-19 | §11 · §12 |
+| [`004`](decisiones/004-deteccion-de-externos.md) | Detección de externos: campo estructurado, jamás detector propio | ✅ FIRMADA | 2026-07-19 | §8 |
+| [`005`](decisiones/005-clase-micro.md) | Clase «micro»: no existe | ✅ FIRMADA | 2026-07-19 | §11 · S07 |
+| [`006`](decisiones/006-sustrato-markdown-puro.md) | Sustrato: markdown puro | ✅ FIRMADA | 2026-07-19 | §12 · alcance precisado por `030` |
+| [`007`](decisiones/007-corte-de-versiones.md) | Corte de versiones v0 / v1 / v2 | ✅ FIRMADA | 2026-07-19 | §0 |
+| [`008`](decisiones/008-absorcion-director-de-obra.md) | Absorción de `director-de-obra` como fase 2 | ✅ FIRMADA | 2026-07-18 | §9 |
+| [`009`](decisiones/009-autenticacion-de-la-firma.md) | Autenticación de la firma | ✅ FIRMADA | 2026-07-21 | §7 · desbloqueó S06 |
+| [`010`](decisiones/010-secretos-en-v0.md) | Escaneo de secretos en v0 | ✅ FIRMADA | 2026-07-20 | S05 |
+| [`011`](decisiones/011-ratificacion-del-plano.md) | Acto de ratificación del plano | ✅ FIRMADA | 2026-07-19 · re-ratificada 2026-07-23 | S02 |
+| [`012`](decisiones/012-umbral-de-egreso.md) | Umbral de egreso | ✅ FIRMADA | 2026-07-21 | desbloqueó S07 |
+| [`013`](decisiones/013-retrospectiva-opcional.md) | El estado de `retrospectiva` | ✅ FIRMADA | 2026-07-22 | §3 · desbloqueó S08 |
+| [`014`](decisiones/014-rubrica-de-confidence.md) | Rúbrica de confidence | ✅ FIRMADA | 2026-07-20 | S04 |
+| [`015`](decisiones/015-eje-externo.md) | Decisiones nuevas del eje ejecutar + externos *(paraguas)* | ✅ CERRADA | 2026-07-24 | delega en `019` · `020` · `021` |
+| [`016`](decisiones/016-cota-banda-angosta.md) | Cota de la banda angosta | ✅ FIRMADA | 2026-07-20 | S04 |
+| [`018`](decisiones/018-blindaje-antifalsificacion.md) | La firma es un acto, no un campo | ✅ FIRMADA | 2026-07-20 | complemento operativo de `011` |
+| [`019`](decisiones/019-fuentes-de-provisto.md) | Fuentes de verdad del PROVISTO | ✅ FIRMADA | 2026-07-24 | §5 · de `015` |
+| [`020`](decisiones/020-salud-en-runtime.md) | Salud de externos en runtime: reporte, no estado | ✅ FIRMADA | 2026-07-24 | §5 · de `015` |
+| [`021`](decisiones/021-lista-negra-egreso-v0.md) | Política general de egreso v0: lista negra mínima | ✅ FIRMADA | 2026-07-24 | completa a `012` · de `015` |
+| [`022`](decisiones/022-asiento-bookkeeping-de-apertura.md) | Asiento del bookkeeping de apertura: tercer salvo | ✅ FIRMADA | 2026-07-25 | `registro-de-cadena.md` §6 |
+| [`023`](decisiones/023-versionado-del-plano.md) | Versionado del plano: sufijo incremental dentro del día | ✅ FIRMADA | 2026-07-26 | S12 |
+| [`024`](decisiones/024-patron-unico-de-sello.md) | Patrón único de sello: el ADR se firma en el PR que lo propone | ✅ FIRMADA | 2026-07-26 | S13 · §10 «Cuándo se estampa» |
+| [`025`](decisiones/025-separacion-de-credenciales.md) | Separación de credenciales: el agente no opera con la cuenta del dueño | ✅ FIRMADA | 2026-07-26 | S13 · **superada en parte por `027`** |
+| [`026`](decisiones/026-operaciones-administrativas.md) | Quién ejecuta las operaciones administrativas del repositorio | ✅ FIRMADA | 2026-07-26 | lista blanca acotada + asiento por uso |
+| [`027`](decisiones/027-reversion-de-la-cuenta-del-agente.md) | Reversión de la cuenta del agente: la premisa de `025` era falsa | ✅ FIRMADA | 2026-07-26 | **supera en parte a `025`** |
+| [`028`](decisiones/028-sin-cuenta-de-agente.md) | Sin cuenta de agente: el agujero de `009` se acepta, declarado | ✅ FIRMADA | 2026-07-26 | consecuencia sobre `registro-de-cadena.md` §6 |
+| [`030`](decisiones/030-coherencia-del-contrato.md) | Coherencia del contrato: fuente única y verificación mecánica | ✅ FIRMADA | 2026-07-30 | S16 · precisa el alcance de `006` |
+
+**Los tres sellos que existen.** `FIRMADA` y `PENDIENTE` son el caso normal; **`CERRADA` es un tercer
+sello legítimo** y `015` es su único caso: un **paraguas** que no se decide, se cierra delegando en
+ADRs propios (`019`, `020`, `021`). Se declara acá porque un lector —o un chequeo— que asuma el binario
+lo lee como sello ilegible. **No es un estado nuevo del modelo de decisiones: es el cierre de un
+agrupador.**
+
+**Lo que esta tabla NO reemplaza.** El porqué, el contexto, las opciones evaluadas y la `Procedencia`
+de cada decisión viven **en su ADR**. Si al leer una fila hace falta saber *por qué*, el link es la
+respuesta — y esa indirección es deliberada: es lo que impide que la ficha y el ADR se contradigan.
+
+**Cambios de estado posteriores a la firma** (`027` sobre `025`) se leen en la columna *Baja / aplica
+en* y en el `superaA` del ADR. Ninguna firma se reescribe (`018`): un ADR superado **conserva su sello
+y su fecha**, y quien lo supera lo declara.
 
 ### Pendientes
 
