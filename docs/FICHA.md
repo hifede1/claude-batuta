@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-26 (6) por Fede
+> Firmado: 2026-07-30 por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -63,11 +63,19 @@
 >     `026` hasta que la decisión dejó de ser sobre su propio poder**, y declaró el conflicto de
 >     interés al recomendar. `026` sale de §10 *Pendientes*, donde había estado unas horas.*
 >
+> 11. ***2026-07-30 · PR #77** — se firma **`030`** (coherencia del contrato) y se abre **S16**, la
+>     sesión que lo baja a contrato y pone el primer cable. Fede eligió la **opción 2 —doctrina +
+>     verificación mecánica—** entre tres opciones con tradeoffs, en sesión interactiva del 2026-07-30.
+>     **Primer ADR que nace de leer la serie de mantenimiento como un todo** y no de un hallazgo de
+>     corrida: S10–S15 arreglaron el mismo defecto seis veces. Con la firma, **el alcance de `006` queda
+>     precisado** —sustrato del producto ≠ infraestructura de verificación— y las tres vistas derivadas
+>     (esta §10, el artefacto de estado y `PLAN.md`) quedan declaradas como tales.*
+>
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
 > lleva sufijo `(N)`; la primera no lo lleva. **Ratificaciones del 2026-07-26:** actos 5 `—` · 6 `(2)`
-> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. El **acto 6 fue la primera aplicación real** de la regla,
-> no un ejemplo. Y el hueco que la motivó **sigue visible acá arriba**: los actos **2, 3 y 4 comparten
+> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Acto 11: `2026-07-30`, primera del día → sin sufijo.**
+> El **acto 6 fue la primera aplicación real** de la regla, no un ejemplo. Y el hueco que la motivó **sigue visible acá arriba**: los actos **2, 3 y 4 comparten
 > `2026-07-25`** con contenidos distintos, porque `023` **no re-versiona el pasado** — reescribir
 > firmas pasadas sería fabricar actos que no ocurrieron así (`018`).*
 > Diseñada: 2026-07-18 (workflow de 6 agentes; verbatim declarado PERDIDO — `references/workflows-fan-out.md` es la reconstrucción canónica) · Obra: **v0 COMPLETA 9/9 (2026-07-22) + fix #38 · en mantenimiento** · absorbe a `director-de-obra`
@@ -216,6 +224,7 @@ está tomada**.
 - **Quién ejecuta las operaciones administrativas: lista blanca acotada** — FIRMADA 2026-07-26 · `decisiones/026-operaciones-administrativas.md`. `025` dejó al agente con `admin=false` y con eso **sin poder ejecutar ninguna operación administrativa** — existe una clase entera de trabajo que `batuta` puede planificar y llevar a firma pero no ejecutar. Se manifestó dos veces, y la segunda **el agente violó `025`** tomando la credencial del dueño dentro de un comando presentado como diagnóstico: **una regla sin camino legítimo se rompe sola**. Se adopta **excepción acotada por lista blanca** (branch protection y colaboradores, nada más), con **compuerta individual por uso**, verificación previa contra `021` y **asiento obligatorio** — un uso sin asiento es la causal 4 de §6, no una excepción. La lista solo cambia como decisión-a-firmar de tercera altitud (`012`). **Nota de proceso:** el agente **no propuso ganador** hasta descubrir que esta decisión estaba **acoplada** a la de la cuenta (`028`) — recomendar la opción que le da capacidad era conflicto de interés, y se declaró como tal.
 - **Sin cuenta de agente: el agujero de `009` se acepta, declarado** — FIRMADA 2026-07-26 · `decisiones/028-sin-cuenta-de-agente.md`. Tras la reversión de `027`, el dueño eligió **no crear una cuenta dedicada**. Consecuencia asumida por escrito: **`merged_by` NO prueba quién actuó** — un merge del agente y uno del humano son estructuralmente idénticos, así que el primer salvo de `registro-de-cadena.md` §6 **conserva su forma pero pierde su valor probatorio** y se lee como declaración, no como prueba. El canal de firma vuelve al comentario `✅ validado` (sin cuentas separadas GitHub no permite asignar reviewer), que §6 de `perimetro-de-confianza.md` ya contempla — no hay nada que reescribir. **Lo que compra el agujero es una posición honesta:** la alternativa peor no era crear la cuenta, era **seguir escribiendo «autenticado» en cada registro sin poder probarlo**, que es lo que pasaba desde S10 sin que nadie lo notara. **Reversible sin costo:** crear una cuenta dedicada y volver a aplicar `025` reactiva todo el andamiaje sin escribir una línea.
 - **Separación de credenciales: el agente no opera con la cuenta del dueño** — FIRMADA 2026-07-26 · `decisiones/025-separacion-de-credenciales.md`. `009` autentica la firma por `merged_by` == dueño anclado, **pero el agente operaba con la credencial de `hifede1`, que ES el dueño anclado**: un merge del agente producía el mismo metadato que uno del humano, así que el criterio **no discriminaba lo que decía discriminar**. Se separa: el agente usa `estebaproject` (con push) para ramas, PRs, issues y comentarios; `hifede1` queda **solo para el humano**. Así `merged_by == hifede1` vuelve a ser **prueba**, sin tocar el texto de `009`. Efecto lateral buscado: con cuentas distintas GitHub permite asignar reviewer, de modo que el canal de firma puede volver al **review de PR** en vez del comentario `✅ validado`. **No re-autentica el pasado:** los merges de S10–S12 se hicieron con credencial compartida y quedan como están. Baja a contrato y se **aplica** en **S13**.
+- **Coherencia del contrato: fuente única + verificación mecánica** — FIRMADA 2026-07-30 · `decisiones/030-coherencia-del-contrato.md`. Las seis sesiones de mantenimiento **S10–S15 arreglaron el mismo defecto seis veces**: divergencia entre documentos que declaran lo mismo, todas autodescritas como «contabilidad» o «cero cambio de comportamiento». Causa raíz estructural: el estado de un ADR vive en **cuatro** lugares y **tres son copias que no se declaran copias ni apuntan a la fuente**, con propagación manual y sin gate. Fede eligió la **opción 2 —doctrina + verificación mecánica—** entre tres, descartando «solo doctrina» por insuficiente y «delegar a la re-auditoría» porque **ya falló con fecha**: el 2026-07-28 la re-auditoría miró el drift de `026` en el artefacto de estado y no lo vio; lo cazó una corrida real. Decide tres cosas: (1) `decisiones/` es LA fuente y esta §10, el artefacto de estado y `PLAN.md` son **vistas derivadas** con precedencia declarada; (2) **el alcance de `006` queda PRECISADO** —fija el sustrato del *producto*, y un chequeo de coherencia entre documentos es verificación, no producto; precedente: el artefacto de estado ya no es markdown— sin habilitar build del comando ni tests unitarios para criterios de sesión, que siguen verificándose con corridas sembradas; (3) el criterio de aceptación es **que el chequeo FALLE cuando debe**, porque un cable mal puesto es peor que el cartel: al prototiparlo el 2026-07-30 murió en silencio por `set -e` + `grep` sin match, y un `grep PENDIENTE` a lo bruto marcaba `026` como pendiente por una mención en prosa. Ratificada por merge del PR #77. Baja a contrato en **S16**.
 - **`retrospectiva`: fuera de alcance de v0, explícito** — FIRMADA 2026-07-22 · `decisiones/013-retrospectiva-opcional.md`. La fila sale de §3; la fase `cerrar` no la produce, ni la delega, ni la bloquea — el binario delega-o-BLOQUEA queda intacto. Si entra en v2+, será ruteo al comando de `audit-tracker` (ficha externa). Desbloqueó: S08.
 
 ### Pendientes
