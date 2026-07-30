@@ -463,6 +463,85 @@ de identidad concreta; el principio que S14 documentó sigue vigente.*
 
 ---
 
+> ### Nota de numeración: por qué el plano salta de S14 a S16
+>
+> **S15 — precondición de identidad** está **cerrada** (2026-07-28, encargo #73 → PR #74) y figura en
+> el artefacto de estado como bloque `b15`, pero **nunca entró a este documento**. El propio artefacto
+> declara por qué: *«NACIÓ FUERA DEL PLANO: es un hallazgo de corrida, no una sesión que `docs/PLAN.md`
+> previera. **Incorporarla al plano la firma el dueño**»*.
+>
+> **No se incorpora acá**, porque hacerlo sería fabricar el requisito que el artefacto reserva a una
+> firma. Se declara el hueco para que no se investigue de cero cada vez que alguien lo note — el mismo
+> tratamiento que `FICHA.md` le da al hueco `017`. **S15 no es un número saltado: es una sesión real
+> sin asiento en el plano**, y ese asiento es trabajo pendiente del dueño.
+>
+> Consecuencia contable, por `registro-de-cadena.md` §6: mientras S15 no tenga requisito acá, **los
+> identificadores `S15/*` no existen en ninguna `plano_version`**, así que un encargo que los invoque
+> nace como eslabón roto. Es el mismo defecto estructural que motivó la apertura de esta serie de
+> mantenimiento.
+
+---
+
+## S16 — Coherencia del contrato: bajar `030` y poner el primer cable
+
+🎯 **Planteamiento.** Las seis sesiones de esta serie —S10 a S15— arreglaron **el mismo defecto seis
+veces**: divergencia entre documentos que declaran lo mismo. Ninguna agregó capacidad; todas se
+autodescriben como «contabilidad» o «precisión, cero cambio de comportamiento». No fue mala suerte: el
+estado de un ADR vive en **cuatro** lugares y **tres son copias que no se declaran copias ni apuntan a
+la fuente**, con propagación 100 % manual y sin gate. Con esa estructura el drift es la salida
+esperada del sistema.
+
+El proyecto ya tenía la doctrina para juzgarlo, aplicada al proyecto que `batuta` orquesta y nunca a
+`batuta` como sistema de documentos: *«un control que no puede fallar tampoco puede detectar nada, y es
+peor que no tenerlo: da falsa cobertura»* (`registro-de-cadena.md:120`). Y el peaje está medido: el
+`estado.json` arrastró `026` como pendiente después de que el ADR quedara FIRMADA, y **lo cazó una
+corrida real, no la re-auditoría de ese mismo día, que lo miró y no lo vio**.
+
+`decisiones/030` decidió el camino. Esta sesión lo baja a contrato y **pone el primer cable** — que es
+lo único de todo el trabajo que no se resuelve escribiendo.
+
+🛠️ **Método.** Escritura de contrato + primera superficie de verificación. Cero decisión nueva: `030`
+ya decidió.
+
+1. Declarar la jerarquía en las **tres vistas derivadas**: `FICHA.md` §10, el artefacto de estado y
+   `PLAN.md` dicen que lo son, apuntan a `decisiones/` y fijan la precedencia («ante divergencia manda
+   `decisiones/`»). Es el patrón «el snapshot orienta, GitHub decide», un nivel más arriba.
+2. **Reducir `FICHA.md` §10 a punteros.** Hoy son ~250 líneas de prosa que duplican el cuerpo de cada
+   ADR: es la fuente del drift, no su síntoma. El porqué se lee en el ADR, que es donde ya está.
+3. Escribir el alcance precisado de `006` **donde alguien lo buscaría** —junto a la deuda de
+   verificación estructural que hoy lo invoca como impedimento—, con lo que **no** habilita.
+4. Poner el cable: los tres chequeos del alcance decidido de `030`, corriendo **sin que nadie los
+   pida** en cada PR. Con dos cuidados que se midieron al prototiparlo: **frenar distinto de fallar**
+   (precondición ausente → salida explícita, jamás silencio) y **anclar en la línea del sello**, no en
+   la palabra — un `grep PENDIENTE` a lo bruto marca `026` como pendiente por su línea 120, que es
+   prosa.
+5. Cerrar los **dos casos de drift vivos** como aplicación de la regla, no como items sueltos: el label
+   `externo` (`batuta.md:632`/`:637`/`:658`/`:729` contra `:604-616`, donde `:658` frena por hacer lo
+   que `:613` ordena) y el título de `FICHA.md` §4, que dice «Las 6 fases de una corrida» describiendo
+   **v1** en la precondición que `batuta` lee en cada corrida.
+6. **Gotcha:** la tentación acá es escribir un chequeo grande. Un cable mal puesto es peor que el
+   cartel, porque el cartel no promete nada. Tres chequeos, y cada uno visto fallar.
+
+✅ **Criterios de aceptación.**
+- [ ] Las tres vistas derivadas se declaran como tales y fijan la precedencia *(verificación: inspección — `FICHA.md` §10, el artefacto de estado y `PLAN.md` remiten a `decisiones/` y dicen qué manda ante divergencia)*
+- [ ] `FICHA.md` §10 quedó reducida a punteros *(verificación: inspección — cada entrada lleva ADR, estado, fecha y path; cero duplicación del cuerpo del ADR)*
+- [ ] El alcance precisado de `006` está escrito donde hoy se lo invoca como impedimento, con lo que NO habilita *(verificación: inspección — el texto distingue sustrato del producto de infraestructura de verificación, y deja dicho que los criterios de sesión siguen verificándose con corridas sembradas)*
+- [ ] El chequeo corre **sin que nadie lo pida** *(verificación: `.github/workflows/` existe y un PR de prueba muestra el check ejecutado)*
+- [ ] **El chequeo FALLA cuando debe** *(verificación: corrida sembrada — un drift plantado en `decisiones_pendientes` del artefacto de estado lo pone en rojo, señalando el ADR; y un ADR sin línea de sello también. Un chequeo que nunca se vio fallar es una intención con formato de comando)*
+- [ ] El chequeo **frena distinto de fallar** *(verificación: corrida sembrada sin `jq` o sin el artefacto de estado; salida explícita de precondición, jamás silencio ni verde)*
+- [ ] Los dos casos de drift vivos quedaron cerrados *(verificación: inspección — el label `externo` tiene un solo estado en las cinco menciones de `batuta.md`, y el título de §4 no describe v1)*
+
+📚 **Referencias.** — *(ninguna nueva: se lee contra `decisiones/030`, `registro-de-cadena.md` §6 y la deuda de verificación estructural del artefacto de estado)*
+
+⛓️ **Prerrequisitos.** `decisiones/030` **FIRMADA** — sin el ADR ratificado no hay regla que bajar, y
+la precisión de `006` del criterio 3 **es parte de esa firma**, no de esta sesión.
+
+**Estimación: M** — los criterios 1, 2, 3 y 7 son escritura de contrato; el 4, 5 y 6 son la primera
+superficie de CI del proyecto y su corrida sembrada. El chequeo ya está prototipado y medido
+(2026-07-30), así que lo que falta es instalarlo y verificarlo, no diseñarlo.
+
+---
+
 ## Resumen
 
 | Sesión | Objetivo | Talle | Bloqueada por decisión |
@@ -481,7 +560,11 @@ de identidad concreta; el principio que S14 documentó sigue vigente.*
 | **S12** | **Versionado del plano + drift de `011`** *(mantenimiento)* ✅ cerrada 2026-07-26 | **S** | `023` versionado |
 | **S13** | **Cerrar el contrato de firma** *(mantenimiento)* ✅ cerrada 2026-07-26 | **M** | `024` sello · `025` credenciales |
 | **S14** | **Mecanismo de credenciales** *(mantenimiento)* ✅ cerrada 2026-07-26 · 1 criterio retirado (`027`) | **S** | — *(`025` ya aplicada)* |
+| *(S15)* | *Precondición de identidad — **cerrada 2026-07-28 y sin asiento acá**: nació fuera del plano. Ver la nota de numeración sobre S14* | *—* | *— (su incorporación al plano la firma el dueño)* |
+| **S16** | **Coherencia del contrato: bajar `030` y poner el primer cable** *(mantenimiento)* | **M** | `030` coherencia del contrato |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
 **Las 9 de v0 están cerradas** (2026-07-22). De **S10 en adelante**, la serie es de **mantenimiento**: misma numeración, mismas reglas, y —lo que importa— **requisito propio**, para que el trabajo posterior a v0 tenga asiento y sea delegable.
+
+**Y de S10 a S15, las seis arreglaron el mismo defecto.** Ninguna agregó capacidad: todas corrigieron divergencia entre documentos que declaran lo mismo. Eso no es una racha de descuidos, es una propiedad de la estructura — y **S16 es la primera de la serie que ataca la causa en vez del síntoma** (`decisiones/030`). Si al cerrarla aparece una S17 de contabilidad, la que falló es S16.
