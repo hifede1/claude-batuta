@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-30 por Fede
+> Firmado: 2026-07-30 (2) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -71,10 +71,19 @@
 >     precisado** —sustrato del producto ≠ infraestructura de verificación— y las tres vistas derivadas
 >     (esta §10, el artefacto de estado y `PLAN.md`) quedan declaradas como tales.*
 >
+> 12. ***2026-07-30 (2) · PR #81** — se asienta **`029`** en la fuente. **No es una decisión nueva:**
+>     la elección es del **2026-07-28** —Fede eligió «frenar y preguntar» entre tres opciones vía
+>     `AskUserQuestion`, registrado en el comentario del issue `#73`— y quedó **ratificada y aplicada al
+>     contrato** con el merge del PR `#74` ese mismo día. Lo que faltaba era su **asiento en
+>     `docs/decisiones/`**, que el artefacto de estado declaraba como deuda con el número `029`
+>     reservado. **Primer ADR del proyecto que se escribe DESPUÉS de que su regla ya rige** — el inverso
+>     del defecto que S12 cerró, y una clase que el cable de `030` **no puede detectar**: un ADR que
+>     falta no es un drift entre vistas.*
+>
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
 > lleva sufijo `(N)`; la primera no lo lleva. **Ratificaciones del 2026-07-26:** actos 5 `—` · 6 `(2)`
-> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Acto 11: `2026-07-30`, primera del día → sin sufijo.**
+> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Ratificaciones del 2026-07-30:** acto 11 `—` (primera del día, sin sufijo) · acto 12 `(2)`.
 > El **acto 6 fue la primera aplicación real** de la regla, no un ejemplo. Y el hueco que la motivó **sigue visible acá arriba**: los actos **2, 3 y 4 comparten
 > `2026-07-25`** con contenidos distintos, porque `023` **no re-versiona el pasado** — reescribir
 > firmas pasadas sería fabricar actos que no ocurrieron así (`018`).*
@@ -248,6 +257,7 @@ está tomada**.
 | [`026`](decisiones/026-operaciones-administrativas.md) | Quién ejecuta las operaciones administrativas del repositorio | ✅ FIRMADA | 2026-07-26 | lista blanca acotada + asiento por uso |
 | [`027`](decisiones/027-reversion-de-la-cuenta-del-agente.md) | Reversión de la cuenta del agente: la premisa de `025` era falsa | ✅ FIRMADA | 2026-07-26 | **supera en parte a `025`** |
 | [`028`](decisiones/028-sin-cuenta-de-agente.md) | Sin cuenta de agente: el agujero de `009` se acepta, declarado | ✅ FIRMADA | 2026-07-26 | consecuencia sobre `registro-de-cadena.md` §6 |
+| [`029`](decisiones/029-precondicion-de-identidad.md) | Ante discrepancia de identidad al arrancar: FRENAR, jamás restaurar | ✅ FIRMADA | 2026-07-28 | `batuta.md` §Precondición de identidad · `perimetro` §7 |
 | [`030`](decisiones/030-coherencia-del-contrato.md) | Coherencia del contrato: fuente única y verificación mecánica | ✅ FIRMADA | 2026-07-30 | S16 · precisa el alcance de `006` |
 
 **Los tres sellos que existen.** `FIRMADA` y `PENDIENTE` son el caso normal; **`CERRADA` es un tercer
