@@ -1,0 +1,56 @@
+# El cable de `decisiones/030`.
+#
+# Corre SIN QUE NADIE LO PIDA. Ésa es toda la diferencia entre un cable y un
+# cartel: el cartel dice cuál es el orden correcto; el cable no deja hacer el
+# incorrecto. Un script que hay que acordarse de correr sigue siendo un cartel.
+#
+# Dos pasos, y el segundo importa tanto como el primero:
+#   1. el chequeo — ¿las vistas derivadas coinciden con la fuente?
+#   2. la batería sembrada — ¿el chequeo DETECTA lo que promete?
+#
+# El paso 2 corre en cada PR a propósito. `030` fija que el criterio de
+# aceptación es que el chequeo FALLE cuando debe, y una garantía verificada una
+# sola vez es histórica: si alguien rompe la detección, el paso 1 seguiría
+# verde y nadie se enteraría. Así, no.
+#
+# Alcance (`030`, precisión de `006`): esto NO es build ni test del producto.
+# El comando sigue siendo markdown puro, sin dependencias de instalación. Esto
+# es infraestructura de VERIFICACIÓN del repo, y los criterios de aceptación de
+# una sesión siguen verificándose con corridas sembradas.
+
+name: coherencia del contrato
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - '.github/scripts/**'
+      - '.github/workflows/coherencia.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/scripts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  coherencia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Herramientas — solo jq, que ya viene en el runner
+        run: jq --version
+
+      - name: 1· El chequeo — las vistas contra la fuente
+        run: |
+          chmod +x .github/scripts/coherencia-contrato.sh
+          ./.github/scripts/coherencia-contrato.sh .
+
+      - name: 2· La batería sembrada — ¿el chequeo detecta?
+        run: |
+          chmod +x .github/scripts/bateria-sembrada.sh
+          ./.github/scripts/bateria-sembrada.sh .

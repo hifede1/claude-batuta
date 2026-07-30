@@ -43,6 +43,28 @@ Desde **audit-tracker v1.12.0** hay un contrato declarado (`audit-tracker` →
 El artefacto está **versionado** (`schema_version` semver): `batuta` comprueba la MAJOR y
 frena si no la soporta. Es un snapshot derivado de la auditoría, no estado vivo.
 
+### El artefacto es una VISTA DERIVADA — y su campo `decisiones_pendientes` tiene otra fuente
+
+`decisiones/030` fija que **`docs/decisiones/` es LA fuente del estado de un ADR**. El artefacto de
+estado es una **vista derivada** de esa fuente, y **ante divergencia manda `docs/decisiones/`**.
+
+**Se declara acá y no adentro del artefacto, a propósito.** El artefacto lo **emite `audit-tracker`**,
+y su schema vive en **otro repo** (`audit-tracker` → `docs/estado-contrato.md`). Agregarle un campo de
+procedencia sería **cambiar el contrato de un delegado** — exactamente lo que «bloqueá, nunca
+reimplementes» prohíbe. Así que la precedencia se declara en esta referencia, que **sí** es de este
+repo y es lo que las fases leen.
+
+> 🕳️ **Hueco-a-construir declarado (S16).** El artefacto no puede declararse a sí mismo como vista
+> derivada mientras su schema sea ajeno. Lo que falta es un **campo de procedencia en el contrato de
+> `audit-tracker`** —del tipo `fuente_de_decisiones` o equivalente—, y eso es trabajo **de ese
+> proyecto**, con su propia decisión. Hasta entonces la defensa es doble y vive acá: esta declaración,
+> más el **chequeo mecánico** de `.github/workflows/coherencia.yml`, que compara
+> `decisiones_pendientes` contra los sellos en disco y **falla el PR** si divergen.
+>
+> Es la lección del 2026-07-28: el artefacto arrastró `026` como pendiente después de que el ADR
+> quedara FIRMADA, y **la re-auditoría de ese mismo día lo miró y no lo vio**. Confiar en que el
+> delegado lo revise campo por campo ya se probó insuficiente — de ahí el cable, no otra regla escrita.
+
 ---
 
 ## 1. Qué expone — tres comandos, no más
