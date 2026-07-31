@@ -9,12 +9,18 @@ tools?» sino en «**¿mi idea llegó a obra intacta?**».
 
 ## Estado
 
-| | |
+Este README **no repite el estado: apunta a donde vive.** Es la misma regla que
+`docs/ALCANCE.md:63` fija para las dependencias —«el estado vive **solo acá**, README y FICHA
+apuntan a esta tabla, no lo repiten»— y la que `decisiones/030` generaliza: una copia que no se
+declara copia es la fuente del drift, no su síntoma.
+
+| Qué | Dónde vive |
 |---|---|
-| **Obra** | v0 **COMPLETA 9/9** (2026-07-22) · en mantenimiento |
-| **Contrato** | `docs/FICHA.md` — VIGENTE, firmado 2026-07-30 |
-| **Compuerta de precondición** | ✅ **ABIERTA** desde 2026-07-19 (`docs/ALCANCE.md`) |
-| **Comando** | `/batuta:batuta "[objetivo en una frase]"` |
+| Estado de la obra y de las sesiones | [`docs/PLAN.md`](docs/PLAN.md) |
+| Estado del contrato y de cada decisión | [`docs/FICHA.md`](docs/FICHA.md) §10 → [`docs/decisiones/`](docs/decisiones/) |
+| Estado de las dependencias y de la compuerta | [`docs/ALCANCE.md`](docs/ALCANCE.md) — **la fuente** |
+
+**El comando:** `/batuta:batuta "[objetivo en una frase]"`
 
 ## La regla de oro
 
@@ -42,7 +48,7 @@ Dos cables, los dos corren en cada PR ([`.github/workflows/coherencia.yml`](.git
 | Cable | Qué vigila |
 |---|---|
 | [`coherencia-contrato.sh`](.github/scripts/coherencia-contrato.sh) | Las vistas derivadas contra la fuente — **hacia adentro** |
-| [`frontera.sh`](.github/scripts/frontera.sh) | El contrato contra el disco: producto ↔ manifiesto, catálogo ↔ referencias, README ↔ compuerta — **hacia afuera** |
+| [`frontera.sh`](.github/scripts/frontera.sh) | El contrato contra el disco: producto ↔ versión del manifiesto, catálogo ↔ referencias que existen — **hacia afuera** |
 
 Cada uno con su **batería sembrada**, que corre junto a él: el criterio de aceptación no es que el
 chequeo pase, sino que **FALLE cuando debe** (`decisiones/030`). Un chequeo que nunca se vio fallar

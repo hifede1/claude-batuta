@@ -21,12 +21,16 @@
 
 set -uo pipefail
 
+# El locale decide el orden de `*`: se fija para que el veredicto no dependa
+# del entorno. El mismo repo daba ROJO en `C` y VERDE en `en_US.UTF-8`.
+export LC_ALL=C
+
 REPO="${1:-.}"
 CABLE="$REPO/.github/scripts/coherencia-contrato.sh"
 TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
 
-fallas=0; corridos=0
+fallas=0; corridos=0; no_corridos=0
 
 if [ ! -x "$CABLE" ]; then
   echo "⛔ FRENA · no encuentro el cable ejecutable en $CABLE"
@@ -87,7 +91,23 @@ s_huerfano()    { saca 'decisiones/022-asiento' "$SEMBRAR_EN/docs/FICHA.md"; }
 # está citado en prosa (FICHA.md:91), así que le bastaba esa mención para
 # quedar inmune: se le sacaba la fila y el cable contestaba «✓ ninguna
 # huérfana». Este escenario ancla la detección donde vive la entrada.
-s_huerfano_citado() { saca '^|.*decisiones/007-' "$SEMBRAR_EN/docs/FICHA.md"; }
+#
+# La siembra hace DOS cosas, y la segunda es la que prueba algo: saca la fila
+# Y pasa a MAYÚSCULA la palabra «firmada» de la prosa que cita al ADR. Sin eso
+# el escenario pasaba **por casualidad** —la prosa de :91 dice «firmada» en
+# minúscula, así que no matcheaba el `case` de estados— y certificaba un
+# arreglo que no estaba hecho. La garantía valía un carácter.
+s_huerfano_citado() {
+  saca '^|.*decisiones/007-' "$SEMBRAR_EN/docs/FICHA.md"
+  edita 's/(firmada 2026-07-19/(FIRMADA 2026-07-19/' "$SEMBRAR_EN/docs/FICHA.md"; }
+
+# El espejo del anterior: prosa FUERA de §10 que nombra un ADR y escribe un
+# estado en mayúscula. Entraba como fila fantasma y ponía el cable en ROJO
+# acusando a §10 de decir algo que §10 no dice. Falso negativo y falso
+# positivo, la misma causa.
+s_prosa_fuera_de_10() {
+  printf '\n- Nota: ver [`030`](decisiones/030-coherencia-del-contrato.md), quedó FIRMADA el 30-07.\n' \
+    >> "$SEMBRAR_EN/docs/FICHA.md"; }
 s_sin_json()    { rm -f "$SEMBRAR_EN"/docs/audits/*-estado.json; }
 s_ficha_prosa() { saca '^| \[' "$SEMBRAR_EN/docs/FICHA.md"; }
 s_mencion()     { printf '\n> nota: mientras esto siga ⏳ PENDIENTE rige la opción 1.\n' \
@@ -115,6 +135,7 @@ escenario "§10 sin filas evaluables (prosa)"  2 "FRENA" s_ficha_prosa
 echo
 echo "y NO tiene que dar falso positivo:"
 escenario "PENDIENTE mencionado en la prosa de un ADR" 0 "VERDE" s_mencion
+escenario "prosa con FIRMADA + link, fuera de §10"     0 "VERDE" s_prosa_fuera_de_10
 
 echo
 echo "y NO tiene que dar verde bajo un intérprete que no soporta:"
@@ -136,6 +157,7 @@ done
 printf '  %-46s ' "cable corrido con bash < 4"
 if [ -z "$viejo" ]; then
   echo "— NO CORRIDO · esta máquina no tiene un bash < 4"
+  no_corridos=$((no_corridos + 1))
 else
   corridos=$((corridos + 1))
   salida=$("$viejo" "$CABLE" "$REPO" 2>&1); rc=$?
@@ -151,6 +173,16 @@ fi
 echo
 echo "───────────────────────────────────────────────"
 if [ "$fallas" -eq 0 ]; then
+  # Un escenario que no corrió NO se promete como cubierto. En el runner el
+  # de `bash < 4` nunca corre —ubuntu-latest trae 5.x en los dos paths— y el
+  # resumen igual decía «el cable detecta lo que promete». Un escenario
+  # salteado en silencio se lee igual que uno que pasó: la misma falla que
+  # esta batería existe para evitar, un nivel más arriba.
+  if [ "$no_corridos" -gt 0 ]; then
+    echo "VERDE · $corridos/$corridos corridos · ⚠️ $no_corridos NO CORRIDO en este entorno"
+    echo "El cable detecta lo que promete EN LO QUE SE CORRIÓ. Lo no corrido no está probado acá."
+    exit 0
+  fi
   echo "VERDE · $corridos/$corridos escenarios · el cable detecta lo que promete"
   exit 0
 fi

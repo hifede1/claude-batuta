@@ -28,6 +28,13 @@
 
 set -uo pipefail
 
+# El locale decide el orden de `*` y el orden decidía QUÉ ARTEFACTO se leía.
+# Con dos `*-estado.json` en docs/audits/, `LC_ALL=C` ordena mayúsculas antes
+# que minúsculas y `en_US.UTF-8` al revés: el MISMO repo daba ROJO o VERDE
+# según el entorno. Un cable cuyo veredicto depende del locale no verifica,
+# sortea. Se fija acá y el glob de abajo deja de adivinar.
+export LC_ALL=C
+
 # ── FRENO 0: el INTÉRPRETE ──────────────────────────────────────────────
 # Va primero porque es la única dependencia que este script no puede
 # sustituir. `declare -A` (abajo) es bash 4+; el bash del sistema en macOS
@@ -58,12 +65,22 @@ for req in "$DECISIONES" "$FICHA"; do
   fi
 done
 
-ESTADO=$(ls "$REPO"/docs/audits/*-estado.json 2>/dev/null | head -1)
-if [ -z "$ESTADO" ]; then
+# El artefacto se resuelve por glob CONTADO, no por `ls | head -1`. Tomar el
+# primero de una lista es elegir por orden alfabético — o sea por locale — cuál
+# de dos vistas es LA vista. Si hay más de una, el cable no adivina: FRENA.
+set -- "$REPO"/docs/audits/*-estado.json
+if [ ! -e "$1" ]; then
   echo "⛔ FRENA · no hay artefacto de estado en $REPO/docs/audits/"
   echo "   Esto NO es un verde: el chequeo 2 no tiene vista contra qué comparar."
   exit 2
 fi
+if [ "$#" -ne 1 ]; then
+  echo "⛔ FRENA · hay $# artefactos de estado, no sé cuál es la vista:"
+  for a in "$@"; do echo "     ${a#$REPO/}"; done
+  echo "   Esto NO es un verde: elegir el primero sería elegir por locale."
+  exit 2
+fi
+ESTADO="$1"
 if ! command -v jq >/dev/null 2>&1; then
   echo "⛔ FRENA · falta jq — no se puede leer la vista derivada"
   exit 2
@@ -159,16 +176,28 @@ while IFS= read -r linea; do
   if ! grep -q '^\*\*Procedencia de la firma' "$DECISIONES"/"$num"-*.md 2>/dev/null; then
     prob="$prob\n     el ADR $num no declara 'Procedencia de la firma' (018)"
   fi
-done < "$FICHA"
+done < <(awk '/^## 10\./{f=1;next} /^## /{f=0} f' "$FICHA" | grep '^|')
 
 # Y al revés: ningún ADR de la fuente queda sin FILA EVALUABLE en §10.
 #
 # Se compara contra `vistos` —los ADRs que el parseo de arriba reconoció como
-# fila— y NO con un grep sobre el archivo entero. Con el grep, a un ADR le
-# bastaba con aparecer citado en cualquier párrafo de la ficha para quedar
-# inmune a esta detección: se le sacó la fila de §10 a `007` (citado en :91) y
-# el cable contestó «✓ ninguna huérfana». El ancla tiene que ser la MISMA que
-# define la entrada, o el chequeo inverso mide otra cosa que el directo.
+# fila— y ese parseo lee SOLO §10, recortada con awk, y solo sus líneas de
+# tabla. Las dos mitades importan:
+#
+#   Sin el recorte, el ancla era el archivo ENTERO y el chequeo inverso medía
+#   otra cosa que el directo: a un ADR le bastaba aparecer citado en cualquier
+#   párrafo para quedar inmune. Se le sacaba la fila a `007` (citado en :91) y
+#   el cable contestaba «✓ ninguna huérfana». El primer intento de arreglo puso
+#   este comentario y NO movió el ancla — zafaba porque esa prosa dice
+#   «firmada» en minúscula. Una mayúscula lo rompía: la garantía valía un
+#   carácter.
+#
+#   Y el mismo agujero abría por el otro lado: una nota en §12 que escribiera
+#   FIRMADA o PENDIENTE cerca de un link a `decisiones/NNN-` entraba como fila
+#   fantasma y ponía el cable en ROJO acusando a §10 de algo que §10 no dice.
+#
+# Falso negativo y falso positivo, la misma causa: anclar donde aparece la
+# palabra en vez de donde vive la verdad (`030` §3).
 for n in "${!sello_de[@]}"; do
   case " $vistos " in
     *" $n "*) ;;
