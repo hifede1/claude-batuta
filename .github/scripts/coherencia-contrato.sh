@@ -28,6 +28,26 @@
 
 set -uo pipefail
 
+# El locale decide el orden de `*` y el orden decidía QUÉ ARTEFACTO se leía.
+# Con dos `*-estado.json` en docs/audits/, `LC_ALL=C` ordena mayúsculas antes
+# que minúsculas y `en_US.UTF-8` al revés: el MISMO repo daba ROJO o VERDE
+# según el entorno. Un cable cuyo veredicto depende del locale no verifica,
+# sortea. Se fija acá y el glob de abajo deja de adivinar.
+export LC_ALL=C
+
+# ── FRENO 0: el INTÉRPRETE ──────────────────────────────────────────────
+# Va primero porque es la única dependencia que este script no puede
+# sustituir. `declare -A` (abajo) es bash 4+; el bash del sistema en macOS
+# es 3.2 y ahí el array asociativo muere pero el script SIGUE: los chequeos
+# 1 y 2 imprimían ✓ sobre una fracción de los ADRs. Verde sobre datos rotos
+# es exactamente el pecado del encabezado, cometido por el propio cable.
+if [ "${BASH_VERSINFO[0]:-0}" -lt 4 ]; then
+  echo "⛔ FRENA · requiere bash 4+ · éste es ${BASH_VERSION:-desconocido}"
+  echo "   Esto NO es un verde: el chequeo no pudo correr."
+  echo "   En macOS: /opt/homebrew/bin/bash $0 $*"
+  exit 2
+fi
+
 REPO="${1:-.}"
 DECISIONES="$REPO/docs/decisiones"
 FICHA="$REPO/docs/FICHA.md"
@@ -45,12 +65,22 @@ for req in "$DECISIONES" "$FICHA"; do
   fi
 done
 
-ESTADO=$(ls "$REPO"/docs/audits/*-estado.json 2>/dev/null | head -1)
-if [ -z "$ESTADO" ]; then
+# El artefacto se resuelve por glob CONTADO, no por `ls | head -1`. Tomar el
+# primero de una lista es elegir por orden alfabético — o sea por locale — cuál
+# de dos vistas es LA vista. Si hay más de una, el cable no adivina: FRENA.
+set -- "$REPO"/docs/audits/*-estado.json
+if [ ! -e "$1" ]; then
   echo "⛔ FRENA · no hay artefacto de estado en $REPO/docs/audits/"
   echo "   Esto NO es un verde: el chequeo 2 no tiene vista contra qué comparar."
   exit 2
 fi
+if [ "$#" -ne 1 ]; then
+  echo "⛔ FRENA · hay $# artefactos de estado, no sé cuál es la vista:"
+  for a in "$@"; do echo "     ${a#$REPO/}"; done
+  echo "   Esto NO es un verde: elegir el primero sería elegir por locale."
+  exit 2
+fi
+ESTADO="$1"
 if ! command -v jq >/dev/null 2>&1; then
   echo "⛔ FRENA · falta jq — no se puede leer la vista derivada"
   exit 2
@@ -120,7 +150,7 @@ fi
 # Se parsea POR LÍNEA: cada fila de la tabla de §10 lleva su link al ADR y su
 # estado en la misma línea. Por línea es robusto al número de columnas.
 printf '3· FICHA §10 == la fuente ........... '
-prob=""; entradas=0
+prob=""; entradas=0; vistos=""
 
 while IFS= read -r linea; do
   num=$(printf '%s' "$linea" | grep -oE 'decisiones/[0-9]{3}-' | head -1 | grep -oE '[0-9]{3}')
@@ -133,6 +163,7 @@ while IFS= read -r linea; do
   esac
   [ -z "$declarado" ] && continue
   entradas=$((entradas + 1))
+  vistos="$vistos $num"
 
   real="${sello_de[$num]:-}"
   if [ -z "$real" ]; then
@@ -142,16 +173,43 @@ while IFS= read -r linea; do
   if [ "$declarado" != "$real" ]; then
     prob="$prob\n     §10 declara $num como $declarado · su ADR dice $real"
   fi
-  if ! grep -q '^\*\*Procedencia de la firma' "$DECISIONES"/"$num"-*.md 2>/dev/null; then
-    prob="$prob\n     el ADR $num no declara 'Procedencia de la firma' (018)"
+  # La Procedencia se le exige a lo FIRMADO, no a lo pendiente. Un ADR que
+  # nace ⏳ PENDIENTE —el caso que `024` reserva para cuando la elección humana
+  # todavía no ocurrió— no tiene firma, así que no puede tener procedencia de
+  # una firma. Exigírsela ponía el CI en rojo por abrir un ADR correctamente, y
+  # el único modo de apagarlo era escribir la procedencia de un acto que no
+  # ocurrió: el cable empujaba a la falsificación que `018` existe para prohibir.
+  if [ "$real" != PENDIENTE ] && \
+     ! grep -q '^\*\*Procedencia de la firma' "$DECISIONES"/"$num"-*.md 2>/dev/null; then
+    prob="$prob\n     el ADR $num tiene sello $real y no declara 'Procedencia de la firma' (018)"
   fi
-done < "$FICHA"
+done < <(awk '/^## 10\./{f=1;next} /^## /{f=0} f' "$FICHA" | grep '^|')
 
-# Y al revés: ningún ADR de la fuente queda sin entrada en §10.
+# Y al revés: ningún ADR de la fuente queda sin FILA EVALUABLE en §10.
+#
+# Se compara contra `vistos` —los ADRs que el parseo de arriba reconoció como
+# fila— y ese parseo lee SOLO §10, recortada con awk, y solo sus líneas de
+# tabla. Las dos mitades importan:
+#
+#   Sin el recorte, el ancla era el archivo ENTERO y el chequeo inverso medía
+#   otra cosa que el directo: a un ADR le bastaba aparecer citado en cualquier
+#   párrafo para quedar inmune. Se le sacaba la fila a `007` (citado en :91) y
+#   el cable contestaba «✓ ninguna huérfana». El primer intento de arreglo puso
+#   este comentario y NO movió el ancla — zafaba porque esa prosa dice
+#   «firmada» en minúscula. Una mayúscula lo rompía: la garantía valía un
+#   carácter.
+#
+#   Y el mismo agujero abría por el otro lado: una nota en §12 que escribiera
+#   FIRMADA o PENDIENTE cerca de un link a `decisiones/NNN-` entraba como fila
+#   fantasma y ponía el cable en ROJO acusando a §10 de algo que §10 no dice.
+#
+# Falso negativo y falso positivo, la misma causa: anclar donde aparece la
+# palabra en vez de donde vive la verdad (`030` §3).
 for n in "${!sello_de[@]}"; do
-  if ! grep -q "decisiones/$n-" "$FICHA"; then
-    prob="$prob\n     el ADR $n existe en la fuente · §10 no lo lista"
-  fi
+  case " $vistos " in
+    *" $n "*) ;;
+    *) prob="$prob\n     el ADR $n existe en la fuente · §10 no lo lista como fila" ;;
+  esac
 done
 
 if [ "$entradas" -eq 0 ]; then

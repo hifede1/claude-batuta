@@ -1,17 +1,23 @@
-# El cable de `decisiones/030`.
+# Los cables de `decisiones/030`.
 #
-# Corre SIN QUE NADIE LO PIDA. Ésa es toda la diferencia entre un cable y un
+# Corren SIN QUE NADIE LO PIDA. Ésa es toda la diferencia entre un cable y un
 # cartel: el cartel dice cuál es el orden correcto; el cable no deja hacer el
 # incorrecto. Un script que hay que acordarse de correr sigue siendo un cartel.
 #
-# Dos pasos, y el segundo importa tanto como el primero:
-#   1. el chequeo — ¿las vistas derivadas coinciden con la fuente?
-#   2. la batería sembrada — ¿el chequeo DETECTA lo que promete?
+# DOS CABLES, uno por cada costura donde el contrato puede desprenderse:
 #
-# El paso 2 corre en cada PR a propósito. `030` fija que el criterio de
-# aceptación es que el chequeo FALLE cuando debe, y una garantía verificada una
-# sola vez es histórica: si alguien rompe la detección, el paso 1 seguiría
-# verde y nadie se enteraría. Así, no.
+#   coherencia-contrato.sh — las vistas derivadas contra la fuente. Mira HACIA
+#   ADENTRO: `docs/decisiones/` contra `FICHA.md` §10 y el artefacto de estado.
+#
+#   frontera.sh — el contrato contra el disco. Mira HACIA AFUERA: el producto
+#   contra su manifiesto, el catálogo de referencias contra los archivos que
+#   existen, el README contra el estado de la compuerta. Los tres derivaron de
+#   verdad entre el 2026-07-21 y el 2026-07-31, y ninguno estaba bajo cable.
+#
+# Y CADA CABLE CON SU BATERÍA, que corre al lado a propósito: `030` fija que el
+# criterio de aceptación es que el chequeo FALLE cuando debe, y una garantía
+# verificada una sola vez es histórica. Si alguien rompe la detección, el cable
+# seguiría verde y nadie se enteraría. Así, no.
 #
 # Alcance (`030`, precisión de `006`): esto NO es build ni test del producto.
 # El comando sigue siendo markdown puro, sin dependencias de instalación. Esto
@@ -24,12 +30,16 @@ on:
   pull_request:
     paths:
       - 'docs/**'
+      - 'plugins/**'
+      - 'README.md'
       - '.github/scripts/**'
       - '.github/workflows/coherencia.yml'
   push:
     branches: [main]
     paths:
       - 'docs/**'
+      - 'plugins/**'
+      - 'README.md'
       - '.github/scripts/**'
   workflow_dispatch:
 
@@ -40,7 +50,14 @@ jobs:
   coherencia:
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 NO es opcional. El chequeo 1 de `frontera.sh` compara
+      # qué commit tocó el comando contra cuál tocó el manifiesto; con el clon
+      # shallow por defecto ese log no existe y el cable FRENA (exit 2) en vez
+      # de evaluar. Frenar está bien —es su doctrina— pero un cable que frena
+      # siempre no verifica nada.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Herramientas — solo jq, que ya viene en el runner
         run: jq --version
@@ -54,3 +71,13 @@ jobs:
         run: |
           chmod +x .github/scripts/bateria-sembrada.sh
           ./.github/scripts/bateria-sembrada.sh .
+
+      - name: 3· El cable de frontera — el contrato contra el disco
+        run: |
+          chmod +x .github/scripts/frontera.sh
+          ./.github/scripts/frontera.sh .
+
+      - name: 4· La batería de frontera — ¿el cable de frontera detecta?
+        run: |
+          chmod +x .github/scripts/bateria-frontera.sh
+          ./.github/scripts/bateria-frontera.sh .
