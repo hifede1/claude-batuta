@@ -259,6 +259,7 @@ está tomada**.
 | [`028`](decisiones/028-sin-cuenta-de-agente.md) | Sin cuenta de agente: el agujero de `009` se acepta, declarado | ✅ FIRMADA | 2026-07-26 | consecuencia sobre `registro-de-cadena.md` §6 |
 | [`029`](decisiones/029-precondicion-de-identidad.md) | Ante discrepancia de identidad al arrancar: FRENAR, jamás restaurar | ✅ FIRMADA | 2026-07-28 | `batuta.md` §Precondición de identidad · `perimetro` §7 |
 | [`030`](decisiones/030-coherencia-del-contrato.md) | Coherencia del contrato: fuente única y verificación mecánica | ✅ FIRMADA | 2026-07-30 | S16 · precisa el alcance de `006` |
+| [`031`](decisiones/031-proteccion-de-rama-sin-review.md) | Protección de rama: el cable requerido sin review requerido | ✅ FIRMADA | 2026-07-31 | **supera a `027` punto 4** · fuente del estado de la protección |
 
 **Los tres sellos que existen.** `FIRMADA` y `PENDIENTE` son el caso normal; **`CERRADA` es un tercer
 sello legítimo** y `015` es su único caso: un **paraguas** que no se decide, se cierra delegando en
@@ -276,14 +277,16 @@ y su fecha**, y quien lo supera lo declara.
 
 ### Pendientes
 
-| ADR | Decisión | Sello | Dueño | Qué la desbloquea |
-|---|---|---|---|---|
-| [`031`](decisiones/031-proteccion-de-rama-sin-review.md) | Protección de rama: el cable requerido sin review requerido | ⏳ PENDIENTE | Fede | elegir una de las tres opciones · **supera a `027` punto 4** |
 
-*Vuelve a tener entrada el **2026-07-31**, por tercera vez y por el motivo que `024` reserva: el ADR
-se abre para que el dueño estudie antes de decidir, así que el sello va después. Origen: el
-2026-07-31 se repuso la protección de rama que `027` punto 4 había retirado, **sin declararlo**. El
-acto está asentado y no se reescribe (`018`); `031` es la decisión que le faltaba.*
+**Ninguna al 2026-07-31.**
+
+*Historial de esta sección — tres veces vacía, por motivos distintos:*
+
+1. *Hasta **S11** listaba el paraguas `015` como PENDIENTE mientras Firmadas lo declaraba **CERRADO**: la ficha se contradecía a sí misma dentro de la misma sección. S11 eliminó la **contradicción**, no el historial — el registro completo de `015` vive arriba, en Firmadas.*
+2. *El **2026-07-26** volvió a tener una entrada por unas horas: `026` nació ⏳ PENDIENTE durante la **ventana propuesta↔sello** que `024` reserva para cuando la elección humana todavía no ocurrió.*
+3. *El **2026-07-31**, misma ventana y mismo motivo, con `031`: se abrió para que el dueño estudiara las tres opciones antes de decidir. Su origen fue un desvío —ese día se repuso la protección de rama que `027` punto 4 había retirado, **sin declararlo**— y el ADR es la decisión que le faltaba a un acto ya ejecutado. El acto no se reescribe (`018`); se le da la decisión que le correspondía.*
+
+> Esta línea se sostiene sola: si aparece una decisión pendiente, se agrega acá con su dueño y qué la desbloquea. Una sección vacía y una sección borrada se leen distinto — la primera dice «no hay», la segunda no dice nada.
 
 *Historial de esta sección — dos veces vacía, por motivos distintos:*
 

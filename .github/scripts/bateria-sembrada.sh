@@ -119,23 +119,30 @@ s_firmada_sin_proc() {
 # la elección humana todavía no ocurrió. No tiene firma, así que NO puede tener
 # procedencia de una firma — y tiene que dar VERDE. El cable lo ponía en rojo, y
 # el único modo de apagarlo era inventar la procedencia de un acto que no pasó.
+#
+# ⚠️ EL NÚMERO SEMBRADO ES `999` Y NO EL SIGUIENTE LIBRE. La primera versión
+# sembraba `031` —el que venía— y funcionó hasta que `031` **existió de verdad**
+# el 2026-07-31: dos archivos con el mismo prefijo, el sello leído era el de la
+# siembra, y la batería se puso roja acusando al cable de un drift que había
+# creado ella. Un número fijo bajo envejece HACIA la colisión; `999` está fuera
+# del rango que el proyecto va a usar.
 s_adr_pendiente_nuevo() {
-  printf -- '# 031 — prueba\n\n**Estado:** ⏳ **PENDIENTE** · dueño: Fede\n\n## Contexto\n\nSin elegir todavía.\n' \
-    > "$SEMBRAR_EN/docs/decisiones/031-prueba.md"
-  edita 's#^| \[`030`\].*#&\n| [`031`](decisiones/031-prueba.md) | Prueba | ⏳ PENDIENTE | — | — |#' \
+  printf -- '# 999 — prueba\n\n**Estado:** ⏳ **PENDIENTE** · dueño: Fede\n\n## Contexto\n\nSin elegir todavía.\n' \
+    > "$SEMBRAR_EN/docs/decisiones/999-prueba.md"
+  edita 's#^| \[`030`\].*#&\n| [`999`](decisiones/999-prueba.md) | Prueba | ⏳ PENDIENTE | — | — |#' \
     "$SEMBRAR_EN/docs/FICHA.md"
   j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
-  jq '.decisiones_pendientes = ["031 — prueba"]' "$j" > "$j.x" && mv "$j.x" "$j"; }
+  jq '.decisiones_pendientes = ["999 — prueba"]' "$j" > "$j.x" && mv "$j.x" "$j"; }
 # Una entrada de `decisiones_pendientes` que CITA otro ADR en su texto libre.
 # El ID es el primer número de la entrada; los demás son prosa. Sin esto, una
 # entrada legítima como «031 — … (supera 027 punto 4)» declaraba dos pendientes
 # y el cable acusaba a un ADR FIRMADO de estar pendiente.
 s_pend_cita_otro() {
   j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
-  jq '.decisiones_pendientes = ["031 — prueba (supera 027 punto 4)"]' "$j" > "$j.x" && mv "$j.x" "$j"
-  printf -- '# 031 — prueba\n\n**Estado:** \xe2\x8f\xb3 **PENDIENTE** \xc2\xb7 due\xc3\xb1o: Fede\n' \
-    > "$SEMBRAR_EN/docs/decisiones/031-prueba.md"
-  edita 's#^| \[`030`\].*#&\n| [`031`](decisiones/031-prueba.md) | Prueba | \xe2\x8f\xb3 PENDIENTE | \xe2\x80\x94 | \xe2\x80\x94 |#' \
+  jq '.decisiones_pendientes = ["999 — prueba (supera 027 punto 4)"]' "$j" > "$j.x" && mv "$j.x" "$j"
+  printf -- '# 999 — prueba\n\n**Estado:** \xe2\x8f\xb3 **PENDIENTE** \xc2\xb7 due\xc3\xb1o: Fede\n' \
+    > "$SEMBRAR_EN/docs/decisiones/999-prueba.md"
+  edita 's#^| \[`030`\].*#&\n| [`999`](decisiones/999-prueba.md) | Prueba | \xe2\x8f\xb3 PENDIENTE | \xe2\x80\x94 | \xe2\x80\x94 |#' \
     "$SEMBRAR_EN/docs/FICHA.md"; }
 
 s_ficha_prosa() { saca '^| \[' "$SEMBRAR_EN/docs/FICHA.md"; }
