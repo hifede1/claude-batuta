@@ -276,8 +276,14 @@ y su fecha**, y quien lo supera lo declara.
 
 ### Pendientes
 
+| ADR | Decisión | Sello | Dueño | Qué la desbloquea |
+|---|---|---|---|---|
+| [`031`](decisiones/031-proteccion-de-rama-sin-review.md) | Protección de rama: el cable requerido sin review requerido | ⏳ PENDIENTE | Fede | elegir una de las tres opciones · **supera a `027` punto 4** |
 
-**Ninguna al 2026-07-26 (6).**
+*Vuelve a tener entrada el **2026-07-31**, por tercera vez y por el motivo que `024` reserva: el ADR
+se abre para que el dueño estudie antes de decidir, así que el sello va después. Origen: el
+2026-07-31 se repuso la protección de rama que `027` punto 4 había retirado, **sin declararlo**. El
+acto está asentado y no se reescribe (`018`); `031` es la decisión que le faltaba.*
 
 *Historial de esta sección — dos veces vacía, por motivos distintos:*
 

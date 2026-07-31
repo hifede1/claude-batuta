@@ -26,29 +26,69 @@
 
 name: coherencia del contrato
 
+# SIN FILTROS `paths`, y no es descuido: es la condición para que el check
+# pueda ser REQUERIDO.
+#
+# Desde el 2026-07-31 `coherencia` es un required status check de `main`. Un
+# workflow con `paths` NO CORRE cuando el PR toca solo archivos fuera de la
+# lista — y un check requerido que no corre nunca reporta, así que el PR queda
+# BLOQUEADO PARA SIEMPRE esperando algo que no va a llegar. `.gitignore`, un
+# workflow nuevo, un archivo en la raíz: cualquiera de esos alcanzaba.
+#
+# Es la misma clase de falla que los cables vienen a evitar, servida por la
+# configuración en vez de por un documento: un control que no puede dispararse.
+# Solo que este no da falso verde — traba el repo entero.
+#
+# El costo de correr siempre son ~20 segundos por PR. El costo de la otra
+# opción es un PR que no se puede mergear y nadie sabe por qué.
+#
+# LA OTRA PUERTA, que `paths` no era la única: los marcadores de omisión de
+# GitHub en el mensaje del commit HEAD —skip-ci, ci-skip, no-ci, skip-actions,
+# actions-skip, cada uno entre corchetes y con espacio en vez de guion—
+# suprimen la corrida igual, y una corrida omitida tampoco crea check run.
+#
+# ⚠️ POR ESO ESTÁN ESCRITOS CON GUION Y NO EN SU FORMA LITERAL. No es estilo:
+# el primer commit que documentó esto los escribió tal cual, en su cuerpo, para
+# explicar el hallazgo — y GitHub los leyó como la DIRECTIVA. El commit que
+# documentaba la trampa se auto-suprimió con ella: cero corridas, cero check
+# runs, y el PR quedó bloqueado esperando un check que nunca se iba a crear.
+# La regla es la misma de siempre —la máquina lee la palabra, no la intención—
+# y acá muerde en el mensaje del commit, que casi nadie mira como superficie.
+#
+# Si un PR queda pendiente sin corrida, la salida es:
+#     gh workflow run "coherencia del contrato" --ref <rama>
+# que postea el check al mismo head SHA y desbloquea.
 on:
   pull_request:
-    paths:
-      - 'docs/**'
-      - 'plugins/**'
-      - 'README.md'
-      - '.github/scripts/**'
-      - '.github/workflows/coherencia.yml'
   push:
     branches: [main]
-    paths:
-      - 'docs/**'
-      - 'plugins/**'
-      - 'README.md'
-      - '.github/scripts/**'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
+  # ⚠️ EL ID DE ESTE JOB ES EL CONTRATO CON LA PROTECCIÓN DE `main`.
+  #
+  # El check-run que llega al commit se llama con el `name:` del job, y si no
+  # hay `name:` cae al ID. Ese string —`coherencia`— es el `context` que la
+  # branch protection exige. Renombrar el job, agregarle un `name:` más lindo,
+  # o partirlo en dos, hace que el contexto requerido NUNCA reporte: el mismo
+  # bloqueo permanente que los `paths` de arriba, por la otra costura. Y el PR
+  # que hiciera el rename tampoco se podría mergear a sí mismo.
+  #
+  # Por eso el `name:` va EXPLÍCITO aunque hoy sea redundante: convierte el
+  # contexto en una decisión declarada en vez de un efecto colateral del ID.
+  # No se toca sin tocar la protección primero.
+  #
+  # Ojo: `name: coherencia del contrato` (arriba) es el nombre del WORKFLOW y
+  # NO es lo que llega al commit status. Son dos strings distintos.
   coherencia:
+    name: coherencia
     runs-on: ubuntu-latest
+    # Un cuelgue con el check requerido traba TODOS los PRs hasta el default de
+    # GitHub, que son 6 horas. 5 minutos es ~30x el peor tiempo medido.
+    timeout-minutes: 5
     steps:
       # fetch-depth: 0 NO es opcional. El chequeo 1 de `frontera.sh` compara
       # qué commit tocó el comando contra cuál tocó el manifiesto; con el clon
