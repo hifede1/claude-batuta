@@ -109,6 +109,23 @@ s_prosa_fuera_de_10() {
   printf '\n- Nota: ver [`030`](decisiones/030-coherencia-del-contrato.md), quedó FIRMADA el 30-07.\n' \
     >> "$SEMBRAR_EN/docs/FICHA.md"; }
 s_sin_json()    { rm -f "$SEMBRAR_EN"/docs/audits/*-estado.json; }
+
+# Un ADR FIRMADA sin su Procedencia: sello sin acto, que es lo que `018` llama
+# falsificación. Tiene que dar ROJO.
+s_firmada_sin_proc() {
+  saca '^\*\*Procedencia de la firma' "$SEMBRAR_EN/docs/decisiones/030-coherencia-del-contrato.md"; }
+
+# Y su espejo: abrir un ADR ⏳ PENDIENTE, el caso que `024` reserva para cuando
+# la elección humana todavía no ocurrió. No tiene firma, así que NO puede tener
+# procedencia de una firma — y tiene que dar VERDE. El cable lo ponía en rojo, y
+# el único modo de apagarlo era inventar la procedencia de un acto que no pasó.
+s_adr_pendiente_nuevo() {
+  printf -- '# 031 — prueba\n\n**Estado:** ⏳ **PENDIENTE** · dueño: Fede\n\n## Contexto\n\nSin elegir todavía.\n' \
+    > "$SEMBRAR_EN/docs/decisiones/031-prueba.md"
+  edita 's#^| \[`030`\].*#&\n| [`031`](decisiones/031-prueba.md) | Prueba | ⏳ PENDIENTE | — | — |#' \
+    "$SEMBRAR_EN/docs/FICHA.md"
+  j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
+  jq '.decisiones_pendientes = ["031 — prueba"]' "$j" > "$j.x" && mv "$j.x" "$j"; }
 s_ficha_prosa() { saca '^| \[' "$SEMBRAR_EN/docs/FICHA.md"; }
 s_mencion()     { printf '\n> nota: mientras esto siga ⏳ PENDIENTE rige la opción 1.\n' \
                     >> "$SEMBRAR_EN/docs/decisiones/001-mono-proyecto.md"; }
@@ -126,6 +143,7 @@ escenario "un ADR pierde su línea de sello"               1 "sin línea"       
 escenario "§10 declara un estado distinto al del ADR"     1 "§10 declara 023"           s_ficha_miente
 escenario "un ADR de la fuente sin fila en §10"           1 "§10 no lo lista"           s_huerfano
 escenario "huérfano de un ADR citado en la prosa"        1 "§10 no lo lista como fila" s_huerfano_citado
+escenario "un ADR FIRMADA sin su Procedencia (018)"      1 "no declara .Procedencia"   s_firmada_sin_proc
 
 echo
 echo "el cable tiene que FRENAR, no dar verde (exit 2):"
@@ -136,6 +154,7 @@ echo
 echo "y NO tiene que dar falso positivo:"
 escenario "PENDIENTE mencionado en la prosa de un ADR" 0 "VERDE" s_mencion
 escenario "prosa con FIRMADA + link, fuera de §10"     0 "VERDE" s_prosa_fuera_de_10
+escenario "abrir un ADR ⏳ PENDIENTE (024), sin firma"  0 "VERDE" s_adr_pendiente_nuevo
 
 echo
 echo "y NO tiene que dar verde bajo un intérprete que no soporta:"

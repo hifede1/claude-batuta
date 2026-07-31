@@ -173,8 +173,15 @@ while IFS= read -r linea; do
   if [ "$declarado" != "$real" ]; then
     prob="$prob\n     §10 declara $num como $declarado · su ADR dice $real"
   fi
-  if ! grep -q '^\*\*Procedencia de la firma' "$DECISIONES"/"$num"-*.md 2>/dev/null; then
-    prob="$prob\n     el ADR $num no declara 'Procedencia de la firma' (018)"
+  # La Procedencia se le exige a lo FIRMADO, no a lo pendiente. Un ADR que
+  # nace ⏳ PENDIENTE —el caso que `024` reserva para cuando la elección humana
+  # todavía no ocurrió— no tiene firma, así que no puede tener procedencia de
+  # una firma. Exigírsela ponía el CI en rojo por abrir un ADR correctamente, y
+  # el único modo de apagarlo era escribir la procedencia de un acto que no
+  # ocurrió: el cable empujaba a la falsificación que `018` existe para prohibir.
+  if [ "$real" != PENDIENTE ] && \
+     ! grep -q '^\*\*Procedencia de la firma' "$DECISIONES"/"$num"-*.md 2>/dev/null; then
+    prob="$prob\n     el ADR $num tiene sello $real y no declara 'Procedencia de la firma' (018)"
   fi
 done < <(awk '/^## 10\./{f=1;next} /^## /{f=0} f' "$FICHA" | grep '^|')
 
