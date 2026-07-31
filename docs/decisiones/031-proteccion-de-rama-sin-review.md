@@ -1,6 +1,15 @@
 # 031 — Protección de rama: el cable requerido sin review requerido
 
-**Estado:** ⏳ **PENDIENTE** · dueño: Fede · **la desbloquea:** elegir una de las tres opciones
+**Estado:** ✅ **FIRMADA** · 2026-07-31 · **Firmada por:** Fede
+**Procedencia de la firma:** dos actos rastreables (`018`). **(1) Apertura sin decisión:** este ADR se
+abrió el 2026-07-31 en el PR #84 **sin opción elegida** — nació ⏳ PENDIENTE, el caso que `024`
+reserva para cuando la elección humana todavía no ocurrió, y se listó en `FICHA.md` §10 *Pendientes*
+durante esa ventana. **(2) Elección:** en sesión interactiva del **2026-07-31**, Fede eligió la
+**opción 1 — check requerido, sin review requerido** entre las **tres** presentadas con sus tradeoffs
+y con la recomendación y su contrapunto a la vista. **Ratifica al mergear este PR**, autenticable por
+`merged_by` == dueño anclado (`009`) — con la salvedad de `028`, que este mismo ADR hereda: sin cuenta
+de agente ese metadato **no discrimina quién actuó**, así que la prueba es débil y se declara como
+tal, no se disfraza de fuerte.
 **superaA:** `decisiones/027` **en su punto 4** (la protección de rama) — no en el resto, que sigue
 íntegro: la cuenta del agente sigue sin definirse (`027` punto 3) y sigue sin crearse (`028`).
 **Origen:** el 2026-07-31 se repuso la protección de rama sobre `main` **sin declarar que `027` la
@@ -88,7 +97,42 @@ protección justamente por un deadlock, y esto reintroduce uno distinto, más ra
 familia. Quien firme la 1 tiene que aceptar que la disponibilidad del repo queda atada a la
 disponibilidad de GitHub Actions.
 
-## Lo que esta firma decidiría
+## Lo que esta firma decide — **opción 1**
+
+**Rige la opción 1: check requerido, sin review requerido.** La configuración firmada es exactamente
+esta, y **este ADR es su fuente** —no el comentario de PR donde quedó el asiento del acto—:
+
+```
+required_status_checks : { contexts: ["coherencia"], strict: true }
+enforce_admins         : true
+required_pull_request_reviews : null      ← el punto: sin reviews, no hay deadlock
+restrictions           : null
+```
+
+Con eso:
+
+1. **`027` punto 4 queda SUPERADO**, y solo ese punto. El motivo de aquel retiro —el deadlock de
+   *1 review requerido + `enforce_admins`* con un dueño que no puede aprobar su propio PR— **no
+   aplica a esta configuración**, porque no exige reviews. `027` no se reescribe: conserva su sello y
+   su fecha (`018`), y este ADR declara qué parte supera.
+2. **`enforce_admins: true` queda firmado como parte de la decisión**, no como detalle de
+   implementación. Era la desviación que el asiento del PR #82 declaró sin decisión que la
+   respaldara: acá la tiene. Sin ese campo la protección sería decorativa en un repo cuyo único
+   merger es admin.
+3. **La verificación contra `021`** de la operación administrativa queda asentada (arriba, en
+   Contexto): `PUT …/protection` no mueve dinero, no es borrado irreversible, y es reversible con
+   `DELETE`. Con eso el uso de la lista blanca de `026` cumple **las tres** condiciones.
+4. **El estado de la protección de rama tiene fuente declarada**: este ADR. Antes vivía solo en un
+   comentario de PR, y ningún cable puede verificarlo (leer `…/protection` exige `admin`; el token
+   de CI es `contents: read`).
+
+### Lo que el dueño aceptó al firmar — el contrapunto, explícito
+
+La disponibilidad del repo queda **atada a la de GitHub Actions**: si el CI se cae por causa ajena
+al contrato, no hay PR mergeable. La válvula existe —editar la protección— pero es otro acto
+administrativo con su compuerta. Se firma sabiéndolo.
+
+## Lo que esta firma decidía *(enunciado al abrir el ADR)*
 
 1. **Cuál de las tres configuraciones rige**, y con eso si `027` punto 4 queda superado o confirmado.
 2. **Que el estado de la protección de rama tiene fuente declarada.** Hoy no vive en ningún documento
