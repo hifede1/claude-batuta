@@ -125,8 +125,16 @@ fi
 
 # ── CHEQUEO 2 ───────────────────────────────────────────────────────────
 printf '2· PENDIENTE: fuente == artefacto ... '
+# El ID del ADR es el PRIMER número de tres dígitos de la entrada, no cualquier
+# número que aparezca en su texto libre. Con `grep -oE '[0-9]{3}'` a secas, una
+# entrada legítima como «031 — … (supera 027 punto 4)» declaraba DOS pendientes
+# y el cable acusaba a `027` de estar pendiente cuando está FIRMADA. Lo encontró
+# el propio cable al usarlo para asentar `031`: anclar en el número que aparece
+# en vez de en el que identifica es la misma falla de siempre, en la vista.
 pend_vista=$(jq -r '.decisiones_pendientes[]? | tostring' "$ESTADO" 2>/dev/null \
-             | grep -oE '[0-9]{3}' | sort -u | tr '\n' ' ')
+             | while IFS= read -r entrada; do
+                 printf '%s' "$entrada" | grep -oE '[0-9]{3}' | head -1
+               done | sort -u | tr '\n' ' ')
 norm() { echo "$1" | tr ' ' '\n' | sort -u | tr -d '\n '; }
 
 if [ "$(norm "$pend_fuente")" != "$(norm "$pend_vista")" ]; then

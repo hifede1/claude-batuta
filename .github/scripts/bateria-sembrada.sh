@@ -126,6 +126,18 @@ s_adr_pendiente_nuevo() {
     "$SEMBRAR_EN/docs/FICHA.md"
   j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
   jq '.decisiones_pendientes = ["031 — prueba"]' "$j" > "$j.x" && mv "$j.x" "$j"; }
+# Una entrada de `decisiones_pendientes` que CITA otro ADR en su texto libre.
+# El ID es el primer número de la entrada; los demás son prosa. Sin esto, una
+# entrada legítima como «031 — … (supera 027 punto 4)» declaraba dos pendientes
+# y el cable acusaba a un ADR FIRMADO de estar pendiente.
+s_pend_cita_otro() {
+  j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
+  jq '.decisiones_pendientes = ["031 — prueba (supera 027 punto 4)"]' "$j" > "$j.x" && mv "$j.x" "$j"
+  printf -- '# 031 — prueba\n\n**Estado:** \xe2\x8f\xb3 **PENDIENTE** \xc2\xb7 due\xc3\xb1o: Fede\n' \
+    > "$SEMBRAR_EN/docs/decisiones/031-prueba.md"
+  edita 's#^| \[`030`\].*#&\n| [`031`](decisiones/031-prueba.md) | Prueba | \xe2\x8f\xb3 PENDIENTE | \xe2\x80\x94 | \xe2\x80\x94 |#' \
+    "$SEMBRAR_EN/docs/FICHA.md"; }
+
 s_ficha_prosa() { saca '^| \[' "$SEMBRAR_EN/docs/FICHA.md"; }
 s_mencion()     { printf '\n> nota: mientras esto siga ⏳ PENDIENTE rige la opción 1.\n' \
                     >> "$SEMBRAR_EN/docs/decisiones/001-mono-proyecto.md"; }
@@ -155,6 +167,7 @@ echo "y NO tiene que dar falso positivo:"
 escenario "PENDIENTE mencionado en la prosa de un ADR" 0 "VERDE" s_mencion
 escenario "prosa con FIRMADA + link, fuera de §10"     0 "VERDE" s_prosa_fuera_de_10
 escenario "abrir un ADR ⏳ PENDIENTE (024), sin firma"  0 "VERDE" s_adr_pendiente_nuevo
+escenario "entrada pendiente que cita otro ADR"         0 "VERDE" s_pend_cita_otro
 
 echo
 echo "y NO tiene que dar verde bajo un intérprete que no soporta:"

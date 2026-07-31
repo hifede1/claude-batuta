@@ -233,7 +233,9 @@
       "cierra": []
     }
   ],
-  "decisiones_pendientes": [],
+  "decisiones_pendientes": [
+    "031 — proteccion de rama: el cable requerido sin review requerido (supera 027 punto 4) — dueño: Fede"
+  ],
   "referencias": [
     {
       "tema": "doc-arquitecto",
