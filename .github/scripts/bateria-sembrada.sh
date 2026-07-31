@@ -82,6 +82,12 @@ s_sin_sello()   { edita 's/^\*\*Estado:\*\*/**Situación:**/' \
 s_ficha_miente(){ edita '\#decisiones/023-#s/✅ FIRMADA/⏳ PENDIENTE/' \
                     "$SEMBRAR_EN/docs/FICHA.md"; }
 s_huerfano()    { saca 'decisiones/022-asiento' "$SEMBRAR_EN/docs/FICHA.md"; }
+# El huérfano de arriba se detectaba POR CASUALIDAD: el chequeo inverso hacía
+# grep sobre el archivo entero, y `022` solo aparece en §10. `007` en cambio
+# está citado en prosa (FICHA.md:91), así que le bastaba esa mención para
+# quedar inmune: se le sacaba la fila y el cable contestaba «✓ ninguna
+# huérfana». Este escenario ancla la detección donde vive la entrada.
+s_huerfano_citado() { saca '^|.*decisiones/007-' "$SEMBRAR_EN/docs/FICHA.md"; }
 s_sin_json()    { rm -f "$SEMBRAR_EN"/docs/audits/*-estado.json; }
 s_ficha_prosa() { saca '^| \[' "$SEMBRAR_EN/docs/FICHA.md"; }
 s_mencion()     { printf '\n> nota: mientras esto siga ⏳ PENDIENTE rige la opción 1.\n' \
@@ -99,6 +105,7 @@ escenario "ADR pasa a PENDIENTE y el artefacto no lo sabe" 1 "el ADR 028 está P
 escenario "un ADR pierde su línea de sello"               1 "sin línea"                 s_sin_sello
 escenario "§10 declara un estado distinto al del ADR"     1 "§10 declara 023"           s_ficha_miente
 escenario "un ADR de la fuente sin fila en §10"           1 "§10 no lo lista"           s_huerfano
+escenario "huérfano de un ADR citado en la prosa"        1 "§10 no lo lista como fila" s_huerfano_citado
 
 echo
 echo "el cable tiene que FRENAR, no dar verde (exit 2):"
@@ -108,6 +115,38 @@ escenario "§10 sin filas evaluables (prosa)"  2 "FRENA" s_ficha_prosa
 echo
 echo "y NO tiene que dar falso positivo:"
 escenario "PENDIENTE mencionado en la prosa de un ADR" 0 "VERDE" s_mencion
+
+echo
+echo "y NO tiene que dar verde bajo un intérprete que no soporta:"
+# El cable usa `declare -A` (bash 4+). Bajo el bash 3.2 de macOS el array
+# asociativo moría y el script SEGUÍA: los chequeos 1 y 2 imprimían ✓ sobre
+# una fracción de los ADRs («✓ 8 ADRs» cuando eran 28). Verde sobre datos
+# rotos, el pecado exacto del encabezado, cometido por el propio cable.
+#
+# No se puede sembrar copiando archivos: hay que INVOCARLO con otro bash. Si
+# la máquina no tiene uno viejo, se DECLARA que no se corrió — un escenario
+# salteado en silencio se lee igual que uno que pasó, que es la misma falla.
+viejo=""
+for cand in /bin/bash /usr/bin/bash; do
+  [ -x "$cand" ] || continue
+  v=$("$cand" -c 'echo ${BASH_VERSINFO[0]}' 2>/dev/null)
+  case "$v" in ''|*[!0-9]*) continue ;; esac
+  [ "$v" -lt 4 ] && { viejo="$cand"; break; }
+done
+printf '  %-46s ' "cable corrido con bash < 4"
+if [ -z "$viejo" ]; then
+  echo "— NO CORRIDO · esta máquina no tiene un bash < 4"
+else
+  corridos=$((corridos + 1))
+  salida=$("$viejo" "$CABLE" "$REPO" 2>&1); rc=$?
+  if [ "$rc" -eq 2 ] && printf '%s' "$salida" | grep -q "requiere bash 4"; then
+    echo "✓ exit 2 ($("$viejo" -c 'echo $BASH_VERSION'))"
+  else
+    echo "✗ esperaba exit 2 con «requiere bash 4», dio $rc"
+    printf '%s\n' "$salida" | sed 's/^/        /'
+    fallas=$((fallas + 1))
+  fi
+fi
 
 echo
 echo "───────────────────────────────────────────────"

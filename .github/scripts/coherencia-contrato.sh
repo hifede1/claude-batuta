@@ -28,6 +28,19 @@
 
 set -uo pipefail
 
+# ── FRENO 0: el INTÉRPRETE ──────────────────────────────────────────────
+# Va primero porque es la única dependencia que este script no puede
+# sustituir. `declare -A` (abajo) es bash 4+; el bash del sistema en macOS
+# es 3.2 y ahí el array asociativo muere pero el script SIGUE: los chequeos
+# 1 y 2 imprimían ✓ sobre una fracción de los ADRs. Verde sobre datos rotos
+# es exactamente el pecado del encabezado, cometido por el propio cable.
+if [ "${BASH_VERSINFO[0]:-0}" -lt 4 ]; then
+  echo "⛔ FRENA · requiere bash 4+ · éste es ${BASH_VERSION:-desconocido}"
+  echo "   Esto NO es un verde: el chequeo no pudo correr."
+  echo "   En macOS: /opt/homebrew/bin/bash $0 $*"
+  exit 2
+fi
+
 REPO="${1:-.}"
 DECISIONES="$REPO/docs/decisiones"
 FICHA="$REPO/docs/FICHA.md"
@@ -120,7 +133,7 @@ fi
 # Se parsea POR LÍNEA: cada fila de la tabla de §10 lleva su link al ADR y su
 # estado en la misma línea. Por línea es robusto al número de columnas.
 printf '3· FICHA §10 == la fuente ........... '
-prob=""; entradas=0
+prob=""; entradas=0; vistos=""
 
 while IFS= read -r linea; do
   num=$(printf '%s' "$linea" | grep -oE 'decisiones/[0-9]{3}-' | head -1 | grep -oE '[0-9]{3}')
@@ -133,6 +146,7 @@ while IFS= read -r linea; do
   esac
   [ -z "$declarado" ] && continue
   entradas=$((entradas + 1))
+  vistos="$vistos $num"
 
   real="${sello_de[$num]:-}"
   if [ -z "$real" ]; then
@@ -147,11 +161,19 @@ while IFS= read -r linea; do
   fi
 done < "$FICHA"
 
-# Y al revés: ningún ADR de la fuente queda sin entrada en §10.
+# Y al revés: ningún ADR de la fuente queda sin FILA EVALUABLE en §10.
+#
+# Se compara contra `vistos` —los ADRs que el parseo de arriba reconoció como
+# fila— y NO con un grep sobre el archivo entero. Con el grep, a un ADR le
+# bastaba con aparecer citado en cualquier párrafo de la ficha para quedar
+# inmune a esta detección: se le sacó la fila de §10 a `007` (citado en :91) y
+# el cable contestó «✓ ninguna huérfana». El ancla tiene que ser la MISMA que
+# define la entrada, o el chequeo inverso mide otra cosa que el directo.
 for n in "${!sello_de[@]}"; do
-  if ! grep -q "decisiones/$n-" "$FICHA"; then
-    prob="$prob\n     el ADR $n existe en la fuente · §10 no lo lista"
-  fi
+  case " $vistos " in
+    *" $n "*) ;;
+    *) prob="$prob\n     el ADR $n existe en la fuente · §10 no lo lista como fila" ;;
+  esac
 done
 
 if [ "$entradas" -eq 0 ]; then
