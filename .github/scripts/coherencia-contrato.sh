@@ -6,11 +6,27 @@
 #   FICHA.md §10 y el artefacto de estado son VISTAS DERIVADAS.
 #   Si la vista y la fuente no coinciden, la vista miente.
 #
-# Los tres chequeos del alcance decidido de `030` — ni uno más:
+# Los tres chequeos del alcance decidido de `030`:
 #   1. todo ADR tiene su línea de sello
 #   2. ADRs con sello PENDIENTE == `decisiones_pendientes` del artefacto de estado
 #   3. cada entrada de FICHA §10 apunta a un ADR que existe, tiene sello y
 #      `Procedencia`, y el estado que §10 declara == el sello de la fuente
+#
+# Más los dos de S17, que cierran el límite que S16 se declaró al cerrar:
+#   4. `last_audit` del artefacto no quedó atrás del reloj de la fuente
+#   5. la estampa de FICHA.md —o sea `plano_version`— tampoco
+#
+# LOS 4 Y 5 MIDEN FRESCURA, NO CONTENIDO, y la distinción es deliberada. No
+# verifican qué DICE la deuda ni si `bloques` está completo: eso es prosa, y
+# medir intención con patrones léxicos es indecidible — este taller lo vio
+# caerse tres veces. Se evaluaron y descartaron con evidencia dos candidatos:
+# «todo bloque cita su PR» (b01 no lo cita y es legítimo: S01 cerró con un
+# install verificado, no con un PR de este repo) y «la deuda no cita ADRs
+# firmados» (una entrada que NARRA historia da falso positivo, el mismo grep
+# a lo bruto que marcaba al 026 por su línea 120).
+#
+# Lo mecanizable es la frescura; el contenido lo corrige la re-auditoría. El
+# cable no la reemplaza: la OBLIGA.
 #
 # DOS REGLAS DE DISEÑO, las dos aprendidas fallando (`030`, sección 3):
 #
@@ -94,6 +110,21 @@ echo
 adrs=0; pend_fuente=""; sin_sello=""
 declare -A sello_de
 
+# EL RELOJ DE LA FUENTE (chequeos 4 y 5): la fecha de sello más reciente de
+# todo `decisiones/`. Sale de la MISMA pasada que construye `sello_de` — un
+# solo recorrido alimenta las dos vistas.
+#
+# Se toma la fecha MÁXIMA de la línea, no la primera, y el motivo no es
+# prolijidad: `001` lleva «FIRMADA · 2026-07-18 · … · Re-ratificada: 2026-07-23»
+# y una re-ratificación ES un cambio de la fuente. Anclar en la primera fecha
+# dejaría envejecer la vista sin que el cable lo note — el pecado exacto que
+# estos dos chequeos vienen a cerrar, cometido por el propio cable.
+#
+# Las fechas ISO se comparan como texto: `\>` de `test` es orden lexicográfico
+# y en `YYYY-MM-DD` eso es orden cronológico. Sin `date`, que no parsea igual
+# en GNU y en BSD y volvería el veredicto dependiente del runner.
+reloj=""; adr_reloj=""
+
 for f in "$DECISIONES"/*.md; do
   case "$(basename "$f")" in [0-9][0-9][0-9]-*) ;; *) continue ;; esac
   adrs=$((adrs + 1))
@@ -106,6 +137,10 @@ for f in "$DECISIONES"/*.md; do
     *CERRADA*)   sello_de[$num]=CERRADA ;;
     *)           sello_de[$num]=ILEGIBLE ;;
   esac
+  f_max=$(printf '%s' "$linea" | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | sort | tail -1)
+  if [ -n "$f_max" ] && { [ -z "$reloj" ] || [ "$f_max" \> "$reloj" ]; }; then
+    reloj="$f_max"; adr_reloj="$num"
+  fi
 done
 
 # ── CHEQUEO 1 ───────────────────────────────────────────────────────────
@@ -233,10 +268,71 @@ else
   echo "✓ ($entradas entradas, ninguna huérfana)"
 fi
 
+# ── CHEQUEOS 4 y 5 · LA FRESCURA DE LAS VISTAS (S17) ────────────────────
+# Una vista puede coincidir con la fuente en todo lo que declara y estar
+# igual atrasada: le falta lo que la fuente ganó DESPUÉS. Los chequeos 1-3
+# comparan lo que la vista dice; éstos comparan hasta CUÁNDO lo dice.
+
+# FRENO: sin reloj no hay contra qué comparar. Pasa si ningún ADR tiene fecha
+# en su sello — repo vacío o formato de sello cambiado. NO es un verde.
+if [ -z "$reloj" ]; then
+  echo
+  echo "⛔ FRENA · ningún ADR declara fecha en su línea ^**Estado:**"
+  echo "   Esto NO es un verde: los chequeos 4 y 5 no tienen reloj contra qué medir."
+  exit 2
+fi
+
+# `fresca <n> <etiqueta> <fecha-de-la-vista> <de-dónde-salió>`
+# FRENA si la fecha falta o no es YYYY-MM-DD; suma falla si quedó atrás.
+fresca() {
+  local n="$1" etiq="$2" fecha="$3" origen="$4"
+  printf '%s· %s ' "$n" "$etiq"
+  if [ -z "$fecha" ]; then
+    echo "⛔ FRENA"
+    echo "     $origen no declara fecha."
+    echo "     Esto NO es un verde: el chequeo $n no pudo comparar nada."
+    exit 2
+  fi
+  case "$fecha" in
+    20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]) ;;
+    *) echo "⛔ FRENA"
+       echo "     $origen declara «$fecha», que no es YYYY-MM-DD."
+       echo "     Esto NO es un verde: el chequeo $n no pudo comparar nada."
+       exit 2 ;;
+  esac
+  if [ "$fecha" \< "$reloj" ]; then
+    echo "✗ FALLA"
+    echo "     la vista dice $fecha · la fuente llegó a $reloj (ADR $adr_reloj)"
+    echo "     $origen quedó atrás: hay firma posterior a lo que declara."
+    fallas=$((fallas + 1))
+    return
+  fi
+  echo "✓ ($fecha ≥ $reloj)"
+}
+
+# El artefacto: `last_audit` es un campo estructurado, se lee con jq y punto.
+# `// empty` para que un null llegue vacío y caiga en el freno, no en el case.
+fresca 4 "artefacto fresco vs la fuente ...." \
+       "$(jq -r '.last_audit // empty' "$ESTADO" 2>/dev/null)" \
+       "${ESTADO#$REPO/} · last_audit"
+
+# La estampa: es `plano_version`, lo que `batuta` LEE al arrancar cada corrida
+# (`registro-de-cadena.md` §3). Ancla en `^> Firmado:`, que aparece una sola vez
+# en FICHA.md — verificado antes de escribir esto, porque el modo de falla de
+# este proyecto es anclar donde aparece la palabra y no donde vive la verdad.
+#
+# `head -1` sobre las fechas y NO `sort | tail -1`: la estampa lleva UNA fecha
+# y puede llevar sufijo `(N)` de `023` («2026-07-30 (2) por Fede»). El sufijo no
+# es fecha, así que no compite; pero si algún día la línea sumara una segunda,
+# la que estampa es la primera.
+fresca 5 "estampa de FICHA vs la fuente ...." \
+       "$(grep -m1 '^> Firmado:' "$FICHA" 2>/dev/null | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | head -1)" \
+       "${FICHA#$REPO/} · la estampa del plano"
+
 echo
 if [ "$fallas" -eq 0 ]; then
-  echo "VERDE · las vistas coinciden con la fuente"
+  echo "VERDE · las vistas coinciden con la fuente y están al día"
   exit 0
 fi
-echo "ROJO · $fallas de 3 chequeos en falla"
+echo "ROJO · $fallas de 5 chequeos en falla"
 exit 1

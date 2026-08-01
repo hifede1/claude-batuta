@@ -149,6 +149,57 @@ s_ficha_prosa() { saca '^| \[' "$SEMBRAR_EN/docs/FICHA.md"; }
 s_mencion()     { printf '\n> nota: mientras esto siga ⏳ PENDIENTE rige la opción 1.\n' \
                     >> "$SEMBRAR_EN/docs/decisiones/001-mono-proyecto.md"; }
 
+# ── chequeos 4 y 5: LA FRESCURA DE LAS VISTAS (S17) ─────────────────────
+#
+# Las dos vistas que envejecen solas —`last_audit` del artefacto y la estampa
+# de FICHA.md— se comparan contra UN reloj: la fecha de sello más reciente de
+# `docs/decisiones/`. Los sembradores NO dependen del estado del repo base:
+# plantan fechas absolutas, así que siguen probando lo mismo dentro de un año.
+# Un escenario que solo funciona mientras el repo esté en cierto estado prueba
+# el repo, no el cable.
+VIEJA=2020-01-01     # anterior a todo sello que este proyecto vaya a tener
+NUEVA=2099-01-01     # posterior a todo sello, sin depender de calcular el reloj
+
+j_de() { ls "$1"/docs/audits/*-estado.json | head -1; }
+estampa() { edita "4s#^> Firmado:.*#> Firmado: $1#" "$2/docs/FICHA.md"; }
+
+# ROJO — la vista quedó atrás del reloj de la fuente.
+s_artefacto_atrasado() { j=$(j_de "$SEMBRAR_EN")
+                         jq --arg d "$VIEJA" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"; }
+s_estampa_atrasada()   { estampa "$VIEJA por Fede" "$SEMBRAR_EN"; }
+
+# FRENA — sin campo no hay comparación posible, y eso NO es un verde.
+s_sin_last_audit()     { j=$(j_de "$SEMBRAR_EN")
+                         jq 'del(.last_audit)' "$j" > "$j.x" && mv "$j.x" "$j"; }
+s_last_audit_ilegible(){ j=$(j_de "$SEMBRAR_EN")
+                         jq '.last_audit = "hace unos dias"' "$j" > "$j.x" && mv "$j.x" "$j"; }
+s_sin_estampa()        { saca '^> Firmado:' "$SEMBRAR_EN/docs/FICHA.md"; }
+s_estampa_ilegible()   { estampa "el lunes pasado por Fede" "$SEMBRAR_EN"; }
+
+# VERDE — las dos vistas al día. Se siembran juntas porque el control del repo
+# sano no sirve para esto: mientras el repo real esté atrasado daría rojo por
+# el motivo correcto, y entonces el escenario no distinguiría un cable que
+# funciona de uno que dice rojo siempre.
+s_vistas_al_dia()      { j=$(j_de "$SEMBRAR_EN")
+                         jq --arg d "$NUEVA" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
+                         estampa "$NUEVA por Fede" "$SEMBRAR_EN"; }
+
+# VERDE — el borde que se paga caro si se lo trata como error: el día que se
+# firma un ADR **y** se audita, las tres fechas son la MISMA. Igual es al día.
+s_vistas_misma_fecha() { reloj=$(grep -h -m1 '^\*\*Estado:\*\*' "$SEMBRAR_EN"/docs/decisiones/[0-9][0-9][0-9]-*.md \
+                                 | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | sort | tail -1)
+                         j=$(j_de "$SEMBRAR_EN")
+                         jq --arg d "$reloj" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
+                         estampa "$reloj por Fede" "$SEMBRAR_EN"; }
+
+# VERDE — y el sufijo `(N)` de `023` NO puede romper el parseo de la estampa.
+# La segunda ratificación del día lleva `(2)`; si el cable lee la fecha con el
+# sufijo pegado, una estampa legítima se vuelve ilegible y el cable FRENA por
+# hacer las cosas bien. Ese fue el modo de falla de `:658` en `batuta.md`.
+s_estampa_con_sufijo() { j=$(j_de "$SEMBRAR_EN")
+                         jq --arg d "$NUEVA" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
+                         estampa "$NUEVA (3) por Fede" "$SEMBRAR_EN"; }
+
 echo "═══ Batería sembrada — ¿el cable DETECTA? ═══"
 echo
 echo "control (el repo sano tiene que pasar):"
@@ -163,11 +214,17 @@ escenario "§10 declara un estado distinto al del ADR"     1 "§10 declara 023" 
 escenario "un ADR de la fuente sin fila en §10"           1 "§10 no lo lista"           s_huerfano
 escenario "huérfano de un ADR citado en la prosa"        1 "§10 no lo lista como fila" s_huerfano_citado
 escenario "un ADR FIRMADA sin su Procedencia (018)"      1 "no declara .Procedencia"   s_firmada_sin_proc
+escenario "el artefacto quedó atrás del reloj"          1 "last_audit"                s_artefacto_atrasado
+escenario "la estampa de FICHA quedó atrás del reloj"   1 "estampa"                   s_estampa_atrasada
 
 echo
 echo "el cable tiene que FRENAR, no dar verde (exit 2):"
 escenario "no hay artefacto de estado"        2 "FRENA" s_sin_json
 escenario "§10 sin filas evaluables (prosa)"  2 "FRENA" s_ficha_prosa
+escenario "el artefacto no declara last_audit"       2 "FRENA" s_sin_last_audit
+escenario "last_audit con formato ilegible"          2 "FRENA" s_last_audit_ilegible
+escenario "FICHA sin su línea de estampa"            2 "FRENA" s_sin_estampa
+escenario "la estampa sin fecha parseable"           2 "FRENA" s_estampa_ilegible
 
 echo
 echo "y NO tiene que dar falso positivo:"
@@ -175,6 +232,9 @@ escenario "PENDIENTE mencionado en la prosa de un ADR" 0 "VERDE" s_mencion
 escenario "prosa con FIRMADA + link, fuera de §10"     0 "VERDE" s_prosa_fuera_de_10
 escenario "abrir un ADR ⏳ PENDIENTE (024), sin firma"  0 "VERDE" s_adr_pendiente_nuevo
 escenario "entrada pendiente que cita otro ADR"         0 "VERDE" s_pend_cita_otro
+escenario "las dos vistas por delante del reloj"        0 "VERDE" s_vistas_al_dia
+escenario "vistas y reloj en la MISMA fecha"            0 "VERDE" s_vistas_misma_fecha
+escenario "estampa al día con sufijo (N) de 023"        0 "VERDE" s_estampa_con_sufijo
 
 echo
 echo "y NO tiene que dar verde bajo un intérprete que no soporta:"
