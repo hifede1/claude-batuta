@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-07-30 (2) por Fede
+> Firmado: 2026-08-01 (2) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -80,10 +80,33 @@
 >     del defecto que S12 cerró, y una clase que el cable de `030` **no puede detectar**: un ADR que
 >     falta no es un drift entre vistas.*
 >
+> 13. ***2026-07-31 · PR #85** — se firma **`031`** (protección de rama: el cable requerido sin review
+>     requerido), que **supera a `027` en su punto 4** y solo ahí. Fede eligió la **opción 1** entre tres.
+>     Su origen fue un desvío: ese mismo día se repuso la protección que `027` había retirado **sin
+>     declararlo**, y el ADR es la decisión que le faltaba a un acto ya ejecutado — el acto no se
+>     reescribe (`018`), se le da la decisión que le correspondía. **Asentado retroactivamente por S17**
+>     (ver acto 15): la ratificación ocurrió el 31-07 y esta estampa no se movió, que es el drift que
+>     S17 vino a cablear.*
+>
+> 14. ***2026-08-01 · PR #87** — se firma **`032`** (el pase adversarial viaja dentro del diff que se
+>     firma), elegida entre tres opciones tras medir 17 corridas. Completa la Compuerta Cero de `002` y
+>     le da consecuencia aguas abajo. **Asentado retroactivamente por S17**, igual que el acto 13.*
+>
+> 15. ***2026-08-01 (2) · PR de S17** — se abre **S17** y se asientan los actos 13 y 14, que habían
+>     quedado sin estampa. **Este acto es la evidencia de su propia sesión:** la estampa declaraba
+>     `2026-07-30 (2)` con dos ratificaciones posteriores ya firmadas y con fila en §10 —por eso el
+>     chequeo 3 seguía en verde, correctamente— y **nada la cotejaba contra la fuente**. Importa más que
+>     un atraso de documentación: esta cabecera es `plano_version`, lo que `batuta` **lee al arrancar
+>     cada corrida** (`registro-de-cadena.md` §3), y con ella quieta la causal 7 de §6 vuelve a ser
+>     inauditable — el agujero que `023` había tapado. Con S17 el atraso deja de ser posible en
+>     silencio: el **chequeo 5** compara esta línea contra la fecha de sello más reciente de
+>     `docs/decisiones/` en cada PR.*
+>
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
 > lleva sufijo `(N)`; la primera no lo lleva. **Ratificaciones del 2026-07-26:** actos 5 `—` · 6 `(2)`
-> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Ratificaciones del 2026-07-30:** acto 11 `—` (primera del día, sin sufijo) · acto 12 `(2)`.
+> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Ratificaciones del 2026-07-30:** acto 11 `—` (primera del día, sin sufijo) · acto 12 `(2)`. **Del 2026-07-31:** acto 13 `—`. **Del 2026-08-01:** acto 14 `—` · acto 15 `(2)`.
+> ⚠️ *Los actos 13 y 14 se asientan **retroactivamente** en el acto 15 (S17): ocurrieron el 31-07 y el 01-08 y esta estampa no se movió. **El sufijo cuenta ratificaciones, no asientos** —`023`—, así que 13 y 14 conservan la etiqueta del día en que pasaron y no la del día en que se escribieron. Reetiquetarlos por comodidad sería reescribir la historia que `018` prohíbe.*
 > El **acto 6 fue la primera aplicación real** de la regla, no un ejemplo. Y el hueco que la motivó **sigue visible acá arriba**: los actos **2, 3 y 4 comparten
 > `2026-07-25`** con contenidos distintos, porque `023` **no re-versiona el pasado** — reescribir
 > firmas pasadas sería fabricar actos que no ocurrieron así (`018`).*

@@ -543,6 +543,111 @@ superficie de CI del proyecto y su corrida sembrada. El chequeo ya está prototi
 
 ---
 
+## S17 — La frescura de las vistas: cerrar el límite que S16 se declaró
+
+🎯 **Planteamiento.** S16 puso el primer cable y **declaró su propio límite en el mismo acto**: los tres
+chequeos cubren sellos de ADR y filas de `FICHA.md` §10, y **no** miran el artefacto de estado — ni sus
+bloques, ni sus deudas, ni `last_audit`. No fue olvido: `decisiones/030` fija ese alcance como *mínimo
+deliberado*, y el artefacto escribió la salida de puño y letra: *«Si se quiere cerrar, entra como cuarto
+chequeo con su propio escenario sembrado.»*
+
+**El límite ya se cobró, y se puede medir hoy.** El artefacto declara `last_audit: 2026-07-30`. Desde
+entonces se firmaron **dos ADRs** —`031` el 31-07 y `032` el 01-08— y se mergearon cuatro PRs (#82, #84,
+#85, #87). El cable siguió **VERDE**, correctamente, porque eso está fuera de su alcance. Y con el
+artefacto atrasado, tres entradas de su `deuda` pasaron a ser **falsas**: siguen diciendo «ADR `026`
+PENDIENTE» (FIRMADA desde el 26-07), «la decisión del 28-07 no tiene ADR» (es `029`, firmada ese mismo
+día) y «la causa no quedó determinada» del switch de cuenta (determinada el 01-08: otras sesiones de
+Claude Code ejecutando `gh auth switch`).
+
+**Y al abrir esta sesión apareció el segundo caso, peor que el primero.** La cabecera de `FICHA.md`
+declara `Firmado: 2026-07-30 (2)` y su historial de Procedencia se corta en el acto 12, con `031` y
+`032` ya firmadas — **con su fila en §10**, por eso el chequeo 3 está en verde y hace bien. Esa cabecera
+es `plano_version`, **lo que `batuta` lee al arrancar cada corrida** (`registro-de-cadena.md` §3). Con
+ella atrasada, la causal 7 de §6 —«el plano cambió de versión durante la corrida»— vuelve a ser
+inauditable: el agujero exacto que `023` vino a tapar, reabierto por el mismo mecanismo. **Dos vistas,
+la misma enfermedad: envejecen solas porque nada las coteja contra la fuente.**
+
+**Esta sesión NO es contabilidad, y la distinción es el punto.** Actualizar las dos vistas a mano sería
+contabilidad — y por `:576` de este documento, sería declarar que S16 falló. Lo que se instala es el
+**mecanismo que vuelve imposible ese atraso en silencio**. La corrección del contenido llega después, y
+llega *porque el cable la obliga*.
+
+🛠️ **Método.** Dos chequeos más sobre el cable existente, con sus escenarios sembrados. Cero decisión
+nueva: el precedente de ampliar la superficie de verificación sin ADR lo fijó el PR #82, que agregó
+`frontera.sh` —un cable entero, no un chequeo— bajo el alcance ya precisado de `006` por `030`.
+
+**Un cálculo, dos vistas.** La fecha de sello más reciente de `docs/decisiones/` es el reloj de la
+fuente; las dos vistas que envejecen solas se comparan contra él. El cálculo caro se hace una vez.
+
+1. **Chequeo 4 — `last_audit` del artefacto contra el reloj de la fuente.** Si algún ADR quedó firmado
+   **después** de la última auditoría, la vista está atrasada y el cable lo dice.
+2. **Chequeo 5 — la estampa de `FICHA.md` contra el mismo reloj.** Descubierto al abrir esta sesión: la
+   cabecera declara `Firmado: 2026-07-30 (2)` y el historial de Procedencia se corta en el acto 12,
+   mientras `031` (31-07) y `032` (01-08) ya están firmadas y **con su fila en §10** — por eso el
+   chequeo 3 está en verde, correctamente. **Este es el más grave de los dos**: la estampa es
+   `plano_version`, lo que `batuta` **lee al arrancar cada corrida** (`registro-de-cadena.md` §3). Con
+   ella atrasada, la causal 7 de §6 —«el plano cambió de versión durante la corrida»— vuelve a ser
+   inauditable, que es exactamente el agujero que `023` vino a tapar.
+3. **Las anclas, validadas antes de escribir el código** *(la falla que `030` §3 documenta es anclar
+   donde aparece la palabra en vez de donde vive la verdad)*: `^> Firmado:` aparece **una sola vez** en
+   `FICHA.md`, y el reloj se calcula tomando **todas** las fechas de la línea `^**Estado:**` de cada ADR
+   y quedándose con la máxima — así una **re-ratificación** cuenta como cambio de la fuente, que es lo
+   que es. Ambos chequeos leen líneas estructuradas por `024`; ninguno toca prosa.
+4. **Sus escenarios sembrados**, en las dos direcciones y por cada vista: atrasada → ROJO; al día →
+   VERDE, incluido el borde de la **misma fecha**, que es el caso normal el día que se firma y se
+   audita. Más el freno: campo ausente, vacío o con formato no-`YYYY-MM-DD` → **exit 2**, jamás verde.
+5. **Corregir el contenido de las dos vistas** —los cuatro PRs sin asentar, las tres deudas falsas, y
+   los actos 13 y 14 del historial de Procedencia— como *consecuencia* del rojo, no como el trabajo en
+   sí. El orden importa: si se corrige primero, los chequeos nacen verdes y **nunca se los ve fallar**,
+   que es justo lo que `030` prohíbe.
+4. **Gotcha — lo que este chequeo NO hace, declarado.** No verifica el **contenido** de `deuda` ni la
+   completitud de `bloques`. Se evaluaron los dos y se descartaron con evidencia:
+   - *«todo bloque cerrado cita su PR»*: **`b01` no cita PR y es legítimo** —S01 cerró verificando el
+     install en perfil limpio, no con un PR de este repo—, así que daría ROJO sobre historia correcta.
+     Y exige un patrón léxico sobre prosa, el pecado que `030` §3 documenta.
+   - *«la deuda no cita ADRs ya firmados»*: detecta el drift de hoy, pero una entrada que **narre
+     historia** —«en ese momento `029` estaba PENDIENTE»— da falso positivo. Es el mismo `grep
+     PENDIENTE` a lo bruto que marcó al `026` por su línea 120, que es prosa.
+
+   **La frescura es mecanizable; el contenido es juicio.** El cable fuerza la re-auditoría, y es la
+   re-auditoría —humana— la que corrige el contenido. Pedirle a la máquina el juicio es lo que este
+   taller ya vio caerse tres veces.
+
+✅ **Criterios de aceptación.** — **7 de 7 cumplidos.**
+Evidencia completa en [`audits/s17-frescura-2026-08-01.md`](audits/s17-frescura-2026-08-01.md).
+- [x] Los chequeos 4 y 5 existen y **anclan donde vive la verdad**, no en prosa *(verificación:
+      inspección de `.github/scripts/coherencia-contrato.sh` — el reloj sale de las fechas de
+      `^**Estado:**`, en la misma pasada que ya construye `sello_de`; la estampa sale de `^> Firmado:`,
+      que aparece una sola vez. Sin `git`, sin `fetch-depth`, sin dependencia nueva)*
+- [x] **Los dos FALLAN cuando deben** *(verificación: corridas sembradas — `last_audit` anterior al
+      reloj → `exit 1`; estampa anterior al reloj → `exit 1`. Cada uno nombrando el ADR que lo delata y
+      las dos fechas)*
+- [x] **Los dos FRENAN distinto de fallar** *(verificación: corridas sembradas — campo ausente, vacío o
+      con formato no-`YYYY-MM-DD` → `exit 2` con el motivo dicho, jamás verde ni silencio)*
+- [x] **Ninguno da falso positivo** *(verificación: corridas sembradas — vista igual o posterior al
+      reloj → VERDE, incluido el borde de la MISMA fecha, que es el caso normal el día que se firma y
+      se audita, y el de la estampa **con sufijo `(N)`**, que no debe romper el parseo)*
+- [x] La batería corre **dentro del workflow**, como las anteriores *(verificación: la corrida real del
+      PR de esta sesión, con los dos pasos en verde)*
+- [x] **Se los vio fallar contra el repo real antes de corregir nada** *(verificación: la salida de los
+      chequeos 4 y 5 en ROJO sobre el `main` del 01-08 —`last_audit: 2026-07-30`, estampa
+      `2026-07-30 (2)`, reloj `2026-08-01`— transcripta en la evidencia. Sin esto son intenciones con
+      formato de comando: `030` §3)*
+- [x] Las dos vistas quedan al día **después** del rojo *(verificación: `last_audit`, el bloque de la
+      jornada del 31-07/01-08 y las tres deudas falsas en el artefacto; la estampa y los actos 13 y 14
+      del historial de Procedencia en `FICHA.md`. Con el cable en verde al cerrar)*
+
+📚 **Referencias.** — *(ninguna nueva: se lee contra `decisiones/030` §«Alcance decidido», el límite
+declarado en el artefacto de estado y el precedente del PR #82)*
+
+⛓️ **Prerrequisitos.** Ninguno pendiente de firma. `030` **FIRMADA** desde el 30-07 y el cable instalado
+por S16; esta sesión lo extiende dentro del alcance que `030` ya precisó.
+
+**Estimación: S** — un chequeo sobre infraestructura que ya existe, más sus escenarios. El trabajo real
+no es el script: es **no** corregir el artefacto antes de ver el rojo.
+
+---
+
 ## Resumen
 
 > ⚠️ **Esta tabla es una VISTA DERIVADA** (`decisiones/030`). La columna *Bloqueada por decisión*
@@ -568,9 +673,14 @@ superficie de CI del proyecto y su corrida sembrada. El chequeo ya está prototi
 | **S14** | **Mecanismo de credenciales** *(mantenimiento)* ✅ cerrada 2026-07-26 · 1 criterio retirado (`027`) | **S** | — *(`025` ya aplicada)* |
 | *(S15)* | *Precondición de identidad — **cerrada 2026-07-28 y sin asiento acá**: nació fuera del plano. Ver la nota de numeración sobre S14* | *—* | *— (su incorporación al plano la firma el dueño)* |
 | **S16** | **Coherencia del contrato: bajar `030` y poner el primer cable** *(mantenimiento)* | **M** | `030` coherencia del contrato |
+| **S17** | **La frescura del artefacto: el cuarto chequeo** *(mantenimiento)* | **S** | — *(`030` ya firmada; extiende su alcance precisado)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
 **Las 9 de v0 están cerradas** (2026-07-22). De **S10 en adelante**, la serie es de **mantenimiento**: misma numeración, mismas reglas, y —lo que importa— **requisito propio**, para que el trabajo posterior a v0 tenga asiento y sea delegable.
 
 **Y de S10 a S15, las seis arreglaron el mismo defecto.** Ninguna agregó capacidad: todas corrigieron divergencia entre documentos que declaran lo mismo. Eso no es una racha de descuidos, es una propiedad de la estructura — y **S16 es la primera de la serie que ataca la causa en vez del síntoma** (`decisiones/030`). Si al cerrarla aparece una S17 de contabilidad, la que falló es S16.
+
+**S17 apareció, y no es de contabilidad — pero el enunciado de arriba se responde, no se esquiva.** El artefacto de estado **sí** quedó atrasado después de S16: `last_audit` en 30-07 con dos ADRs firmados después. Ahora bien, la prueba de si S16 falló no es *«¿apareció drift?»* sino *«¿apareció drift DENTRO de lo que S16 se comprometió a cubrir?»*. Y no: `030` fijó el alcance del cable en sellos de ADR y `FICHA.md` §10, S16 **declaró ese límite por escrito el día que cerró**, y en su terreno el cable no falló ni una vez. El drift cayó exactamente donde el alcance decía que iba a caer.
+
+Por eso S17 **no actualiza el artefacto** —eso sería la contabilidad que `:576` condena— sino que **instala el chequeo que vuelve imposible el atraso en silencio**, y corrige el contenido después, forzada por el rojo. La diferencia entre las dos S17 posibles no es de tamaño: es que una deja el mismo agujero abierto para la próxima jornada y la otra lo cierra. **Un límite declarado y luego cableado es el ciclo funcionando; un límite declarado y luego olvidado es el cartel de siempre.**
