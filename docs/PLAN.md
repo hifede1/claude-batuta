@@ -648,6 +648,66 @@ no es el script: es **no** corregir el artefacto antes de ver el rojo.
 
 ---
 
+## S18 — La frontera de los delegados: medir los tres `BLOQUEA` y reasentarlos
+
+🎯 **Planteamiento.** `ALCANCE.md` declara los **tres motivos por los que `batuta` BLOQUEA**, los tres
+«verificado 2026-07-19». Al 2026-08-01 los tres son **factualmente falsos**: `verificador` y `publicador`
+—declarados «cero código»— tienen 121 KB y 185 KB con su comando construido, y `cartera` —declarada «no
+está en el marketplace, su repo remoto no existe, no está instalado»— **está en el marketplace y está
+instalada**. Los tres se construyeron entre el 23 y el 24 de julio; la tabla no se enteró en trece días.
+
+**Y no es un atraso de documentación.** Los tres `BLOQUEA` **son el mecanismo central del producto**
+—*«bloqueá, nunca reimplementes»*—, así que un `BLOQUEA` apoyado en un estado falso hace que `batuta`
+frene ante trabajo que **ya tiene ejecutor legítimo**. Es el drift de mayor consecuencia funcional del
+proyecto hasta hoy: los otros deformaban lo que el plano *dice*; éste deforma lo que la herramienta
+*hace*.
+
+**Es la enfermedad de S17, un nivel más arriba.** La diferencia no es el tipo de drift sino **contra qué
+se mide**: S17 comparó vistas contra `docs/decisiones/`, dentro del repo; esto exige medir contra **el
+disco y GitHub**, afuera. Ningún cable lo cubre — `coherencia` mira ADRs y `FICHA` §10, `frontera` mira
+`references/` y `plugin.json`.
+
+🛠️ **Método.** Medición contra fuentes externas + reasentamiento del contrato. Cero decisión nueva.
+
+1. **Medir cada delegado contra el criterio que el propio ALCANCE fija: «terminado», no «existe».**
+   Repo, plugin, comandos, artefacto de estado, deuda declarada y evidencia de corrida real.
+2. **Emitir el veredicto por delegado** —cae, se reduce o sobrevive— **con su evidencia al lado**, y con
+   la fecha de verificación fresca. Una marca sin fecha miente sola: es la regla que este mismo documento
+   ya aplica a la tabla de cimientos.
+3. **Distinguir el motivo que sobrevive del que se cayó.** `cartera` sigue bloqueada, pero por **`007`,
+   corte de versiones** —es v2— y no por delegado faltante. Un bloqueo correcto por la razón equivocada
+   es indistinguible de uno incorrecto la próxima vez que alguien lo lea.
+4. **Gotcha:** la tentación es declarar «los bloqueos cayeron» y seguir. Lo medible es que **las
+   afirmaciones del plano eran falsas**; que los delegados *sirvan* para todo lo que `batuta` necesite es
+   otra cosa, y «terminado» lo declara cada delegado **en su propio artefacto** — es su palabra,
+   corroborada por corridas reales, no una auditoría que `batuta` les haya hecho.
+
+✅ **Criterios de aceptación.** — **5 de 5 cumplidos.**
+Evidencia completa en [`audits/s18-delegados-2026-08-01.md`](audits/s18-delegados-2026-08-01.md).
+- [x] Los tres delegados medidos contra fuentes externas *(verificación: API de GitHub — repo, tamaño,
+      `plugins/<n>/commands/`, artefacto de estado y deuda; más `installed_plugins.json` local y el
+      `marketplace.json` de `fede-tools`)*
+- [x] Cada `BLOQUEA` tiene veredicto **con evidencia y fecha fresca** *(verificación: inspección de
+      `ALCANCE.md` §«v0 NO hace» — dos ✅ CAYÓ, uno ⚠️ SOBREVIVE, ninguno sin fecha)*
+- [x] El bloqueo que sobrevive declara **el motivo real** *(verificación: `cartera` bloquea por `007`
+      —es v2—, y queda escrito que las tres razones anteriores eran falsas)*
+- [x] La falsedad sobre `gitleaks` queda corregida *(verificación: `publicar.md` lo menciona **7 veces**;
+      la nota de `ALCANCE` decía «no hay capacidad de ejecutarla» y era falsa desde el 2026-07-24)*
+- [x] Lo que NO se hizo queda declarado *(verificación: inspección — no se cablea, porque exigiría **red
+      en CI** y todos los cables corren offline por diseño: eso es decisión, no trabajo, y va a ADR
+      propio. Y **no se instalan** `verificador` ni `publicador`: por `029` el estado del entorno es del
+      humano)*
+
+📚 **Referencias.** — *(ninguna nueva)*
+
+⛓️ **Prerrequisitos.** Ninguno. La medición es lectura; el cambio de contrato lo ratifica el dueño con
+el merge (`018`).
+
+**Estimación: S** — la medición es rápida contra la API. El trabajo real es **no** declarar caídos los
+tres bloqueos de un saque: dos cayeron, uno se redujo y el tercero sobrevive por otro motivo.
+
+---
+
 ## Resumen
 
 > ⚠️ **Esta tabla es una VISTA DERIVADA** (`decisiones/030`). La columna *Bloqueada por decisión*
@@ -673,7 +733,8 @@ no es el script: es **no** corregir el artefacto antes de ver el rojo.
 | **S14** | **Mecanismo de credenciales** *(mantenimiento)* ✅ cerrada 2026-07-26 · 1 criterio retirado (`027`) | **S** | — *(`025` ya aplicada)* |
 | *(S15)* | *Precondición de identidad — **cerrada 2026-07-28 y sin asiento acá**: nació fuera del plano. Ver la nota de numeración sobre S14* | *—* | *— (su incorporación al plano la firma el dueño)* |
 | **S16** | **Coherencia del contrato: bajar `030` y poner el primer cable** *(mantenimiento)* | **M** | `030` coherencia del contrato |
-| **S17** | **La frescura del artefacto: el cuarto chequeo** *(mantenimiento)* | **S** | — *(`030` ya firmada; extiende su alcance precisado)* |
+| **S17** | **La frescura de las vistas: el cuarto y quinto chequeo** *(mantenimiento)* | **S** | — *(`030` ya firmada; extiende su alcance precisado)* |
+| **S18** | **La frontera de los delegados: medir los tres `BLOQUEA` y reasentarlos** *(mantenimiento)* | **S** | — *(el motivo que sobrevive es `007`, corte de versiones)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
