@@ -1,6 +1,12 @@
 # Alcance — `batuta`
 
-> Firmado: 2026-07-19 por Fede · Ratifica FICHA §0 y §11 · Corte de versiones: `decisiones/007-corte-de-versiones.md`
+> Firmado: 2026-07-19 por Fede · **Re-ratificado: 2026-08-01 (S18)** · Ratifica FICHA §0 y §11 · Corte de versiones: `decisiones/007-corte-de-versiones.md`
+>
+> *La re-ratificación del 2026-08-01 toca **solo** la tabla «v0 NO hace» y su nota de precisión: los tres
+> `BLOQUEA` se apoyaban en un estado de delegados verificado el 2026-07-19 que dejó de ser cierto el 23-24
+> de julio. **El alcance de v0 no cambia** — cambia el motivo por el que dos de sus filas bloquean, y eso
+> es contrato, no contabilidad. ⚠️ Esta estampa **no la cubre ningún cable**: el chequeo 5 de S17 ancla en
+> `FICHA.md`, y la de este documento envejece igual de sola. Declarado como hueco, no cerrado acá.*
 
 ## Nomenclatura de versiones
 
@@ -86,11 +92,26 @@ Cerrar esta compuerta es **S01** del plan, y toda sesión posterior la declara c
 
 | Fuera de alcance | Porqué |
 |---|---|
-| Criterios → tests | `verificador` está **diseñado y sin construir** (ficha firmada, 2 commits, cero código — verificado 2026-07-19). **BLOQUEA**, no reimplementa. |
-| Publicar / pushear | `publicador` está **diseñado y sin construir** (ficha firmada, 2 commits, cero código — verificado 2026-07-19). **BLOQUEA**, no reimplementa. ⚠️ `decisiones/010` le delega `gitleaks`: la decisión está firmada en su ficha pero no hay capacidad de ejecutarla, así que ese bloqueo no tiene fecha de resolución. |
-| Enumerar la flota / portafolio | `cartera` está **a medias** (verificado 2026-07-19): los prompts de S02-S05 están escritos, pero **S01 —hacerlo instalable— se salteó**. No está en el marketplace, su repo remoto no existe y no está instalado. Además es v2. **BLOQUEA** — el criterio de delegado usable es «terminado», no «existe». |
+| Criterios → tests | ✅ **EL BLOQUEO CAYÓ — verificado 2026-08-01.** `verificador` está **terminado**: repo 121 KB, `plugins/verificador/commands/criterios-a-tests.md`, **4/4 bloques hecho**, `PLAN COMPLETO 2026-07-24 — producto en mantenimiento`, y **ejercitado de verdad** (primera clasificación real firmada por el dueño, `publicador#15`). ⚠️ **Se reduce, no desaparece:** su S03 es *«Generación trazable: SIEMPRE esqueletos»* — entrega **esqueletos de test**, no tests ejecutables. `batuta` puede delegar criterios→esqueletos; **lo que sigue sin ejecutor es la generación de tests que corren**. ⚠️ No instalado en esta máquina. |
+| Publicar / pushear | ✅ **EL BLOQUEO CAYÓ — verificado 2026-08-01.** `publicador` está **terminado**: repo 185 KB, `plugins/publicador/commands/publicar.md`, **5/5 bloques hecho**, `PLAN COMPLETO 2026-07-24`, y **ejercitado de verdad** — su S05 es dogfooding, se publicó a sí mismo, con registro firmado en `docs/verificacion/criterios-clasificados.md`. ⚠️ **`decisiones/010` ya tiene ejecutor:** `publicar.md` menciona `gitleaks` **7 veces**. La frase anterior de esta fila —«no hay capacidad de ejecutarla, así que ese bloqueo no tiene fecha de resolución»— **era falsa desde el 2026-07-24**. ⚠️ npm exige **OTP del dueño** (2FA `auth-and-writes`): gate humano declarado como rasgo, y coherente con `012`. ⚠️ No instalado en esta máquina. |
+| Enumerar la flota / portafolio | ⚠️ **EL BLOQUEO SOBREVIVE, POR OTRO MOTIVO — verificado 2026-08-01.** `cartera` está **terminada**: repo 82 KB, dos comandos, **6/6 bloques hecho**, `PLAN COMPLETO 2026-07-23` con C1/C2/C3 verificadas (PRs #5, #6, #8 mergeados por Fede), **está en el marketplace `fede-tools` Y está instalada en esta máquina**. Las tres afirmaciones anteriores de esta fila —«no está en el marketplace», «su repo remoto no existe», «no está instalado»— **eran las tres falsas**. Lo que sobrevive es **el único motivo que no dependía del estado de `cartera`: es v2** (`decisiones/007`, corte de versiones). `batuta` v0 no la consume **por decisión firmada, no por delegado faltante** — y esa distinción es el punto. ⚠️ Hueco propio declarado: el nivel «auditoría roja» del ranking sigue sin ejercitar. |
 
-> Precisión sobre los tres BLOQUEA (auditoría 2026-07-19): ninguno de los delegados está *indefinido*. Los tres tienen ficha firmada y plan de sesiones. La distancia para levantarlos es **ejecutar**, no **decidir** — dato que importa al estimar cuándo cae cada bloqueo.
+> ⚠️ **Precisión sobre los tres BLOQUEA — reasentada el 2026-08-01 (S18), sustituye a la del 2026-07-19.**
+> La anterior decía que la distancia para levantar los delegados era «ejecutar, no decidir». **Se ejecutó**:
+> los tres se construyeron entre el 23 y el 24 de julio y esta tabla no se enteró durante trece días.
+> **Dos bloqueos cayeron, uno se redujo y el tercero sobrevive por un motivo distinto del que declaraba.**
+>
+> Lo que este reasentamiento deja escrito, y vale más que las filas: **un `BLOQUEA` fechado es una promesa
+> con vencimiento.** Su verdad depende de un mundo que sigue moviéndose afuera del repo, y acá nada lo
+> cotejaba — ni `coherencia` (mira ADRs y `FICHA` §10) ni `frontera` (mira `references/` y `plugin.json`).
+> Es la enfermedad que S17 cableó, un nivel más arriba: la diferencia no es el tipo de drift sino **contra
+> qué se mide** — dentro del repo, o contra el disco y GitHub. **No se cablea en esta sesión:** exigiría
+> red en CI y todos los cables corren offline por diseño. Eso es decisión, no trabajo, y va a ADR propio.
+>
+> Lo verificado acá es que **las afirmaciones del plano eran falsas** — no que los tres delegados sirvan
+> para todo lo que `batuta` necesite. El criterio sigue siendo «terminado», y «terminado» lo declara cada
+> delegado en su propio artefacto: es **su** palabra, corroborada por corridas reales, no una auditoría
+> que `batuta` les haya hecho.
 | Retro del proceso al cerrar | **Fuera de alcance de v0, explícito** (`decisiones/013`, FIRMADA 2026-07-22): ni delega, ni bloquea — la fila salió del modelo. Si entra en v2+, será ruteo al comando de `audit-tracker`. |
 | Campo estructurado `externos` | Es v1. En v0 se cosecha best-effort. |
 | Estado VERIFICADO de externos y health-check vivo | Es v2. Un falso VERIFICADO revienta a mitad con trabajo gastado: peor que bloquear. |
