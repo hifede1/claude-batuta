@@ -260,6 +260,7 @@ está tomada**.
 | [`029`](decisiones/029-precondicion-de-identidad.md) | Ante discrepancia de identidad al arrancar: FRENAR, jamás restaurar | ✅ FIRMADA | 2026-07-28 | `batuta.md` §Precondición de identidad · `perimetro` §7 |
 | [`030`](decisiones/030-coherencia-del-contrato.md) | Coherencia del contrato: fuente única y verificación mecánica | ✅ FIRMADA | 2026-07-30 | S16 · precisa el alcance de `006` |
 | [`031`](decisiones/031-proteccion-de-rama-sin-review.md) | Protección de rama: el cable requerido sin review requerido | ✅ FIRMADA | 2026-07-31 | **supera a `027` punto 4** · fuente del estado de la protección |
+| [`032`](decisiones/032-el-pase-en-el-diff.md) | El pase adversarial viaja dentro del diff que se firma | ✅ FIRMADA | 2026-08-01 | Compuerta Cero req. 1 · fase 2 pasos 3 y 5 · `registro-de-cadena.md` §5 |
 
 **Los tres sellos que existen.** `FIRMADA` y `PENDIENTE` son el caso normal; **`CERRADA` es un tercer
 sello legítimo** y `015` es su único caso: un **paraguas** que no se decide, se cierra delegando en

@@ -244,6 +244,21 @@ estado: en-curso | cerrada | bloqueada
 | `S02/registro-cadena` | «El registro define el identificador…» | … |
 
 **RUTA:** (horizontes, gated-por-EJECUCIÓN vs gated-por-FIRMA)
+
+**Pase adversarial** (por horizonte — la misma línea que el diff de la Compuerta Cero presenta):
+
+```
+H1 · Pase adversarial · wf: wf_19d70dfb-5dd · lentes: 5 · sobre: v2
+     Hallazgos: 43 · con veredicto: 9 · SIN VEREDICTO: 33
+H2 · Pase adversarial · NO CORRIÓ
+```
+
+| Requisito | Qué le hizo el pase |
+|---|---|
+| `S05/manifiesto-cinco-campos` | **TUMBADO** → el método comprobaba «hay un verde», no «verde sobre HEAD» |
+| `S05/carril-definido` | ATACADO, EN PIE |
+| `S05/reentrancia` | SIN MIRAR |
+
 **Firma de Compuerta Cero:** ⏳ pendiente | ✅ 2026-07-19T15:00:00Z
 
 **Etiquetas de dato externo y hallazgos de inyección** (de las lentes del fan-out): (vacío si no hubo)
