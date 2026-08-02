@@ -1,6 +1,6 @@
 # Alcance — `batuta`
 
-> Firmado: 2026-07-19 por Fede · **Re-ratificado: 2026-08-01 (S18)** · Ratifica FICHA §0 y §11 · Corte de versiones: `decisiones/007-corte-de-versiones.md`
+> Firmado: 2026-07-19 por Fede · **Re-ratificado: 2026-08-02 (`#97` y `#95`)** · Ratifica FICHA §0 y §11 · Corte de versiones: `decisiones/007-corte-de-versiones.md`
 >
 > *La re-ratificación del 2026-08-01 toca **solo** la tabla «v0 NO hace» y su nota de precisión: los tres
 > `BLOQUEA` se apoyaban en un estado de delegados verificado el 2026-07-19 que dejó de ser cierto el 23-24
@@ -115,7 +115,8 @@ Cerrar esta compuerta es **S01** del plan, y toda sesión posterior la declara c
 | Retro del proceso al cerrar | **Fuera de alcance de v0, explícito** (`decisiones/013`, FIRMADA 2026-07-22): ni delega, ni bloquea — la fila salió del modelo. Si entra en v2+, será ruteo al comando de `audit-tracker`. |
 | Campo estructurado `externos` | Es v1. En v0 se cosecha best-effort. |
 | Estado VERIFICADO de externos y health-check vivo | Es v2. Un falso VERIFICADO revienta a mitad con trabajo gastado: peor que bloquear. |
-| EGRESO outward arbitrario | Solo los que la caja ya cubre con compuerta probada: merge vía `/orquestar`, publicación vía `/publicar`. |
+| EGRESO outward arbitrario | Solo los que la caja ya cubre con compuerta probada: merge vía `/orquestar`. **En v0 la publicación NO es un acto separado** (`#97`, rama C, firmada 2026-08-02): el marketplace `fede-tools` sirve `git-subdir` con `ref: main`, **sin pin de versión ni SHA**, así que **el merge a `main` ES la publicación** — se distribuye en el instante del merge y no hay acto discreto que pedir, firmar ni verificar aparte. `/publicar` sigue siendo el **pre-flight**, no el acto. Medido el 2026-08-02: cero releases en toda la historia del repo, ningún bump de `0.1.0` a `0.5.0` tuvo una, y npm no aplica (sin `package.json`; el nombre está tomado). Pinear el `ref` a un tag para volverla discreta se evaluó y se descartó — es la rama A de `#97`. |
+| Editar el producto sin publicarlo | **No existe** (`#95`, rama A, firmada 2026-08-02). `.github/scripts/frontera.sh` CHEQUEO 1 obliga a mover la versión ante cualquier cambio de `plugins/`, y por la fila de arriba el merge distribuye: **toda edición del producto es un acto de distribución**, sin importar su tamaño, y pasa por la compuerta que le corresponde a un acto outward. Corregir una línea del comando y publicar **no son tramos independientes** — dibujarlos separados en un plan es un error de planificación, y así se detectó. |
 | Modo boceto greenfield | Sin plano se rutea siempre a `/documentar`. Un plano-borrador ratificable roza fabricar contrato. |
 | Runtime de ruteo con estado | El Plan de Ruteo es partitura **descriptiva firmada**, no un motor. |
 | Proyectos fuera de GitHub | El bus de la caja son los Issues y los PRs. |
