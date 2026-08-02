@@ -182,7 +182,15 @@ y su path es el correcto para el modo en que corrió.
 
 ## 5. Qué le pasa hoy — triage de lo abierto
 
-Lectura del **2026-08-02**. Cada fila apunta a su fuente; ninguna copia estado.
+Lectura del **2026-08-02**, **cotejada contra GitHub el 2026-08-02**. Cada fila apunta a su fuente;
+ninguna copia estado.
+
+> **Por qué la fecha de cotejo va aparte de la fecha de la instantánea.** La primera versión de esta
+> sección declaró cuatro decisiones del bus como abiertas porque copió el campo `deuda` del
+> artefacto sin cotejarlo contra el canal — y las cuatro estaban cerradas. **Una vista derivada sin
+> fecha de cotejo miente sola**, que es la regla que `ALCANCE.md:69` aplica a su tabla de cimientos.
+> El error se deja escrito, no se borra: es el defecto del que trata este documento, cometido al
+> escribirlo.
 
 ### Deforma lo que se ve, no lo que la herramienta hace
 
@@ -217,8 +225,19 @@ Lectura del **2026-08-02**. Cada fila apunta a su fuente; ninguna copia estado.
 | Qué pasa | Fuente | Qué lo destraba |
 |---|---|---|
 | **S15 está cerrada (2026-07-28) y no tiene requisito en `PLAN.md`.** Nació fuera del plano, como hallazgo de corrida. Consecuencia contable: los identificadores `S15/*` **no existen en ninguna `plano_version`**, así que un encargo que los invoque nace como eslabón roto | `PLAN.md:466-481` | Incorporarla al plano **la firma el dueño** — el agente no fabrica el requisito |
-| **Cuatro decisiones del bus abiertas sin requisito**: `#95`, `#96`, `#97`, `#98`. No van al campo `decisiones_pendientes` —ese es la vista derivada de los sellos de `docs/decisiones/` y el chequeo 2 falla el PR si divergen— porque son decisiones del bus, no ADRs | `estado.json` → `deuda` | Firma del dueño en cada una |
-| **Seis hallazgos viven solo en el registro local**, fuera del repo, y **nadie los tiene a la vista en GitHub**: N4, N6, N7, N8, N12 y N13 de la corrida `2026-08-02-publicar-050-y-esqueletos-s17-s18`. Esperaban a que se firmara la rama de `#94`; **ya se firmó**, así que hoy son despachables | `estado.json` → `deuda` | Despacharlos al canal. *(El séptimo, N1, ya cerró: `#105`/`#106` sacó la enumeración de delegados de `FICHA.md` §0 — verificado el 2026-08-02)* |
+| **Seis hallazgos viven solo en el registro local**, fuera del repo, y **nadie los tiene a la vista en GitHub**: N4, N6, N7, N8, N12 y N13 de la corrida `2026-08-02-publicar-050-y-esqueletos-s17-s18`. Esperaban a que se firmara la rama de `#94`; **ya se firmó**, así que hoy son despachables. El séptimo, N1, **ya cerró** con `#105`/`#106` | `estado.json` → `deuda` · issue `#101` | Despacharlos al canal. Requieren la máquina del dueño: el registro no vive en el repo |
+
+### Lo que el `deuda` del artefacto declara abierto y **ya no lo está**
+
+Cotejado contra el canal el 2026-08-02. Se listan porque el artefacto todavía los declara abiertos,
+y un lector que solo mire ahí concluiría lo contrario:
+
+| Qué decía | Qué es cierto |
+|---|---|
+| «Cuatro decisiones-a-firmar abiertas en el canal: `#95`, `#96`, `#97`, `#98`» | **Las cuatro cerradas**, y materializadas: `#97`/`#95` en `26d604b`, `#96` en `07439a1` y `79bf477`, `#98` sin drift vivo — la descripción de `plugin.json` y la del catálogo **coinciden literalmente** (verificado contra `marketplace.json`) |
+| «SIETE hallazgos huérfanos» | **Seis.** N1 cerró con `#105`/`#106` |
+
+**El único issue abierto del repo es `#101`**, el reporte de cierre de la corrida del 2026-08-02.
 
 ### Observación abierta al escribir este documento
 
