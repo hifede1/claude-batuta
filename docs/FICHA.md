@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-02 (2) por Fede
+> Firmado: 2026-08-02 (3) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -125,10 +125,21 @@
 >     firmadas por el dueño en `#97` (rama C) y `#95` (rama A), ambas nacidas de la corrida
 >     `2026-08-02-publicar-050-y-esqueletos-s17-s18`.*
 >
+> 18. ***2026-08-02 (3) · PR de materialización de `#105`** — **§0 deja de enumerar el estado de los
+>     delegados** y remite a `ALCANCE.md`. Es el hallazgo **N1** de la corrida
+>     `2026-08-02-publicar-050-y-esqueletos-s17-s18`, y **el único que sobrevivió a todo lo que se
+>     arregló ese día**: `#96` sacó la copia del PRODUCTO —publicada en `0.6.0`— y dejó viva la del
+>     PLANO, que es peor, porque es la fuente que todo lo demás ratifica. Durante trece días §0
+>     afirmó que `verificador`, `publicador` y `cartera` no existían; S18 midió que los tres estaban
+>     terminados. Y la contradicción era **circular**: `ALCANCE.md` declara «Ratifica FICHA §0»
+>     mientras su tabla dice lo contrario palabra por palabra. La cura no es corregir el enunciado
+>     —eso conserva la duplicación que lo hizo derivar— sino **no tenerlo dos veces**. Tercera
+>     ratificación del día, sufijo `(3)` (`023`). Firmada por el dueño en `#105` (rama B).*
+>
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
 > lleva sufijo `(N)`; la primera no lo lleva. **Ratificaciones del 2026-07-26:** actos 5 `—` · 6 `(2)`
-> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Ratificaciones del 2026-07-30:** acto 11 `—` (primera del día, sin sufijo) · acto 12 `(2)`. **Del 2026-07-31:** acto 13 `—`. **Del 2026-08-01:** acto 14 `—` · acto 15 `(2)`. **Del 2026-08-02:** acto 16 `—` (primera del día, sin sufijo) · acto 17 `(2)`.
+> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Ratificaciones del 2026-07-30:** acto 11 `—` (primera del día, sin sufijo) · acto 12 `(2)`. **Del 2026-07-31:** acto 13 `—`. **Del 2026-08-01:** acto 14 `—` · acto 15 `(2)`. **Del 2026-08-02:** acto 16 `—` (primera del día, sin sufijo) · acto 17 `(2)` · acto 18 `(3)`.
 > ⚠️ *Los actos 13 y 14 se asientan **retroactivamente** en el acto 15 (S17): ocurrieron el 31-07 y el 01-08 y esta estampa no se movió. **El sufijo cuenta ratificaciones, no asientos** —`023`—, así que 13 y 14 conservan la etiqueta del día en que pasaron y no la del día en que se escribieron. Reetiquetarlos por comodidad sería reescribir la historia que `018` prohíbe.*
 > El **acto 6 fue la primera aplicación real** de la regla, no un ejemplo. Y el hueco que la motivó **sigue visible acá arriba**: los actos **2, 3 y 4 comparten
 > `2026-07-25`** con contenidos distintos, porque `023` **no re-versiona el pasado** — reescribir
@@ -139,7 +150,7 @@
 
 Corrección al plan original ("construir última"): `batuta` NO tiene que esperar a que TODOS sus delegados existan. Su **loop central corre solo con los dos cimientos** —`doc-arquitecto` (documentar) y `audit-tracker` (auditar + `/orquestar`)— **más los workflows, que ya existen.** Por eso se construye una **v0 MÍNIMA head-first** y se usa para bootstrappear el resto (armar la cabeza, y con la cabeza construir las extremidades más fácil).
 
-**El salvaguarda real NO es el orden, es la regla "bloqueá, nunca reimplementes" (§8/§11):** cuando una fase necesita un músico que no existe o no está terminado (testear→verificador, publicar→publicador, portafolio→cartera), `batuta` FRENA y lo reporta como hueco-a-construir — jamás hace el trabajo ella misma "temporalmente". Único antídoto contra el god-object-por-necesidad; la tentación es máxima justo en ese momento.
+**El salvaguarda real NO es el orden, es la regla "bloqueá, nunca reimplementes" (§8/§11):** cuando una fase necesita un músico que `ALCANCE.md` declara bloqueado, `batuta` FRENA y lo reporta como hueco-a-construir — jamás hace el trabajo ella misma "temporalmente". Único antídoto contra el god-object-por-necesidad; la tentación es máxima justo en ese momento.
 
 **Precondición (lo mínimo ANTES de construir v0):** los dos cimientos SÓLIDOS. `audit-tracker` ✅. `doc-arquitecto` casi: sus comandos existen pero falta cerrar el fix `fede-tools` (#29→#21) y **PROBAR el install** — recién ahí es cimiento firme.
 
@@ -153,7 +164,7 @@ Corrección al plan original ("construir última"): `batuta` NO tiene que espera
 
 - **Orquesta SOLO:** `doc-arquitecto` (`/documentar`, `/auditar-docs`), `audit-tracker` (`/audit-tracker`, `/orquestar`), y workflows (fan-out + la planificación absorbida de `director-de-obra`).
 - **Fases activas:** analizar → planificar → ejecutar-con-compuertas → cerrar. Mapeo-de-externos y ruteo en su forma MÍNIMA (best-effort: cosecha lo que los cimientos flaguean y, ante la duda, PREGUNTA — sin el campo estructurado `externos`, que es post-v0).
-- **BLOQUEA** (hueco-a-construir, nunca reimplementa): criterios→tests (falta `verificador`), publicar (falta `publicador`), enumeración de flota / portafolio (`cartera` a medias, no terminada; además es v2), egreso outward genérico.
+- **BLOQUEA** (hueco-a-construir, nunca reimplementa) ante un delegado que **`ALCANCE.md` §«v0 NO hace» declara bloqueado**, más el egreso outward genérico. *La lista concreta —qué bloquea hoy y por qué— **no se enumera acá**: vive en una sola fuente (`#105` rama B, firmada 2026-08-02), la misma que el comando consulta desde `0.6.0` (`#96` rama C). Enumerarla en dos lugares es lo que la hizo derivar trece días.*
 - **MONO-PROYECTO.** Portafolio = v2.
 
 ## 1. Propósito
