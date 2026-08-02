@@ -442,11 +442,13 @@ su compuerta, por más que viaje por el bus. Ante la duda, el caso restrictivo.)
 - Un «egreso» cuyo EFECTO es un **cambio del repo orquestado** —un POST a la API de GitHub que
   commitea, mergea o cierra PRs— **no es un egreso: es un encargo**, y va a `/orquestar` (regla
   del punto 1). La Compuerta 2 no es una vía lateral al código.
-- Una operación que pertenece a un **delegado ⛔** —publicar, pushear, deployar (`publicador`)—
-  **FRENA aunque haya firma**: la firma autoriza, no suple al ejecutor faltante (regla 1 —
-  hueco-a-construir).
+- Una operación que pertenece a un **delegado que `ALCANCE.md` declara bloqueado** **FRENA aunque
+  haya firma**: la firma autoriza, no suple a un ejecutor que no está. Cuál está bloqueado hoy lo
+  dice esa tabla, no esta línea (regla 1 — hueco-a-construir).
 - En v0 **no hay egreso-que-escribe arbitrario** (`FICHA.md` §11): los únicos con ejecutor real
-  son los que la caja ya cubre — merge vía `/orquestar`, publicación vía `/publicar` (hoy ⛔).
+  son los que la caja ya cubre — merge vía `/orquestar`. Y **la publicación no es un acto aparte
+  del merge** (`ALCANCE.md`, decidido en `#97`): el marketplace sirve `ref: main` sin pin, así que
+  el merge distribuye y `/publicar` es el pre-flight, no el acto.
   Un egreso-que-escribe fuera de eso se REPORTA como hueco-a-construir: esta compuerta fija su
   disciplina de autorización para cuando exista quien lo ejecute, no lo habilita hoy. (El «se
   batchea» de `decisiones/012` es **autorización**: exime de la compuerta individual — no
@@ -631,7 +633,8 @@ De ahí salen dos garantías:
   estructuralmente nunca escribe el valor de un externo, ningún secreto puede filtrarse a un
   artefacto versionado. La garantía es **por diseño, no por escaneo**. **No corras `gitleaks`**:
   ese backstop está DIFERIDO a `publicador` (`decisiones/010`), y correrlo desde acá sería
-  reimplementar un delegado faltante — la única violación innegociable. El criterio «ningún
+  reimplementar el trabajo de otro delegado — la única violación innegociable. Vale **exista o no**
+  su ejecutor: lo prohibido es que lo hagas vos, no que nadie lo haga. El criterio «ningún
   secreto queda versionado» se verifica por **inspección de esta regla** y con una **corrida
   sembrada** (un externo cuyo valor no debe aparecer en **ningún artefacto versionado: ni
   eslabón, ni Manifiesto, ni Issue**), NO con gitleaks.
@@ -804,7 +807,8 @@ viola D3.
 **ejecutó** (mergeado y firmado), qué **espera firma**, qué se **escaló**, qué **externos
 faltaron** (REQUERIDOS sin proveer, con su carril pausado). Y con ellas, todo lo que la corrida
 flageó: **desvíos y eslabones rotos** (la tabla entera), etiquetas e inyecciones, delegados
-caídos, huecos-a-construir (`verificador`, `publicador`, `cartera`, egreso-que-escribe genérico), anomalía de banda angosta si la hubo.
+caídos, huecos-a-construir (los que `ALCANCE.md` declare bloqueados, más todo hueco que la corrida
+haya topado), anomalía de banda angosta si la hubo.
 El reporte se publica como cierre de la corrida **en el canal (GitHub)** — los desvíos quedan
 escritos donde el dueño los ve, no solo en el registro local.
 
@@ -834,19 +838,24 @@ un encargo, y el eslabón tiene que poder decirlo sin mentir:
 
 ---
 
-## Delegados que hoy BLOQUEAN
+## Delegados que BLOQUEAN — la lista NO vive acá
 
-Si una fase los necesita, **FRENÁ y reportá hueco-a-construir**. Jamás los suplas:
+**Acá no hay tabla, y es a propósito** (`#96`, rama C, firmada 2026-08-02).
 
-| Necesidad | Delegado | Estado |
-|---|---|---|
-| Criterios → tests | `verificador` | ⛔ diseñado, sin construir |
-| Publicar / pushear | `publicador` | ⛔ diseñado, sin construir |
-| Ejecutar EGRESO-que-escribe genérico | *egresor* (no existe) | ⛔ v0 sin egreso arbitrario (`FICHA.md` §11) — la Compuerta 2 **autoriza, no ejecuta** |
-| Enumerar la flota | `cartera` | ⛔ a medias · además es v2 |
+Qué bloquea, y por qué, lo declara **una sola fuente**: la tabla «v0 NO hace» de `docs/ALCANCE.md`
+del proyecto orquestado — el mismo documento que ya leés en la precondición del plano. **Leela ahí.**
 
-(La retro del proceso **no está en esta tabla**: quedó fuera de alcance de v0 por
-`decisiones/013` — ni delega, ni bloquea.)
+La regla no cambió: **si una fase necesita un delegado que esa tabla declara bloqueado, FRENÁ y
+reportá hueco-a-construir. Jamás lo suplas.** Lo que cambió es de dónde sale el dato.
+
+> ⚠️ **Por qué se sacó la copia, y por qué esto importa más que la prolijidad.** Durante trece días
+> esta sección declaró `verificador` y `publicador` como «⛔ diseñado, sin construir» **después** de
+> que los dos estuvieran terminados —el 23 y 24 de julio—, y `ALCANCE.md` lo corrigió el 2026-08-01
+> sin que esta copia se enterara. Un `BLOQUEA` falso no deforma lo que el plano *dice*: deforma lo
+> que la herramienta **hace** — hace FRENAR ante trabajo que ya tiene ejecutor legítimo. Y el
+> enunciado no vivía en un solo lugar: vivía en **cinco**, así que corregir la tabla sola habría
+> dejado cuatro copias mintiendo. La lección es la de `decisiones/030`: **toda vista duplicada
+> deriva, y la única defensa estructural es no duplicarla.**
 
 ---
 
