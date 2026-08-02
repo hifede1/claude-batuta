@@ -216,7 +216,7 @@ Esta es la única fase donde `batuta` *piensa* en vez de rutear, y por eso es la
 - **D1 enumera-y-clasifica** — el grafo del paso 1: nada entra sin enumerar y clasificar.
 - **D2 GitHub-first** — las decisiones-a-firmar viajan por GitHub, el mismo sustrato que consume la fase 3; no inventás un canal propio.
 - **D3 baseline liviano** — el eslabón `plano` es liviano: identificadores y porqués, no un documento paralelo al plano firmado.
-- **D4 consume cartera** — si el plano necesita enumerar la flota, eso lo produce `cartera`; y `cartera` HOY BLOQUEA (⛔, además es v2). Respetar D4 es **frenar y reportar hueco-a-construir**, jamás enumerar la flota a mano.
+- **D4 consume cartera** — si el plano necesita enumerar la flota, eso lo produce `cartera`, y **`batuta` v0 no la consume porque es v2** (`decisiones/007`, corte de versiones): es una decisión de alcance, **no** el estado del delegado — medido el 2026-08-01, `cartera` está terminada y disponible. Qué bloquea hoy, y por qué, lo declara `ALCANCE.md`. Respetar D4 es **frenar y reportar hueco-a-construir**, jamás enumerar la flota a mano.
 
 Son PISO: `batuta` ejecuta y toca externos, y eso abre decisiones que ninguna de las cuatro cubre (`decisiones/015`).
 
@@ -542,7 +542,7 @@ lava un dato contaminado.
 ### Delegado caído a mitad — se reporta, se escala, se sostiene
 
 Un delegado se cae: la invocación falla, su contrato se rompe (una MAJOR que no soportás), su
-artefacto no aparece, o directamente es un ⛔ de la tabla de abajo. **Este es el momento de
+artefacto no aparece, o directamente `ALCANCE.md` lo declara bloqueado. **Este es el momento de
 máximo riesgo de toda la corrida** — la tentación de «lo arreglo yo para no frenar el loop» es
 god-object **por necesidad**, la forma más seductora. El protocolo es tres verbos, en orden:
 
