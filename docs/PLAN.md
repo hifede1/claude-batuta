@@ -708,6 +708,79 @@ tres bloqueos de un saque: dos cayeron, uno se redujo y el tercero sobrevive por
 
 ---
 
+## S19 — Evidencia limpia sobre la identidad del agente: el plano prescribe un mecanismo que su propia referencia midió fallando
+
+🎯 **Planteamiento.** `docs/PLAN.md:417-421` —dentro de S14, o sea **plano firmado**— presenta
+`GH_TOKEN=$(gh auth token --user <cuenta-agente>) gh <comando>` como **«el mecanismo correcto
+verificado»**. `references/perimetro-de-confianza.md` §7:268 mide **ese mismo mecanismo** y le pone
+❌ en escritura: *«la escritura deja la cuenta activa en la del agente»*. **El plano le está diciendo
+al próximo implementador que use algo que la referencia hermana midió roto.**
+
+**Y la refutación tampoco es confiable.** El propio artefacto declara la tabla de §7:265-269
+**CONFUNDIDA**: sus tres filas se midieron **mientras otra sesión de Claude Code corría `gh auth
+switch` cada ~30 s**, así que ninguna está medida limpiamente. No hay un lado correcto y otro
+equivocado: **hay dos afirmaciones sobre el mismo hecho y ninguna se sostiene.**
+
+**Por qué es la de mayor consecuencia de lo que queda abierto.** Es la clase de S18, no la de S16:
+los drifts de vista deforman lo que el plano *dice*; éste deforma **lo que el operador hace**. Y ya
+se cobró una vez — dos comandos completos del taller corrieron con la cuenta de otro proyecto, y
+**se detectó por accidente**, porque un comando devolvió otro login. Es además el sustrato de
+`009`/`025`/`028`/`029`: todo el modelo de firma se apoya en poder separar identidades.
+
+**Ningún cable puede cazarlo hoy**, y no es olvido: el alcance de `030` son los sellos de ADR y
+`FICHA` §10; `frontera` mira `plugins/` y el catálogo. **`references/` no lo mira nadie** — es la
+tercera superficie de la misma enfermedad, después de las vistas (S17) y del mundo (S18).
+
+🛠️ **Método.** Medición bajo aislamiento probado + reasentamiento. Cero decisión nueva salvo la que
+`033` reserva explícitamente al dueño.
+
+1. **Probar el aislamiento antes de medir nada.** El dueño cierra las demás sesiones de Claude Code
+   y se comprueba con `ps` que ninguna otra corre, **con hora, en el registro**. Sin esa prueba la
+   medición nace con el mismo defecto que la que viene a reemplazar.
+2. **Re-medir las tres filas de §7:265-269 una por una**, con el criterio que la propia tabla ya
+   fija —*¿la cuenta activa del dueño sigue siendo la suya después de una **escritura**?*— cubriendo
+   `gh auth switch`, `GH_TOKEN` y `GH_CONFIG_DIR`.
+3. **Cerrar la salvedad de `GH_CONFIG_DIR`**: el único comando que quedó sin reproducir aislado es
+   `gh pr create`. Se mide, o se declara no medible **con su motivo**.
+4. **Reasentar §7** con las mediciones frescas y su fecha, y **sacar la prescripción del plano**:
+   `PLAN.md:417-421` deja de recomendar un mecanismo y **apunta a §7**, que es donde vive la
+   medición. Una prescripción en el plano y una medición en la referencia son dos fuentes del mismo
+   dato — es el diagnóstico de `030` aplicado a `references/`.
+5. **Partir el ADR `033`** como pidió el veredicto de su propio pase adversarial, que lo declaró
+   **no firmable como estaba**: (a) el **mecanismo**, complemento firmable de `029`; (b) **sacar el
+   FRENA**, que supera a `029:67-70` y es **elección humana registrada aparte**. Se propone (a); (b)
+   se lleva a firma sin recomendación del agente.
+6. **Gotcha — el que se come esta sesión si se descuida.** La tentación es re-medir y **declarar
+   ganador**. Si la contaminación de `gh pr create` no se reproduce, eso **no prueba que aísle**:
+   prueba que no se reprodujo. La salvedad se cierra cuando haya una **explicación**, no cuando
+   falte una repetición. Es la misma disciplina con que S18 se negó a declarar caídos los tres
+   `BLOQUEA` de un saque.
+
+✅ **Criterios de aceptación.**
+- [ ] El aislamiento está **probado, no supuesto** *(verificación: la salida de `ps` con hora en el registro de la sesión — cero sesiones ajenas de Claude Code durante la ventana de medición)*
+- [ ] Las tres filas de §7 llevan **medición fresca con fecha y el comando exacto** que la produjo *(verificación: inspección — ninguna fila sin fecha, ninguna sin corrida citada)*
+- [ ] La salvedad de `gh pr create` queda **cerrada o re-declarada con su motivo**, jamás borrada en silencio *(verificación: inspección de §7 — el párrafo de la salvedad existe y dice qué pasó)*
+- [ ] `PLAN.md:417-421` **ya no prescribe un mecanismo**: apunta a §7 *(verificación: inspección — cero bloque de código con el mecanismo dentro del plano, y el puntero presente)*
+- [ ] `033` está **partido**, y su parte (a) firmada o PENDIENTE con su motivo escrito *(verificación: `docs/decisiones/033-*.md` existe con sello de `024`; el FRENA queda fuera de su alcance, declarado)*
+- [ ] La contradicción queda **cableada o declarada NO cableable con su motivo** *(verificación: o hay chequeo con su escenario sembrado, o hay hueco escrito — `030` no cubre `references/`, y un límite callado es el cartel de siempre)*
+
+📚 **Referencias.** [`references/perimetro-de-confianza.md`](references/) 🟢 **territorio volátil** ·
+[`references/audit-tracker.md`](references/) 🟢
+
+⛓️ **Prerrequisitos.** **Aislamiento verificado — acto del dueño**, no del agente: exige cerrar las
+otras sesiones de Claude Code. Es prerrequisito duro: sin él la medición repite el defecto que viene
+a corregir. · El veredicto que declaró `033` no firmable ya está registrado (`b17`).
+
+**Estimación: M** — la medición es rápida; lo que pesa es **no** declarar ganador con una repetición
+faltante, y que la parte (b) de `033` no la decide el agente.
+
+> **Lo que S19 NO hace, declarado.** No cablea el tracker HTML ni la estampa de `ALCANCE.md` —las dos
+> siguen sin control y quedan como candidatas a **S20**—, no incorpora al plano los tramos sin asiento
+> (S15, la jornada `b17` y la de hoy: eso lo firma el dueño), y no toca el chequeo 5, que vigila
+> atraso y no justificación. Enumerarlo acá es lo único que impide que se lean como olvidos.
+
+---
+
 ## Resumen
 
 > ⚠️ **Esta tabla es una VISTA DERIVADA** (`decisiones/030`). La columna *Bloqueada por decisión*
@@ -735,6 +808,7 @@ tres bloqueos de un saque: dos cayeron, uno se redujo y el tercero sobrevive por
 | **S16** | **Coherencia del contrato: bajar `030` y poner el primer cable** *(mantenimiento)* | **M** | `030` coherencia del contrato |
 | **S17** | **La frescura de las vistas: el cuarto y quinto chequeo** *(mantenimiento)* | **S** | — *(`030` ya firmada; extiende su alcance precisado)* |
 | **S18** | **La frontera de los delegados: medir los tres `BLOQUEA` y reasentarlos** *(mantenimiento)* | **S** | — *(el motivo que sobrevive es `007`, corte de versiones)* |
+| **S19** | **Evidencia limpia sobre la identidad del agente** *(mantenimiento)* — ⏳ **abierta** | **M** | `033` **partido y sin firmar** · su parte (b) —sacar el FRENA— supera a `029` y es elección del dueño |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 

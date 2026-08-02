@@ -34,6 +34,7 @@ fallo de un delegado — ese es el momento en que un orquestador se convierte en
 
 | Documento | Qué responde |
 |---|---|
+| [`docs/OPERACION.md`](docs/OPERACION.md) | Cómo se instala, cómo se corre, qué pasa en una corrida y qué está abierto hoy |
 | [`docs/VISION.md`](docs/VISION.md) | Qué problema resuelve y cómo se ve el éxito |
 | [`docs/ALCANCE.md`](docs/ALCANCE.md) | Qué entra y qué no en v0 / v1 / v2 — **la fuente del estado de dependencias** |
 | [`docs/FICHA.md`](docs/FICHA.md) | El contrato de diseño completo |
