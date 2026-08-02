@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-02 (3) por Fede
+> Firmado: 2026-08-02 (4) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -135,6 +135,19 @@
 >     mientras su tabla dice lo contrario palabra por palabra. La cura no es corregir el enunciado
 >     —eso conserva la duplicación que lo hizo derivar— sino **no tenerlo dos veces**. Tercera
 >     ratificación del día, sufijo `(3)` (`023`). Firmada por el dueño en `#105` (rama B).*
+>
+> 19. ***2026-08-02 (4) · PR que abre S19** — se abre **S19: evidencia limpia sobre la identidad del
+>     agente**. Origen: `PLAN.md:417-421` —plano firmado— prescribe
+>     `GH_TOKEN=$(gh auth token …)` como «el mecanismo correcto **verificado**», y
+>     `references/perimetro-de-confianza.md` §7:268 mide **ese mismo mecanismo** fallando en
+>     escritura. **No hay un lado correcto:** la tabla de §7 está declarada CONFUNDIDA, porque sus
+>     tres filas se midieron mientras otra sesión corría `gh auth switch` cada ~30 s. Es la clase de
+>     S18 y no la de S16 —deforma **lo que el operador hace**, no lo que el plano dice— y es la
+>     **tercera superficie** de la misma enfermedad: después de las vistas (S17) y del mundo (S18),
+>     `references/`, que no mira ningún cable. **Sin ADR nuevo en este acto:** `033` existe como
+>     veredicto que lo declara no firmable, y partirlo es método de S19, no de esta estampa. Cuarta
+>     ratificación del día, sufijo `(4)` (`023`). **La ratificación es el merge de este PR por el
+>     dueño** (`018`).*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
