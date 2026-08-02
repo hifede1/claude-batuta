@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-01 (2) por Fede
+> Firmado: 2026-08-02 por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -102,10 +102,23 @@
 >     silencio: el **chequeo 5** compara esta línea contra la fecha de sello más reciente de
 >     `docs/decisiones/` en cada PR.*
 >
+> 16. ***2026-08-02 · PR de materialización de `#94`** — se **corrige la estampa**: S18 (PR `#92`,
+>     2026-08-01) modificó el plano —re-ratificó `ALCANCE.md` y amplió `PLAN.md`— y **no incrementó
+>     esta estampa**, lo que `decisiones/023` punto 4 califica de «violación del contrato, no
+>     descuido de estilo». Con ella quieta, `plano_version 2026-08-01 (2)` etiquetaba **dos planos
+>     distintos**: el que declaraba los tres `BLOQUEA` «verificado 2026-07-19» y el que declara dos
+>     de ellos caídos. El acto **no se retro-fecha** (`018`: la procedencia nunca se reescribe): se
+>     asienta con la fecha de ESTA ratificación, que es la primera del día y por eso no lleva
+>     sufijo. **El chequeo 5 no lo cazó** —su reloj es la fecha de sello más reciente de
+>     `docs/decisiones/` y S18 cerró sin firmar ningún ADR, así que una estampa congelada pasaba en
+>     verde—; queda como hueco declarado, no cerrado acá. Detectado por la corrida
+>     `2026-08-02-publicar-050-y-esqueletos-s17-s18` y firmado por el dueño en el issue `#94`
+>     (rama A).*
+>
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
 > lleva sufijo `(N)`; la primera no lo lleva. **Ratificaciones del 2026-07-26:** actos 5 `—` · 6 `(2)`
-> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Ratificaciones del 2026-07-30:** acto 11 `—` (primera del día, sin sufijo) · acto 12 `(2)`. **Del 2026-07-31:** acto 13 `—`. **Del 2026-08-01:** acto 14 `—` · acto 15 `(2)`.
+> · 7 `(3)` · 8 `(4)` · 9 `(5)` · 10 `(6)`. **Ratificaciones del 2026-07-30:** acto 11 `—` (primera del día, sin sufijo) · acto 12 `(2)`. **Del 2026-07-31:** acto 13 `—`. **Del 2026-08-01:** acto 14 `—` · acto 15 `(2)`. **Del 2026-08-02:** acto 16 `—` (primera del día, sin sufijo).
 > ⚠️ *Los actos 13 y 14 se asientan **retroactivamente** en el acto 15 (S17): ocurrieron el 31-07 y el 01-08 y esta estampa no se movió. **El sufijo cuenta ratificaciones, no asientos** —`023`—, así que 13 y 14 conservan la etiqueta del día en que pasaron y no la del día en que se escribieron. Reetiquetarlos por comodidad sería reescribir la historia que `018` prohíbe.*
 > El **acto 6 fue la primera aplicación real** de la regla, no un ejemplo. Y el hueco que la motivó **sigue visible acá arriba**: los actos **2, 3 y 4 comparten
 > `2026-07-25`** con contenidos distintos, porque `023` **no re-versiona el pasado** — reescribir
