@@ -313,7 +313,9 @@
       "cierra": []
     }
   ],
-  "decisiones_pendientes": [],
+  "decisiones_pendientes": [
+    "033"
+  ],
   "referencias": [
     {
       "tema": "doc-arquitecto",

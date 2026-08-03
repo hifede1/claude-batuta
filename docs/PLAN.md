@@ -414,11 +414,26 @@ escritura de contrato.
 sesión del 2026-07-26: `025` es **agnóstica del mecanismo** —dice que el agente no opera con la
 credencial del dueño, y nada sobre cómo— y el agente lo implementó con `gh auth switch`, que cambia
 la **cuenta activa global del perfil del humano**. El dueño quedó operando con la cuenta del agente
-sin haberlo pedido. Se corrigió en el momento, y el mecanismo correcto quedó verificado:
+sin haberlo pedido. Se corrigió en el momento, y el mecanismo quedó documentado en
+[`references/perimetro-de-confianza.md`](references/perimetro-de-confianza.md) **§7, que es su única
+fuente**: acá va el **puntero**, jamás el comando.
 
-```
-GH_TOKEN=$(gh auth token --user <cuenta-agente>) gh <comando>   # por operación, no persiste
-```
+> ⚠️ **Este tramo declaraba «el mecanismo correcto quedó verificado» y materializaba el comando.
+> S19 lo sacó, y el motivo importa.** Lo que se declaraba verificado era `GH_TOKEN=…`, y §7:268 mide
+> **ese mismo mecanismo** con **❌ en escritura** — se había dado por verificado tras probarlo con
+> **una sola lectura**. Un plano que prescribe lo que su referencia hermana midió roto le está
+> diciendo al próximo implementador que repita el error.
+>
+> **Y la refutación tampoco es firme, así que no se cambia una prescripción por otra:** §7 declara su
+> propia tabla `:265-269` **CONFUNDIDA** —las tres filas se midieron mientras otra sesión corría
+> `gh auth switch` cada ~30 s—, de modo que **hoy ninguna está medida limpiamente**. La re-medición
+> bajo aislamiento probado es **C2 de S19** y **espera una decisión del dueño** sobre con qué
+> identidad se mide (`027:43-45` para las filas 2-3, `029:67-70` para la fila 1). **Quien lea §7
+> hasta entonces, lea también esta declaración.**
+>
+> Una prescripción en el plano y una medición en la referencia son **dos fuentes del mismo dato** —
+> el diagnóstico de `decisiones/030` aplicado a `references/`, que su alcance no cubría. Lo vigila el
+> **chequeo 6** de `.github/scripts/coherencia-contrato.sh`.
 
 **Mientras eso no esté escrito, la próxima implementación puede repetir el error** — y `025` no lo va
 a impedir, porque hace bien en no ser un manual.

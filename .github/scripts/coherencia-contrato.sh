@@ -329,10 +329,64 @@ fresca 5 "estampa de FICHA vs la fuente ...." \
        "$(grep -m1 '^> Firmado:' "$FICHA" 2>/dev/null | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | head -1)" \
        "${FICHA#$REPO/} · la estampa del plano"
 
+# ── CHEQUEO 6 · EL MECANISMO DE IDENTIDAD VIVE EN UN SOLO LUGAR (S19) ───
+# `references/perimetro-de-confianza.md` §7 es LA FUENTE de cómo se opera con
+# identidad. Cuando otro documento MATERIALIZA el mecanismo en un bloque de
+# código, deja de citarlo y pasa a prescribirlo: nace la segunda fuente, y las
+# dos envejecen por separado. Es el diagnóstico de `030` aplicado a un
+# territorio que su alcance no cubría — `030` mira los sellos de ADR y FICHA
+# §10; `references/` no lo miraba nadie.
+#
+# NO es hipotético: `PLAN.md:417-421` —plano FIRMADO— presentaba
+# `GH_TOKEN=…` como «el mecanismo correcto verificado», y §7:268 mide ESE
+# MISMO mecanismo con ❌ en escritura. El plano le decía al próximo
+# implementador que usara lo que la referencia hermana había medido roto.
+#
+# ANCLA: el BLOQUE DE CÓDIGO, no la palabra. Este repo NOMBRA los tres
+# mecanismos todo el tiempo en prosa —narrando la historia de `025`/`027`/`028`,
+# citando qué falló y por qué— y eso es legítimo: hablar de un mecanismo no es
+# prescribirlo. Un grep a lo bruto marcaría 20 líneas de narrativa correcta.
+# Lo que distingue prescripción de mención es que el comando esté MATERIALIZADO
+# para copiar y pegar, y eso sí es mecánico: vive dentro de un fence ```.
+#
+# LÍMITE DECLARADO, y se declara porque un límite callado es el cartel de
+# siempre: el chequeo NO caza prescripciones INLINE en prosa o en celda de
+# tabla (p. ej. una fila que diga «la solución es `GH_TOKEN=…`»). Distinguir
+# ahí prescripción de narración es JUICIO, no mecánica, y este taller ya vio
+# caerse tres veces la medición de intención con patrones léxicos. Ese flanco
+# lo cubre la re-auditoría, igual que el contenido de la deuda en los 4 y 5.
+#
+# ALCANCE: `docs/*.md` y `docs/decisiones/*.md`. Quedan fuera `references/`
+# (es la fuente, ahí el bloque DEBE estar) y `audits/` (son registros de
+# hechos fechados, no contrato vigente: un informe que transcribe el comando
+# que se corrió ese día no prescribe nada).
+printf '6· mecanismo de identidad solo en references/ '
+mec_probs=""
+for f in "$REPO"/docs/*.md "$REPO"/docs/decisiones/*.md; do
+  [ -e "$f" ] || continue
+  hits=$(awk '
+    /^[[:space:]]*```/ { dentro = !dentro; next }
+    dentro && /GH_TOKEN=|gh auth switch|GH_CONFIG_DIR=/ {
+      sub(/^[[:space:]]+/, "")
+      print "     " FILENAME ":" FNR " · " $0
+    }
+  ' "$f" 2>/dev/null)
+  [ -n "$hits" ] && mec_probs="$mec_probs\n$hits"
+done
+if [ -n "$mec_probs" ]; then
+  echo "✗ FALLA"
+  echo "     un documento fuera de references/ MATERIALIZA el mecanismo en un bloque de código:"
+  printf '%b\n' "${mec_probs#\\n}" | sed "s|$REPO/||"
+  echo "     La fuente es references/perimetro-de-confianza.md §7. Acá va un PUNTERO, no el comando."
+  fallas=$((fallas + 1))
+else
+  echo "✓ (ningún bloque de código lo materializa fuera de la fuente)"
+fi
+
 echo
 if [ "$fallas" -eq 0 ]; then
   echo "VERDE · las vistas coinciden con la fuente y están al día"
   exit 0
 fi
-echo "ROJO · $fallas de 5 chequeos en falla"
+echo "ROJO · $fallas de 6 chequeos en falla"
 exit 1
