@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-02 (4) por Fede
+> Firmado: 2026-08-03 por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -148,6 +148,18 @@
 >     veredicto que lo declara no firmable, y partirlo es método de S19, no de esta estampa. Cuarta
 >     ratificación del día, sufijo `(4)` (`023`). **La ratificación es el merge de este PR por el
 >     dueño** (`018`).*
+>
+> 20. ***2026-08-03 · PR de S19, horizonte H1** — se abre **`033`(a) ⏳ PENDIENTE** (el mecanismo,
+>     complemento firmable de `029`) y se lista en §10 *Pendientes*. **Esto SUPERA al «sin ADR nuevo
+>     en este acto» del acto 19**, que era cierto para ese acto y quedó obsoleto acá: partir `033` era
+>     método de S19 y S19 lo ejecutó. La parte **(b)** —sacar el FRENA de `029:67-70`— **NO se propone
+>     y queda reservada al dueño** (`PLAN.md:756-758`, sin recomendación del agente). En el mismo
+>     acto, `PLAN.md:417-421` **deja de prescribir** el mecanismo y apunta a `perimetro` §7
+>     declarando que su tabla sigue **CONFUNDIDA**, y nace el **chequeo 6** de
+>     `coherencia-contrato.sh`, que vigila que ningún documento fuera de `references/` vuelva a
+>     materializarlo — **se lo vio FALLAR contra `9edd971` antes de corregir nada**. Primera
+>     ratificación del día → **sin sufijo** (`023`). **La ratificación es el merge de este PR por el
+>     dueño** (`018`). Autorizado por la firma de `#109`; encargo `#110`.*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
@@ -348,8 +360,15 @@ y su fecha**, y quien lo supera lo declara.
 
 ### Pendientes
 
+| ADR | Decisión | Sello | Fecha | Baja / aplica en |
+|---|---|---|---|---|
+| [`033`](decisiones/033-mecanismo-de-identidad-por-operacion.md) | El mecanismo de identidad es POR OPERACIÓN, y su medición vive en un solo lugar | ⏳ PENDIENTE | 2026-08-03 | S19 · complementa a `029` · **la parte (b), sacar el FRENA, queda FUERA de su alcance** |
 
-**Ninguna al 2026-07-31.**
+*Abierta el **2026-08-03** por S19, horizonte H1 (`#110`, autorizado por la firma de `#109`). Nace
+⏳ PENDIENTE: es la **cuarta** vez que esta sección se usa, y por el mismo motivo que la segunda — la
+ventana propuesta↔sello que `024` reserva para cuando la elección humana todavía no ocurrió. La parte
+**(b)** —retirar el FRENA de `029:67-70`— **no está acá y no la propone el agente**: `PLAN.md:756-758`
+la reserva al dueño y prohíbe su recomendación.*
 
 *Historial de esta sección — tres veces vacía, por motivos distintos:*
 

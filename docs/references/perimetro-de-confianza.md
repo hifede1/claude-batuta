@@ -274,6 +274,41 @@ dueño sigue siendo la suya después de una **escritura**?*
 > mecanismo**, y el único comando de ese turno que no se pudo reproducir aislado fue `gh pr create`.
 > **La causa no quedó determinada.** Se deja escrito así —y no como «aísla siempre»— porque afirmar lo
 > segundo sería exactamente el error que esta sección documenta: concluir más de lo que se midió.
+>
+> ---
+>
+> **RE-DECLARADA el 2026-08-03 (S19, horizonte H1). Sigue ABIERTA — y hay que decir contra qué, porque
+> el proyecto ya tiene a mano una «causa determinada» que NO es ésta.**
+>
+> ⚠️ **En este documento conviven DOS «causa no determinada» distintas, y confundirlas cierra esta
+> salvedad con la explicación equivocada:**
+>
+> | Cuál | Dónde | Estado |
+> |---|---|---|
+> | **La de ESTA salvedad** — por qué se contaminó la cuenta tras un turno que solo usó `GH_CONFIG_DIR`, con `gh pr create` como único comando no reproducido | acá arriba | **ABIERTA** |
+> | La **inestabilidad de la restauración** del 2026-07-28 — por qué la cuenta volvió a cambiar en menos de 25 min tras restaurarla | §«Dos momentos» y el artefacto de estado | **DETERMINADA el 2026-08-01**: doce sesiones de Claude Code comparten `~/.config/gh/hosts.yml` y varias ejecutan `gh auth switch` |
+>
+> **Lo que se determinó el 2026-08-01 es la SEGUNDA, no la primera.** Que la cuenta no derive sola no
+> explica por qué `GH_CONFIG_DIR` —que aísla por diseño— fue seguido de una contaminación. Leer una
+> por otra sería cerrar esta salvedad con una explicación prestada.
+>
+> **Por qué NO se cierra hoy, dicho en vez de callado.** La re-medición bajo aislamiento probado es
+> **C2 de S19** y está **gated por una decisión del dueño** sobre con qué identidad se mide
+> (`027:43-45` para las filas 2-3, `029:67-70` para la fila 1). Y aunque se midiera: **si la
+> contaminación no se reproduce, eso NO prueba que aísle — prueba que no se reprodujo.** Esta salvedad
+> se cierra con una **explicación**, jamás con una repetición faltante.
+>
+> **Dato fresco que la corrida del 2026-08-03 sí produjo, y que ACOTA el fenómeno sin cerrarlo:**
+> `~/.config/gh/hosts.yml` acumuló **34 h sin una sola reescritura** (mtime `2026-08-02 13:37:35`,
+> `user: hifede1`) atravesando una corrida entera con decenas de operaciones `gh` de lectura. Y la
+> última escritura de ese archivo **no fue contaminación: fue la mano del dueño restaurando** —
+> reconstruido minuto a minuto contra la transcripción de la sesión, el agente había **FRENADO por
+> escrito** 2 min antes citando `029`, y el turno humano «listo, cambié la cuenta» llega **11 s después
+> de la escritura**. Es `029` funcionando en vivo. **No cierra la salvedad** —no toca `gh pr create`—
+> pero deja asentado que el fenómeno **no es continuo ni espontáneo**.
+>
+> ⚠️ **Y la tabla de arriba sigue CONFUNDIDA.** Sus tres filas se midieron mientras otra sesión corría
+> `gh auth switch` cada ~30 s: **ninguna está medida limpiamente**. Quien la lea, léala con esto.
 
 **El mecanismo de elección es el tercero.** Se prepara una vez y se usa siempre:
 
