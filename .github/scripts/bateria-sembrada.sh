@@ -126,20 +126,32 @@ s_firmada_sin_proc() {
 # siembra, y la batería se puso roja acusando al cable de un drift que había
 # creado ella. Un número fijo bajo envejece HACIA la colisión; `999` está fuera
 # del rango que el proyecto va a usar.
+#
+# ⚠️ Y EL SEMBRADO ES `+=`, NO `=` — la MISMA clase de defecto, descubierta un
+# renglón más abajo el 2026-08-03. La asignación REEMPLAZABA
+# `decisiones_pendientes` entera, y eso funcionó mientras el repo no tuvo
+# ningún ADR ⏳ PENDIENTE real: la lista estaba vacía y pisarla no borraba nada.
+# El día que `033` nació PENDIENTE (S19/H1), el escenario lo sacó de la vista
+# mientras su archivo seguía en la fuente, y el chequeo 2 falló **con razón** —
+# la batería volvió a acusar al cable de un drift que había creado ella, por
+# segunda vez y por el mismo motivo de fondo: **el escenario asumía un estado
+# del repo en vez de agregarse a él.** Arreglar el número y dejar la asignación
+# era curar el síntoma. Con `+=` el escenario prueba lo suyo sin depender de
+# cuántos pendientes reales haya.
 s_adr_pendiente_nuevo() {
   printf -- '# 999 — prueba\n\n**Estado:** ⏳ **PENDIENTE** · dueño: Fede\n\n## Contexto\n\nSin elegir todavía.\n' \
     > "$SEMBRAR_EN/docs/decisiones/999-prueba.md"
   edita 's#^| \[`030`\].*#&\n| [`999`](decisiones/999-prueba.md) | Prueba | ⏳ PENDIENTE | — | — |#' \
     "$SEMBRAR_EN/docs/FICHA.md"
   j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
-  jq '.decisiones_pendientes = ["999 — prueba"]' "$j" > "$j.x" && mv "$j.x" "$j"; }
+  jq '.decisiones_pendientes += ["999 — prueba"]' "$j" > "$j.x" && mv "$j.x" "$j"; }
 # Una entrada de `decisiones_pendientes` que CITA otro ADR en su texto libre.
 # El ID es el primer número de la entrada; los demás son prosa. Sin esto, una
 # entrada legítima como «031 — … (supera 027 punto 4)» declaraba dos pendientes
 # y el cable acusaba a un ADR FIRMADO de estar pendiente.
 s_pend_cita_otro() {
   j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
-  jq '.decisiones_pendientes = ["999 — prueba (supera 027 punto 4)"]' "$j" > "$j.x" && mv "$j.x" "$j"
+  jq '.decisiones_pendientes += ["999 — prueba (supera 027 punto 4)"]' "$j" > "$j.x" && mv "$j.x" "$j"
   printf -- '# 999 — prueba\n\n**Estado:** \xe2\x8f\xb3 **PENDIENTE** \xc2\xb7 due\xc3\xb1o: Fede\n' \
     > "$SEMBRAR_EN/docs/decisiones/999-prueba.md"
   edita 's#^| \[`030`\].*#&\n| [`999`](decisiones/999-prueba.md) | Prueba | \xe2\x8f\xb3 PENDIENTE | \xe2\x80\x94 | \xe2\x80\x94 |#' \
