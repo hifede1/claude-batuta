@@ -144,7 +144,8 @@ s_adr_pendiente_nuevo() {
   edita 's#^| \[`030`\].*#&\n| [`999`](decisiones/999-prueba.md) | Prueba | ⏳ PENDIENTE | — | — |#' \
     "$SEMBRAR_EN/docs/FICHA.md"
   j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
-  jq '.decisiones_pendientes += ["999 — prueba"]' "$j" > "$j.x" && mv "$j.x" "$j"; }
+  jq '.decisiones_pendientes += ["999 — prueba"]' "$j" > "$j.x" && mv "$j.x" "$j"
+  sync_trk; }
 # Una entrada de `decisiones_pendientes` que CITA otro ADR en su texto libre.
 # El ID es el primer número de la entrada; los demás son prosa. Sin esto, una
 # entrada legítima como «031 — … (supera 027 punto 4)» declaraba dos pendientes
@@ -155,7 +156,99 @@ s_pend_cita_otro() {
   printf -- '# 999 — prueba\n\n**Estado:** \xe2\x8f\xb3 **PENDIENTE** \xc2\xb7 due\xc3\xb1o: Fede\n' \
     > "$SEMBRAR_EN/docs/decisiones/999-prueba.md"
   edita 's#^| \[`030`\].*#&\n| [`999`](decisiones/999-prueba.md) | Prueba | \xe2\x8f\xb3 PENDIENTE | \xe2\x80\x94 | \xe2\x80\x94 |#' \
-    "$SEMBRAR_EN/docs/FICHA.md"; }
+    "$SEMBRAR_EN/docs/FICHA.md"
+  sync_trk; }
+# ── SIEMBRA DEL CHEQUEO 6 (S20 · deuda que dejó S19/H1) ────────────────
+# El chequeo 6 se vio fallar A MANO contra el repo real y nunca quedó
+# sembrado. Un cable que sólo se probó una vez a mano tiene su garantía en
+# el pasado; ésta la pone en cada PR. Es la deuda que S19/H1 declaró y que
+# S20 cierra porque toca esta misma batería.
+#
+# El defecto: un documento fuera de `references/` MATERIALIZA un mecanismo
+# de identidad dentro de un fence. Se siembra en `ALCANCE.md` —no en
+# `PLAN.md`, que ya fue el caso real— para que el escenario no dependa de
+# qué archivo tuvo el problema aquella vez.
+s_mecanismo_fuera_de_refs() {
+  printf '\n```\nGH_TOKEN=$(gh auth token --user agente) gh pr create\n```\n' \
+    >> "$SEMBRAR_EN/docs/ALCANCE.md"; }
+
+# Y su espejo, que es el que protege de un cable demasiado goloso: el mismo
+# mecanismo NOMBRADO EN PROSA con backticks tiene que dar VERDE. Este repo
+# narra la historia de `025`/`027`/`028` todo el tiempo y hablar de un
+# mecanismo no es prescribirlo. Sin este escenario, un futuro «endurecimiento»
+# del chequeo 6 a grep de palabra suelta pasaría sin que nadie lo note.
+s_mecanismo_en_prosa() {
+  printf '\n> Nota: el agente lo implementó con `gh auth switch`, y eso fue el error.\n' \
+    >> "$SEMBRAR_EN/docs/ALCANCE.md"; }
+
+# ── SIEMBRA DEL CHEQUEO 7 · el tracker HTML (S20) ──────────────────────
+# Una dimensión por escenario: si uno solo cubriera las cuatro, el día que
+# tres dejaran de compararse el escenario seguiría en rojo por la cuarta y
+# nadie se enteraría. Cada uno rompe UNA cosa.
+TRK='docs/audits/batuta-tracker.html'
+
+# `sync_trk` — deja el tracker COHERENTE con lo que el escenario sembró.
+#
+# Por qué hace falta, y es la lección de esta siembra: el chequeo 7 acopla el
+# HTML a tres cosas que otros escenarios ya movían —`last_audit`,
+# `closed_count` y la cantidad de ADRs—. Sin esto, un escenario que adelanta
+# el reloj para probar los chequeos 4 y 5 se ponía rojo **por el 7**, y
+# fallaba por una dimensión que no venía a probar. El escenario dejaba de
+# medir lo suyo.
+#
+# La regla que fija: **un escenario deja el repo sembrado coherente en todo
+# MENOS en la dimensión que prueba.** Si rompe dos cosas a la vez, su
+# veredicto no dice cuál de las dos detectó el cable.
+#
+# LÍMITE: no sincroniza la cantidad de BLOQUES. Ningún escenario los mueve
+# hoy —el único que lo hace es `s_trk_bloque`, y ése BUSCA el rojo—. Se
+# declara en vez de escribir código muerto que nadie ejercita.
+sync_trk() {
+  local t="$SEMBRAR_EN/$TRK" j
+  [ -f "$t" ] || return 0
+  j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json 2>/dev/null | head -1)
+  [ -f "$j" ] || return 0
+  edita "s/^const LAST_AUDIT = '[^']*';/const LAST_AUDIT = '$(jq -r '.last_audit // empty' "$j")';/" "$t"
+  edita "s/^const CLOSED_COUNT = [0-9]*;/const CLOSED_COUNT = $(jq -r '.closed_count // empty' "$j");/" "$t"
+  # Una entrada dummy por cada ADR que la fuente tenga de más.
+  local want have
+  want=$(ls "$SEMBRAR_EN"/docs/decisiones/[0-9][0-9][0-9]-*.md 2>/dev/null | wc -l | tr -d ' ')
+  have=$(grep -cE "id:[[:space:]]*'d[0-9]{3}'" "$t")
+  # Se ancla en la ÚLTIMA línea que ya declara un ADR y se le pega la entrada
+  # nueva en la MISMA línea (`},{id:…},` es JS válido dentro del array).
+  #
+  # El primer intento anclaba en `^];` — y ese patrón engancha el cierre del
+  # PRIMER array del archivo, que es `DATA`, no `DECISIONS`. La entrada
+  # aterrizaba en la estructura equivocada y el conteo no se movía: el
+  # escenario seguía rojo y la causa era invisible. Anclar en «el cierre de un
+  # array» cuando hay ocho arrays es la misma clase de error que anclar en la
+  # palabra en vez del dato (`030` §3).
+  # Y el ancla exige `},$` EN EL PATRÓN DE BÚSQUEDA, no sólo en la
+  # sustitución. Segundo supuesto falso del mismo helper: la última línea con
+  # `id:'dNNN'` **no es la última entrada del array** —los ADRs no están en
+  # orden en el archivo— y esa línea termina en `'}` **sin coma**, así que la
+  # sustitución no matcheaba nada y el conteo no se movía. Silencioso, como el
+  # anterior. Se busca una línea que YA termine en `},`: ésa admite el pegado.
+  local ln
+  while [ "$have" -lt "$want" ]; do
+    ln=$(grep -nE "id:[[:space:]]*'d[0-9]{3}'.*\},\$" "$t" | tail -1 | cut -d: -f1)
+    [ -n "$ln" ] || break
+    edita "${ln}s|},\$|},{id:'d9$have', n:'9$have', t:'sembrado', estado:'aceptada', fecha:'2020-01-01', ctx:'x', dec:'x', cons:'x', link:'x'},|" "$t"
+    have=$((have + 1))
+  done
+}
+s_trk_fecha()   { edita "s/^const LAST_AUDIT = '[^']*';/const LAST_AUDIT = '2020-01-01';/" \
+                    "$SEMBRAR_EN/$TRK"; }
+s_trk_contador(){ edita 's/^const CLOSED_COUNT = [0-9]*;/const CLOSED_COUNT = 1;/' \
+                    "$SEMBRAR_EN/$TRK"; }
+s_trk_bloque()  { j=$(ls "$SEMBRAR_EN"/docs/audits/*-estado.json | head -1)
+                  jq '.bloques += [{"id":"b99","nombre":"sembrado","zona":"x","estado":"hecho","pendientes":[]}]' \
+                    "$j" > "$j.x" && mv "$j.x" "$j"; }
+s_trk_adr()     { printf -- '# 998 — prueba\n\n**Estado:** ✅ **FIRMADA** · 2020-01-01 · **Firmada por:** Fede\n**Procedencia de la firma:** sembrado.\n' \
+                    > "$SEMBRAR_EN/docs/decisiones/998-prueba.md"
+                  edita 's#^| \[`030`\].*#&\n| [`998`](decisiones/998-prueba.md) | Prueba | ✅ FIRMADA | 2020-01-01 | — |#' \
+                    "$SEMBRAR_EN/docs/FICHA.md"; }
+s_trk_ausente() { rm -f "$SEMBRAR_EN/$TRK"; }
 
 s_ficha_prosa() { saca '^| \[' "$SEMBRAR_EN/docs/FICHA.md"; }
 s_mencion()     { printf '\n> nota: mientras esto siga ⏳ PENDIENTE rige la opción 1.\n' \
@@ -192,10 +285,10 @@ s_estampa_ilegible()   { estampa "el lunes pasado por Fede" "$SEMBRAR_EN"; }
 # sano no sirve para esto: mientras el repo real esté atrasado daría rojo por
 # el motivo correcto, y entonces el escenario no distinguiría un cable que
 # funciona de uno que dice rojo siempre.
-s_vistas_al_dia()      { j=$(j_de "$SEMBRAR_EN")
+s_vistas_al_dia() { j=$(j_de "$SEMBRAR_EN")
                          jq --arg d "$NUEVA" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
-                         estampa "$NUEVA por Fede" "$SEMBRAR_EN"; }
-
+                         estampa "$NUEVA por Fede" "$SEMBRAR_EN"
+  sync_trk; }
 # VERDE — el borde que se paga caro si se lo trata como error: el día que se
 # firma un ADR **y** se audita, las tres fechas son la MISMA. Igual es al día.
 s_vistas_misma_fecha() { reloj=$(grep -h -m1 '^\*\*Estado:\*\*' "$SEMBRAR_EN"/docs/decisiones/[0-9][0-9][0-9]-*.md \
@@ -210,8 +303,8 @@ s_vistas_misma_fecha() { reloj=$(grep -h -m1 '^\*\*Estado:\*\*' "$SEMBRAR_EN"/do
 # hacer las cosas bien. Ese fue el modo de falla de `:658` en `batuta.md`.
 s_estampa_con_sufijo() { j=$(j_de "$SEMBRAR_EN")
                          jq --arg d "$NUEVA" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
-                         estampa "$NUEVA (3) por Fede" "$SEMBRAR_EN"; }
-
+                         estampa "$NUEVA (3) por Fede" "$SEMBRAR_EN"
+  sync_trk; }
 echo "═══ Batería sembrada — ¿el cable DETECTA? ═══"
 echo
 echo "control (el repo sano tiene que pasar):"
@@ -228,6 +321,11 @@ escenario "huérfano de un ADR citado en la prosa"        1 "§10 no lo lista co
 escenario "un ADR FIRMADA sin su Procedencia (018)"      1 "no declara .Procedencia"   s_firmada_sin_proc
 escenario "el artefacto quedó atrás del reloj"          1 "last_audit"                s_artefacto_atrasado
 escenario "la estampa de FICHA quedó atrás del reloj"   1 "estampa"                   s_estampa_atrasada
+escenario "mecanismo materializado fuera de references/" 1 "MATERIALIZA el mecanismo"  s_mecanismo_fuera_de_refs
+escenario "tracker: LAST_AUDIT atrasado"                 1 "LAST_AUDIT"                s_trk_fecha
+escenario "tracker: CLOSED_COUNT atrasado"               1 "CLOSED_COUNT"              s_trk_contador
+escenario "tracker: le falta un bloque de la fuente"     1 "bloques"                   s_trk_bloque
+escenario "tracker: le falta un ADR de la fuente"        1 "ADRs"                      s_trk_adr
 
 echo
 echo "el cable tiene que FRENAR, no dar verde (exit 2):"
@@ -237,6 +335,7 @@ escenario "el artefacto no declara last_audit"       2 "FRENA" s_sin_last_audit
 escenario "last_audit con formato ilegible"          2 "FRENA" s_last_audit_ilegible
 escenario "FICHA sin su línea de estampa"            2 "FRENA" s_sin_estampa
 escenario "la estampa sin fecha parseable"           2 "FRENA" s_estampa_ilegible
+escenario "no existe el tracker HTML"                2 "FRENA" s_trk_ausente
 
 echo
 echo "y NO tiene que dar falso positivo:"
@@ -247,6 +346,7 @@ escenario "entrada pendiente que cita otro ADR"         0 "VERDE" s_pend_cita_ot
 escenario "las dos vistas por delante del reloj"        0 "VERDE" s_vistas_al_dia
 escenario "vistas y reloj en la MISMA fecha"            0 "VERDE" s_vistas_misma_fecha
 escenario "estampa al día con sufijo (N) de 023"        0 "VERDE" s_estampa_con_sufijo
+escenario "mecanismo NOMBRADO en prosa, no materializado" 0 "VERDE" s_mecanismo_en_prosa
 
 echo
 echo "y NO tiene que dar verde bajo un intérprete que no soporta:"

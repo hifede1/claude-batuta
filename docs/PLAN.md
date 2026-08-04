@@ -855,13 +855,21 @@ mecánicamente.
    del HTML digan la verdad no es mecanizable, igual que en los chequeos 4 y 5. Un límite callado es
    el cartel de siempre.
 
-✅ **Criterios de aceptación.**
-- [ ] El chequeo 7 se **vio FALLAR** contra el drift real antes de corregirlo *(verificación: salida del rojo pegada en el PR, citando `LAST_AUDIT`/`CLOSED_COUNT` divergentes)*
-- [ ] El chequeo 7 compara **las cuatro dimensiones** y ancla en los literales JS *(verificación: inspección del script — cero grep de palabra suelta)*
-- [ ] El tracker HTML queda **al día** con el JSON *(verificación: `coherencia-contrato.sh` en verde, chequeo 7 incluido)*
-- [ ] Los escenarios del chequeo 7 están **sembrados** en `bateria-sembrada.sh` *(verificación: la batería falla si se rompe la detección — se prueba rompiéndola a propósito)*
-- [ ] El **chequeo 6 queda sembrado** *(verificación: escenario propio en la batería; hoy sólo se lo vio fallar a mano)*
-- [ ] El límite del chequeo 7 está **escrito en el propio script** *(verificación: inspección — dice qué NO mira y por qué)*
+✅ **Criterios de aceptación.** — **CERRADA 2026-08-04 (PR de S20), 6 de 6.**
+- [x] El chequeo 7 se **vio FALLAR** contra el drift real antes de corregirlo → **cumplido**: falló en las **cuatro** dimensiones a la vez (`LAST_AUDIT` 2 días · `CLOSED_COUNT` 8 · bloques 4 · ADRs 3). Salida del rojo en el PR.
+- [x] El chequeo 7 compara **las cuatro dimensiones** y ancla en los literales JS → **cumplido**, y la escritura destapó **tres supuestos falsos propios**: el regex no toleraba `id: 'b01'` con espacio (contaba 18 donde había 19), el helper de siembra anclaba en `^];` —el cierre del **primer** array, que es `DATA`, no `DECISIONS`— y el conteo usaba `grep -c`, que cuenta **líneas** y no ocurrencias. Los tres silenciosos: daban números plausibles.
+- [x] El tracker HTML queda **al día** con el JSON → **cumplido**: `2026-08-04 · 88 cierres · 22 bloques · 34 ADRs`. Se agregaron `b20`, `b21`, `b22` y los ADRs `033`/`034`/`035`. `node --check` sobre el JS extraído: **pasa**.
+- [x] Los escenarios del chequeo 7 están **sembrados** → **cumplido**: cinco escenarios (uno por dimensión + FRENO por HTML ausente). **Probado rompiendo la detección a propósito**: con `t_adrs` saboteado la batería se puso **ROJA en 9 escenarios**.
+- [x] El **chequeo 6 queda sembrado** → **cumplido**, con su espejo: un escenario exige ROJO ante un mecanismo materializado en un fence fuera de `references/`, y otro exige **VERDE** ante el mismo mecanismo **nombrado en prosa** — sin ese segundo, un futuro «endurecimiento» a grep de palabra suelta pasaría sin que nadie lo note.
+- [x] El límite del chequeo 7 está **escrito en el propio script** → **cumplido**: mide **frescura y cardinalidad, NO contenido**. Un HTML con los cuatro números al día y un texto que miente pasa este chequeo; ese flanco lo cubre la re-auditoría.
+
+> **Hallazgo de la sesión, y no es el cable: es lo que la siembra encontró EN el cable.** Los tres
+> supuestos falsos de arriba estaban en el chequeo escrito para cazar supuestos falsos, y ninguno
+> habría salido a la luz sin sembrar — los tres devolvían números creíbles. Es la cuarta vez que este
+> taller mide lo mismo: **la superficie de verificación es código como cualquier otro y nace con
+> defectos como cualquier otro** (`b17` ya lo había medido con 27 hallazgos en los cables recién
+> escritos). Sembrar no es ceremonia: es lo único que separa un cable de una intención con formato de
+> comando.
 
 📚 **Referencias.** [`references/audit-tracker.md`](references/) 🟢 · `decisiones/030` (fuente única y
 verificación mecánica) · `docs/audits/s16-cable-2026-07-30.md` y `s17-frescura-2026-08-01.md` (los dos
@@ -911,7 +919,7 @@ reales).
 | **S17** | **La frescura de las vistas: el cuarto y quinto chequeo** *(mantenimiento)* | **S** | — *(`030` ya firmada; extiende su alcance precisado)* |
 | **S18** | **La frontera de los delegados: medir los tres `BLOQUEA` y reasentarlos** *(mantenimiento)* | **S** | — *(el motivo que sobrevive es `007`, corte de versiones)* |
 | **S19** | **Evidencia limpia sobre la identidad del agente** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 4/6, dos criterios retirados** (`035`) | **M** | `033` **partido**, su parte (a) ⏳ PENDIENTE · la (b) —sacar el FRENA— sigue siendo elección del dueño · §7 **NO MEDIBLE** |
-| **S20** | **Cablear el tracker HTML** *(mantenimiento)* — ⏳ **abierta** | **S** | — *(`030` ya autorizó la verificación mecánica)* |
+| **S20** | **Cablear el tracker HTML** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 6/6** | **S** | — *(`030` ya autorizó la verificación mecánica)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
