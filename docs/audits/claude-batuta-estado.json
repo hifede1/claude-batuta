@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "proyecto": "claude-batuta",
   "last_audit": "2026-08-04",
-  "closed_count": 88,
+  "closed_count": 94,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
     "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
@@ -199,6 +199,17 @@
         "El chequeo 6 NO tiene escenario sembrado en bateria-sembrada.sh: sus 23 escenarios cubren los chequeos 1-5. Se lo vio fallar y pasar A MANO contra el repo real —evidencia fuerte pero no vigente—. Si alguien rompe su deteccion, ningun escenario lo caza, que es justo lo que 030 llama peor que no tener el cable. Deuda de verificacion declarada en el PR #111.",
         "La parte (b) de 033 —sacar el FRENA de 029:67-70— sigue sin decidir. Es eleccion del dueño y el agente tiene PROHIBIDO recomendarla (PLAN.md:756-758). 033 sigue ⏳ PENDIENTE.",
         "La tabla de §7 queda CONFUNDIDA y NO MEDIBLE de forma permanente mientras no exista cuenta de agente. Reabrirla exige crear una: 034 es la constancia de que se evaluo a fondo y 035 de que la detuvo. Puerta abierta sin fecha."
+      ]
+    },
+    {
+      "id": "b23",
+      "nombre": "S20 · Cablear el tracker HTML — y lo que la siembra encontro EN el cable",
+      "zona": "Verificación — donde las reglas dejan de ser intenciones",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-08-04 (encargos #118 apertura y #120 ejecucion), 6 de 6. Nace el CHEQUEO 7: el tracker HTML deja de ser la vista que ningun chequeo mira. Se lo vio FALLAR en las CUATRO dimensiones a la vez antes de corregir nada — LAST_AUDIT 2 dias, CLOSED_COUNT 8 cierres, 4 bloques, 3 ADRs. La sesion se abrio por MEDICION y no por argumento: la deuda del 2026-08-02 habia escrito «sigue sin cable, puede volver a atrasarse en silencio mañana» y se atraso DOS DIAS DESPUES — predijo su propia repeticion y acerto. EL HALLAZGO NO ES EL CABLE SINO LO QUE LA SIEMBRA ENCONTRO EN EL: tres supuestos falsos propios, los tres silenciosos porque devolvian numeros creibles. (1) El regex no toleraba `id: b01` con espacio y contaba 18 bloques donde habia 19. (2) El helper de siembra anclaba en `^];`, que es el cierre del PRIMER array del archivo —DATA, no DECISIONS— asi que la entrada aterrizaba en la estructura equivocada. (3) El conteo usaba `grep -c`, que cuenta LINEAS y no ocurrencias, asi que dos entradas en una linea contaban como una. Ninguno habria salido a la luz sin sembrar. Es la cuarta vez que el taller mide lo mismo desde b17: la superficie de verificacion es codigo como cualquier otro y nace con defectos como cualquier otro. Se cierra ademas la deuda de S19/H1 —el chequeo 6 sin escenario sembrado— y se lo siembra CON SU ESPEJO: uno exige ROJO ante el mecanismo materializado en un fence fuera de references/, otro exige VERDE ante el mismo mecanismo NOMBRADO EN PROSA, porque sin ese segundo un futuro endurecimiento a grep de palabra suelta pasaria sin que nadie lo note. La deteccion se probo ROMPIENDOLA A PROPOSITO: con el conteo de ADRs saboteado la bateria se puso roja en 9 escenarios. Bateria: 24 → 31 escenarios. Tracker al dia y node --check sobre el JS extraido: pasa. LIMITE DECLARADO en el propio script: el chequeo 7 mide frescura y cardinalidad, NO contenido — un HTML con los cuatro numeros al dia y un texto que miente pasa igual; ese flanco lo cubre la re-auditoria.",
+      "pendientes": [
+        "El chequeo 7 NO mira el CONTENIDO del tracker: que sus textos digan la verdad no es mecanizable, igual que en los chequeos 4 y 5. Declarado en el script. Lo cubre la re-auditoria, no el cable.",
+        "sync_trk de la bateria no sincroniza la cantidad de BLOQUES del tracker: ningun escenario los mueve hoy salvo s_trk_bloque, que BUSCA el rojo. Declarado en vez de escribir codigo muerto que nadie ejercita — si mañana un escenario agrega bloques, hay que extenderlo."
       ]
     }
   ],

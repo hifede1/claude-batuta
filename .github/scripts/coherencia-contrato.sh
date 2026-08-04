@@ -383,10 +383,100 @@ else
   echo "✓ (ningún bloque de código lo materializa fuera de la fuente)"
 fi
 
+# ── CHEQUEO 7 · EL TRACKER HTML, LA VISTA QUE NADIE MIRABA (S20) ────────
+# `batuta-tracker.html` es una vista derivada del artefacto, igual que
+# FICHA §10 — pero ningún chequeo la miraba. Los 4 y 5 cerraron la frescura
+# de las OTRAS dos vistas y declararon este hueco; el HTML quedó afuera.
+#
+# NO es hipotético, y la prueba es que ya pasó DOS VECES:
+#   2026-08-02 · HTML en LAST_AUDIT 2026-07-30 / CLOSED_COUNT 68 contra un
+#                artefacto en 2026-08-02 / 80. Se saldó A MANO, y la deuda
+#                escribió: «sigue sin cable, puede volver a atrasarse en
+#                silencio mañana».
+#   2026-08-04 · se atrasó de nuevo: 2026-08-02/80 contra 2026-08-04/88,
+#                más 4 bloques y 3 ADRs faltantes. La deuda predijo su
+#                propia repetición y acertó.
+# Corregir la vista a mano no arregla la ausencia del control que la vigila.
+#
+# ANCLA: los LITERALES JS, no la palabra. `const LAST_AUDIT = '…'` y
+# `const CLOSED_COUNT = …` son declaraciones únicas y parseables. Un grep de
+# «LAST_AUDIT» a lo bruto engancha además las 3 menciones del comentario de
+# cabecera del propio archivo, que explican el protocolo de actualización.
+# Es el mismo modo de falla que `030` §3 documenta y que este taller ya se
+# cobró tres veces.
+#
+# LÍMITE DECLARADO, y se declara porque un límite callado es el cartel de
+# siempre: el chequeo 7 mide **frescura y cardinalidad**, NO CONTENIDO. Que
+# los textos del tracker digan la verdad —que el resumen de un bloque
+# describa lo que pasó— no es mecanizable, exactamente igual que en los
+# chequeos 4 y 5. Un HTML con los cuatro números al día y un texto que
+# miente pasa este chequeo. Ese flanco lo cubre la re-auditoría; el cable no
+# la reemplaza, la OBLIGA.
+printf '7· tracker HTML vs la fuente ........ '
+TRACKER="$REPO/docs/audits/batuta-tracker.html"
+if [ ! -f "$TRACKER" ]; then
+  echo "⛔ FRENA"
+  echo "     no existe ${TRACKER#$REPO/}"
+  echo "     Esto NO es un verde: el chequeo 7 no tuvo vista que comparar."
+  exit 2
+fi
+# Los cuatro valores de la vista. `-m1` porque cada constante se declara una
+# sola vez; el ancla `^const ` deja fuera las menciones del comentario.
+t_audit=$(grep -m1 "^const LAST_AUDIT" "$TRACKER" | sed "s/.*'\([^']*\)'.*/\1/")
+t_closed=$(grep -m1 '^const CLOSED_COUNT' "$TRACKER" | grep -oE '[0-9]+' | head -1)
+# `id:[[:space:]]*'` y NO `id:'`: el HTML declara `id: 'b01'` con espacio y
+# `id:'b19'` sin él, y las dos formas son legítimas. La primera versión de
+# este chequeo contaba 18 bloques donde había 19 —se comía `b01`— y el
+# error era invisible: daba un número plausible, sólo que uno menos. Es el
+# modo de falla que `030` §3 nombra, cometido por el cable escrito para
+# cazarlo: anclar en un patrón que no cubre las variantes reales del dato.
+# Y se cuentan OCURRENCIAS (`grep -o | wc -l`), no LÍNEAS (`grep -c`).
+# `grep -c` cuenta líneas que matchean: dos entradas en una misma línea
+# —JS perfectamente válido— cuentan como una sola, y el cable ve un ADR
+# menos del que hay. Lo destapó la propia batería al sembrar una entrada
+# pegada a otra: el conteo no se movió y el escenario quedó rojo sin que
+# el número dijera por qué. Es el tercer supuesto falso de este mismo
+# chequeo, y los tres de la misma clase: contar una cosa creyendo que se
+# cuenta otra.
+t_bloques=$(grep -oE "id:[[:space:]]*'b[0-9]+'" "$TRACKER" | wc -l | tr -d ' ')
+t_adrs=$(grep -oE "id:[[:space:]]*'d[0-9]{3}'" "$TRACKER" | wc -l | tr -d ' ')
+# Los cuatro de la fuente.
+f_audit=$(jq -r '.last_audit // empty' "$ESTADO" 2>/dev/null)
+f_closed=$(jq -r '.closed_count // empty' "$ESTADO" 2>/dev/null)
+f_bloques=$(jq -r '.bloques | length' "$ESTADO" 2>/dev/null)
+f_adrs=$(ls "$DECISIONES"/[0-9][0-9][0-9]-*.md 2>/dev/null | wc -l | tr -d ' ')
+
+if [ -z "$t_audit" ] || [ -z "$t_closed" ]; then
+  echo "⛔ FRENA"
+  echo "     no pude leer LAST_AUDIT o CLOSED_COUNT del tracker."
+  echo "     Esto NO es un verde: el chequeo 7 no pudo comparar nada."
+  exit 2
+fi
+
+t_probs=""
+[ "$t_audit" != "$f_audit" ] && \
+  t_probs="$t_probs\n     LAST_AUDIT   · tracker $t_audit · fuente $f_audit"
+[ "$t_closed" != "$f_closed" ] && \
+  t_probs="$t_probs\n     CLOSED_COUNT · tracker $t_closed · fuente $f_closed"
+[ "$t_bloques" != "$f_bloques" ] && \
+  t_probs="$t_probs\n     bloques      · tracker $t_bloques · fuente $f_bloques"
+[ "$t_adrs" != "$f_adrs" ] && \
+  t_probs="$t_probs\n     ADRs         · tracker $t_adrs · docs/decisiones/ $f_adrs"
+
+if [ -n "$t_probs" ]; then
+  echo "✗ FALLA"
+  echo "     el tracker HTML quedó atrás de la fuente:"
+  printf '%b\n' "${t_probs#\\n}"
+  echo "     Corregirlo a mano no cierra esto: el cable existe para que no vuelva a envejecer solo."
+  fallas=$((fallas + 1))
+else
+  echo "✓ ($t_audit · $t_closed cierres · $t_bloques bloques · $t_adrs ADRs)"
+fi
+
 echo
 if [ "$fallas" -eq 0 ]; then
   echo "VERDE · las vistas coinciden con la fuente y están al día"
   exit 0
 fi
-echo "ROJO · $fallas de 6 chequeos en falla"
+echo "ROJO · $fallas de 7 chequeos en falla"
 exit 1

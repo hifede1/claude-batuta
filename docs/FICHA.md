@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-04 (4) por Fede
+> Firmado: 2026-08-04 (5) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -215,6 +215,25 @@
 >     batería y dejarlo sería pasar al lado con la herramienta en la mano. **Sin ADR nuevo en este
 >     acto.** Cuarta ratificación del día, sufijo `(4)` (`023`). **La ratificación es el merge de este
 >     PR por el dueño** (`018`). Encargo `#118`.*
+>
+> 25. ***2026-08-04 (5) · PR que ejecuta S20** — **S20 cerrada 6/6**: nace el **chequeo 7**, el
+>     tracker HTML deja de ser la vista que nadie mira. Se lo vio **FALLAR en las cuatro dimensiones
+>     a la vez** —`LAST_AUDIT` 2 días, `CLOSED_COUNT` 8, bloques 4, ADRs 3— antes de corregir nada.
+>     **Y el hallazgo no es el cable: es lo que la siembra encontró EN el cable.** Escribirlo destapó
+>     **tres supuestos falsos propios**, los tres silenciosos porque devolvían números creíbles: el
+>     regex no toleraba `id: 'b01'` con espacio (contaba 18 donde había 19); el helper de siembra
+>     anclaba en `^];`, que es el cierre del **primer** array del archivo —`DATA`, no `DECISIONS`—;
+>     y el conteo usaba `grep -c`, que cuenta **líneas** y no ocurrencias, así que dos entradas en
+>     una línea contaban como una. **Ninguno habría salido a la luz sin sembrar.** Cuarta vez que
+>     este taller mide lo mismo desde `b17`: **la superficie de verificación es código como
+>     cualquiera y nace con defectos como cualquiera**. Se cierra además la deuda que dejó S19/H1 —el
+>     **chequeo 6 sin escenario sembrado**— y se lo siembra **con su espejo**: uno exige ROJO ante el
+>     mecanismo materializado en un fence, otro exige **VERDE** ante el mismo mecanismo nombrado en
+>     prosa, porque sin ese segundo un futuro endurecimiento a grep de palabra suelta pasaría sin que
+>     nadie lo note. La detección se probó **rompiéndola a propósito**: con el conteo saboteado la
+>     batería se puso roja en 9 escenarios. **Sin ADR nuevo en este acto.** Quinta ratificación del
+>     día, sufijo `(5)` (`023`). **La ratificación es el merge de este PR por el dueño** (`018`).
+>     Encargo `#120`.*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
