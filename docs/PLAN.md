@@ -771,13 +771,20 @@ tercera superficie de la misma enfermedad, después de las vistas (S17) y del mu
    falte una repetición. Es la misma disciplina con que S18 se negó a declarar caídos los tres
    `BLOQUEA` de un saque.
 
-✅ **Criterios de aceptación.**
-- [ ] El aislamiento está **probado, no supuesto** *(verificación: la salida de `ps` con hora en el registro de la sesión — cero sesiones ajenas de Claude Code durante la ventana de medición)*
-- [ ] Las tres filas de §7 llevan **medición fresca con fecha y el comando exacto** que la produjo *(verificación: inspección — ninguna fila sin fecha, ninguna sin corrida citada)*
-- [ ] La salvedad de `gh pr create` queda **cerrada o re-declarada con su motivo**, jamás borrada en silencio *(verificación: inspección de §7 — el párrafo de la salvedad existe y dice qué pasó)*
-- [ ] `PLAN.md:417-421` **ya no prescribe un mecanismo**: apunta a §7 *(verificación: inspección — cero bloque de código con el mecanismo dentro del plano, y el puntero presente)*
-- [ ] `033` está **partido**, y su parte (a) firmada o PENDIENTE con su motivo escrito *(verificación: `docs/decisiones/033-*.md` existe con sello de `024`; el FRENA queda fuera de su alcance, declarado)*
-- [ ] La contradicción queda **cableada o declarada NO cableable con su motivo** *(verificación: o hay chequeo con su escenario sembrado, o hay hueco escrito — `030` no cubre `references/`, y un límite callado es el cartel de siempre)*
+✅ **Criterios de aceptación.** — **CERRADA 2026-08-04 (PR #111 + PR de cierre)**, con **dos criterios
+retirados**.
+- [~] ~~El aislamiento está **probado, no supuesto**~~ — **RETIRADO 2026-08-04 por decisión del dueño.** Se quedó **sin objeto**: su condición está cuantificada *«durante la ventana de medición»* y, retirado el criterio 2, **no va a haber ventana**. Un criterio que sólo puede evaluarse dentro de algo que no va a ocurrir no es un pendiente: es una casilla que nadie puede tomar. *(El pase adversarial de la corrida ya había tumbado darlo por cumplido con un `ps` previo: eso era verdad vacua, no prueba.)*
+- [~] ~~Las tres filas de §7 llevan **medición fresca con fecha y el comando exacto** que la produjo~~ — **RETIRADO 2026-08-04 por decisión del dueño.** No se cumplió y **dejó de ser cumplible**: re-medir exige una segunda identidad —`gh auth switch --user <agente>` y `GH_TOKEN=$(gh auth token --user <agente>)` **se quedan sin argumento**— y `decisiones/035` (FIRMADA 2026-08-04) decidió que el agente opera con la credencial del dueño, sin cuenta dedicada. **La tabla de §7 queda declarada NO MEDIBLE con su motivo**, que es lo que el método de esta sesión autoriza como alternativa a medir (paso 3: *«se mide, o se declara no medible con su motivo»*). *(Mismo mecanismo que el criterio retirado de S14: no fracasó por falta de trabajo, se quedó sin objeto. `034` es la constancia de que la cuenta dedicada se evaluó a fondo; `035`, de qué la detuvo.)*
+- [x] La salvedad de `gh pr create` queda **cerrada o re-declarada con su motivo**, jamás borrada en silencio *(verificación: inspección de §7 — el párrafo existe y dice qué pasó)* → **cumplido por la rama «re-declarada»** (PR #111): distingue las **dos** «causa no determinada» de §7 y precisa que lo determinado el 2026-08-01 es **la otra**. **La salvedad sigue ABIERTA** — y eso es correcto: cerrarla exige una explicación, no una repetición faltante.
+- [x] `PLAN.md:417-421` **ya no prescribe un mecanismo**: apunta a §7 *(verificación: inspección — cero bloque de código con el mecanismo dentro del plano, y el puntero presente)* → **cumplido** (PR #111), con la obligación que agregó el pase adversarial: el puntero **declara que la tabla está CONFUNDIDA**.
+- [x] `033` está **partido**, y su parte (a) firmada o PENDIENTE con su motivo escrito *(verificación: `docs/decisiones/033-*.md` existe con sello de `024`; el FRENA queda fuera de su alcance, declarado)* → **cumplido** (PR #111): nació ⏳ PENDIENTE, sin `Procedencia`, con el FRENA declarado fuera.
+- [x] La contradicción queda **cableada o declarada NO cableable con su motivo** *(verificación: o hay chequeo con su escenario sembrado, o hay hueco escrito)* → **cumplido y CABLEADA** (PR #111): **chequeo 6** de `coherencia-contrato.sh`, **visto FALLAR** contra `9edd971` antes de corregir. Límite declarado en el propio script: no caza prescripciones *inline*. **Deuda de verificación abierta**: el chequeo 6 **no tiene escenario sembrado** en `bateria-sembrada.sh`.
+
+> **Balance honesto de S19: 4 de 6.** Lo que se cerró es la **contradicción de fuentes** —el plano dejó
+> de prescribir lo que la referencia medía roto, y ahora hay un cable que lo vigila—. Lo que **no** se
+> cerró es el **hecho**: cuál mecanismo aísla de verdad sigue sin saberse, y ahora sin camino para
+> averiguarlo. La sesión arregló el contrato, no el mundo. Decirlo así es la única forma de que la
+> próxima lectura no confunda una cosa con la otra.
 
 📚 **Referencias.** [`references/perimetro-de-confianza.md`](references/) 🟢 **territorio volátil** ·
 [`references/audit-tracker.md`](references/) 🟢
@@ -823,7 +830,7 @@ faltante, y que la parte (b) de `033` no la decide el agente.
 | **S16** | **Coherencia del contrato: bajar `030` y poner el primer cable** *(mantenimiento)* | **M** | `030` coherencia del contrato |
 | **S17** | **La frescura de las vistas: el cuarto y quinto chequeo** *(mantenimiento)* | **S** | — *(`030` ya firmada; extiende su alcance precisado)* |
 | **S18** | **La frontera de los delegados: medir los tres `BLOQUEA` y reasentarlos** *(mantenimiento)* | **S** | — *(el motivo que sobrevive es `007`, corte de versiones)* |
-| **S19** | **Evidencia limpia sobre la identidad del agente** *(mantenimiento)* — ⏳ **abierta** | **M** | `033` **partido y sin firmar** · su parte (b) —sacar el FRENA— supera a `029` y es elección del dueño |
+| **S19** | **Evidencia limpia sobre la identidad del agente** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 4/6, dos criterios retirados** (`035`) | **M** | `033` **partido**, su parte (a) ⏳ PENDIENTE · la (b) —sacar el FRENA— sigue siendo elección del dueño · §7 **NO MEDIBLE** |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 

@@ -259,6 +259,34 @@ Si mañana la herramienta no es `gh`, el principio sigue en pie y la tabla de ab
 
 ### Lo medido — dos mecanismos plausibles FALLAN
 
+> ## ⛔ ESTA TABLA ESTÁ CONFUNDIDA Y, DESDE EL 2026-08-04, **NO ES MEDIBLE**
+>
+> **Léala con las dos advertencias, no con una.**
+>
+> **1 · CONFUNDIDA (desde S19, 2026-08-01).** Las tres filas se midieron **mientras otra sesión de
+> Claude Code corría `gh auth switch` cada ~30 s**. Ninguna está medida limpiamente. No hay un lado
+> correcto y otro equivocado: **hay afirmaciones sobre un hecho y ninguna se sostiene sola.**
+>
+> **2 · NO MEDIBLE (2026-08-04, cierre de S19).** Re-medirlas exige una **segunda identidad**:
+> `gh auth switch --user <agente>` y `GH_TOKEN=$(gh auth token --user <agente>)` **se quedan sin
+> argumento** sin un `<agente>`. Y `decisiones/035` (FIRMADA 2026-08-04) decidió que **el agente opera
+> con la credencial del dueño y no hay cuenta dedicada**. La medición no está pendiente de trabajo:
+> **está sin objeto.**
+>
+> **Esto NO es un veredicto sobre los mecanismos. Es un veredicto sobre nuestra capacidad de
+> medirlos.** Ninguna fila gana, ninguna pierde, ninguna se corrige: quedan **exactamente como se
+> midieron**, con su defecto declarado. Escribir «aísla» sobre cualquiera de ellas sería concluir más
+> de lo que se midió — el error que esta misma sección documenta dos párrafos abajo.
+>
+> **Qué haría falta para reabrirla:** una cuenta de agente dedicada. `decisiones/034` (FIRMADA y
+> superada) es la constancia de que la opción se evaluó a fondo; `035`, de qué la detuvo. **La puerta
+> queda abierta y sin fecha.**
+>
+> **⚠️ Esto NO cierra la salvedad de `gh pr create`** —la de la tercera fila, acá abajo—. Son dos
+> cosas distintas y confundirlas es exactamente lo que S19 vino a evitar: **la tabla no se puede
+> medir; la salvedad no se puede cerrar.** La salvedad sigue **ABIERTA**, con su causa sin determinar
+> y su motivo re-declarado el 2026-08-03.
+
 No es teoría: los tres se probaron sobre este repo, y el criterio de éxito fue *¿la cuenta activa del
 dueño sigue siendo la suya después de una **escritura**?*
 
