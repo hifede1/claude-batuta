@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "proyecto": "claude-batuta",
   "last_audit": "2026-08-04",
-  "closed_count": 84,
+  "closed_count": 88,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
     "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
@@ -187,6 +187,18 @@
       "pendientes": [
         "El externo: la cuenta de agente dedicada NO existe todavia. La crea el dueño (en curso al 2026-08-04). Bloquea C2 de S19 —la re-medicion de la tabla §7— y la aplicacion real de 034. Hasta que exista y este confirmada, merged_by sigue sin discriminar humano de maquina.",
         "Reponer el review requerido en la proteccion de rama vuelve a ser POSIBLE con dos cuentas (027 punto 4 lo habia vuelto imposible, 031 lo dejo sin reponer a proposito). Declarado FUERA del alcance de 034: es otra decision y necesita su propio ADR que declare que punto de 031 supera."
+      ]
+    },
+    {
+      "id": "b22",
+      "nombre": "S19 · CERRADA 4/6 — §7 declarada NO MEDIBLE y dos criterios retirados",
+      "zona": "Mantenimiento — después de la obra v0",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-08-04 (encargo #116, tras #110/#111 del horizonte H1). 4 de 6 criterios cumplidos, DOS RETIRADOS por decision del dueño. Los retirados son el 1 (aislamiento probado) y el 2 (tres filas re-medidas): no fracasaron por falta de trabajo, SE QUEDARON SIN OBJETO cuando 035 decidio que no hay cuenta de agente — re-medir exige una segunda identidad y `gh auth switch --user <agente>` / `GH_TOKEN=$(gh auth token --user <agente>)` se quedan sin argumento. Mismo mecanismo con que S14 retiro un criterio el 2026-07-26 (PLAN.md:461), y el metodo de S19 lo autoriza en su paso 3: «se mide, o se declara no medible con su motivo». La tabla de perimetro §7:265-269 queda declarada NO MEDIBLE ademas de CONFUNDIDA, con las DOS advertencias visibles y sus filas INTACTAS: no es un veredicto sobre los mecanismos sino sobre la capacidad de medirlos, asi que ninguna fila gana ni se corrige. NO cierra la salvedad de gh pr create, que sigue ABIERTA — la tabla no se puede medir, la salvedad no se puede cerrar, y confundirlas es lo que S19 vino a evitar. Lo CUMPLIDO (todo en PR #111): la salvedad re-declarada distinguiendo las dos causa-no-determinada; PLAN.md:417-421 dejo de prescribir y apunta a §7 declarando CONFUNDIDA; 033 nacio ⏳ PENDIENTE sin Procedencia con el FRENA declarado fuera; y la contradiccion quedo CABLEADA con el chequeo 6, visto FALLAR contra 9edd971 antes de corregir. BALANCE HONESTO que el plano deja escrito: se cerro la contradiccion de FUENTES y NO el HECHO — cual mecanismo aisla sigue sin saberse y ahora sin camino para averiguarlo. La sesion arreglo el contrato, no el mundo.",
+      "pendientes": [
+        "El chequeo 6 NO tiene escenario sembrado en bateria-sembrada.sh: sus 23 escenarios cubren los chequeos 1-5. Se lo vio fallar y pasar A MANO contra el repo real —evidencia fuerte pero no vigente—. Si alguien rompe su deteccion, ningun escenario lo caza, que es justo lo que 030 llama peor que no tener el cable. Deuda de verificacion declarada en el PR #111.",
+        "La parte (b) de 033 —sacar el FRENA de 029:67-70— sigue sin decidir. Es eleccion del dueño y el agente tiene PROHIBIDO recomendarla (PLAN.md:756-758). 033 sigue ⏳ PENDIENTE.",
+        "La tabla de §7 queda CONFUNDIDA y NO MEDIBLE de forma permanente mientras no exista cuenta de agente. Reabrirla exige crear una: 034 es la constancia de que se evaluo a fondo y 035 de que la detuvo. Puerta abierta sin fecha."
       ]
     }
   ],

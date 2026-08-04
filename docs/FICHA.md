@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-04 (2) por Fede
+> Firmado: 2026-08-04 (3) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -187,6 +187,21 @@
 >     firmó **con su externo todavía REQUERIDO** — firmar una decisión cuya viabilidad depende de un
 >     acto que nadie confirmó es firmar sobre premisa no verificada, el modo de falla que `027` ya
 >     había documentado. Segunda ratificación del día, sufijo `(2)` (`023`). Encargo `#114`.*
+>
+> 23. ***2026-08-04 (3) · PR de cierre de S19** — **S19 se cierra 4/6, con DOS criterios retirados** y
+>     la tabla de `perimetro-de-confianza.md` §7 declarada **NO MEDIBLE con su motivo**. Los criterios
+>     1 y 2 no fracasaron por falta de trabajo: **se quedaron sin objeto** cuando `035` decidió que no
+>     hay cuenta de agente —re-medir exige una segunda identidad y `--user <agente>` se queda sin
+>     argumento—. Es el mismo mecanismo con que S14 retiró un criterio el 2026-07-26 (`PLAN.md:461`),
+>     y el método de S19 lo autoriza en su paso 3: *«se mide, **o se declara no medible con su
+>     motivo**»*. **NO MEDIBLE no es un veredicto sobre los mecanismos sino sobre nuestra capacidad de
+>     medirlos**: ninguna fila gana, ninguna se corrige, la tabla queda intacta con su defecto
+>     declarado. Y **no cierra la salvedad de `gh pr create`**, que sigue ABIERTA: la tabla no se puede
+>     medir, la salvedad no se puede cerrar, y confundirlas es lo que S19 vino a evitar. **Balance que
+>     el plano deja escrito:** se cerró la contradicción de FUENTES —el plano dejó de prescribir lo que
+>     la referencia medía roto, con cable que lo vigila— y **no** el HECHO: cuál mecanismo aísla sigue
+>     sin saberse. **La sesión arregló el contrato, no el mundo.** Tercera ratificación del día, sufijo
+>     `(3)` (`023`). Encargo `#116`.*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
