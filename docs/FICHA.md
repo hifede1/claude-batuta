@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-04 por Fede
+> Firmado: 2026-08-04 (2) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -173,6 +173,20 @@
 >     ADR** contra `031`. Y **decidir no es aplicar**: el ADR queda ⛓️ **pendiente del externo**
 >     hasta que el dueño cree y confirme la cuenta. Primera ratificación del día → **sin sufijo**
 >     (`023`). **La ratificación es el merge de este PR por el dueño** (`018`). Encargo `#112`.*
+>
+> 22. ***2026-08-04 (2) · PR de `035`** — **`034` no se aplica.** Veinte minutos después de mergearla,
+>     el dueño decidió **no crear la cuenta** («vas a quedar la mía» / «utilizá la mía y ya»), y con
+>     eso el contrato quedó sin ninguna decisión vigente que describiera la realidad: `028` superado
+>     por `034`, y `034` describiendo una cuenta que no iba a existir. **Drift doc↔realidad en el
+>     sustrato del modelo de firma**, cerrado por `035`, que **supera a `034` completo** y repone la
+>     posición de `028` con voz propia — sin resucitar a `028`, porque `018` no admite deshacer una
+>     superación. `034` **queda intacta**: su análisis del precio del agujero sigue en pie y es la
+>     constancia de qué se evaluó. **Consecuencia declarada y NO resuelta acá:** sin segunda identidad
+>     **C2 de S19 no es ejecutable** — si S19 debe cerrar declarando §7 no medible, es acto del plano
+>     y del dueño, no de un ADR de identidad. **Aprendizaje que vale más que los tres ADRs:** `034` se
+>     firmó **con su externo todavía REQUERIDO** — firmar una decisión cuya viabilidad depende de un
+>     acto que nadie confirmó es firmar sobre premisa no verificada, el modo de falla que `027` ya
+>     había documentado. Segunda ratificación del día, sufijo `(2)` (`023`). Encargo `#114`.*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
@@ -356,7 +370,8 @@ está tomada**.
 | [`030`](decisiones/030-coherencia-del-contrato.md) | Coherencia del contrato: fuente única y verificación mecánica | ✅ FIRMADA | 2026-07-30 | S16 · precisa el alcance de `006` |
 | [`031`](decisiones/031-proteccion-de-rama-sin-review.md) | Protección de rama: el cable requerido sin review requerido | ✅ FIRMADA | 2026-07-31 | **supera a `027` punto 4** · fuente del estado de la protección |
 | [`032`](decisiones/032-el-pase-en-el-diff.md) | El pase adversarial viaja dentro del diff que se firma | ✅ FIRMADA | 2026-08-01 | Compuerta Cero req. 1 · fase 2 pasos 3 y 5 · `registro-de-cadena.md` §5 |
-| [`034`](decisiones/034-cuenta-de-agente-dedicada.md) | Cuenta de agente dedicada: el agujero de `009` se cierra en vez de aceptarse | ✅ FIRMADA | 2026-08-04 | **supera a `028` completo** · repone `025` · cierra `027` punto 3 · ⛓️ pendiente del externo |
+| [`034`](decisiones/034-cuenta-de-agente-dedicada.md) | Cuenta de agente dedicada: el agujero de `009` se cierra en vez de aceptarse | ✅ FIRMADA | 2026-08-04 | **superada por `035`** — el externo no se proveyó · su análisis sigue en pie |
+| [`035`](decisiones/035-sin-cuenta-dedicada-el-agujero-vuelve-a-aceptarse.md) | `034` no se aplica: el dueño opera con su credencial y el agujero de `009` vuelve a aceptarse | ✅ FIRMADA | 2026-08-04 | **supera a `034` completo** · repone la posición de `028` · C2 de S19 queda sin camino de medición |
 
 **Los tres sellos que existen.** `FIRMADA` y `PENDIENTE` son el caso normal; **`CERRADA` es un tercer
 sello legítimo** y `015` es su único caso: un **paraguas** que no se decide, se cierra delegando en
