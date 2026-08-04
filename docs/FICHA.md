@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-03 por Fede
+> Firmado: 2026-08-04 por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -160,6 +160,19 @@
 >     materializarlo — **se lo vio FALLAR contra `9edd971` antes de corregir nada**. Primera
 >     ratificación del día → **sin sufijo** (`023`). **La ratificación es el merge de este PR por el
 >     dueño** (`018`). Autorizado por la firma de `#109`; encargo `#110`.*
+>
+> 21. ***2026-08-04 · PR de `034`** — se firma **`034`: cuenta de agente dedicada**, que **supera a
+>     `028` COMPLETO**, repone `025` y cierra el punto 3 de `027`. El agujero de `009` **se cierra en
+>     vez de aceptarse**: `028` lo había aceptado declarado, con el costo entonces teórico; once días
+>     después el precio es visible —cada firma de S16 a S19, incluida la de `#111`, es **verdadera de
+>     hecho y no demostrable por su metadato**— y C2 de S19 quedó bloqueada porque el taller **no
+>     puede medir su propio mecanismo de identidad sin una segunda identidad**. Fede eligió entre
+>     **cuatro** opciones con tradeoffs en sesión interactiva del 2026-08-04. `028` **conserva su
+>     sello y su fecha** (`018`). **Declarado FUERA de alcance:** reponer el review requerido en la
+>     protección de rama —posible de nuevo con dos cuentas— **es otra decisión y necesita su propio
+>     ADR** contra `031`. Y **decidir no es aplicar**: el ADR queda ⛓️ **pendiente del externo**
+>     hasta que el dueño cree y confirme la cuenta. Primera ratificación del día → **sin sufijo**
+>     (`023`). **La ratificación es el merge de este PR por el dueño** (`018`). Encargo `#112`.*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
@@ -343,6 +356,7 @@ está tomada**.
 | [`030`](decisiones/030-coherencia-del-contrato.md) | Coherencia del contrato: fuente única y verificación mecánica | ✅ FIRMADA | 2026-07-30 | S16 · precisa el alcance de `006` |
 | [`031`](decisiones/031-proteccion-de-rama-sin-review.md) | Protección de rama: el cable requerido sin review requerido | ✅ FIRMADA | 2026-07-31 | **supera a `027` punto 4** · fuente del estado de la protección |
 | [`032`](decisiones/032-el-pase-en-el-diff.md) | El pase adversarial viaja dentro del diff que se firma | ✅ FIRMADA | 2026-08-01 | Compuerta Cero req. 1 · fase 2 pasos 3 y 5 · `registro-de-cadena.md` §5 |
+| [`034`](decisiones/034-cuenta-de-agente-dedicada.md) | Cuenta de agente dedicada: el agujero de `009` se cierra en vez de aceptarse | ✅ FIRMADA | 2026-08-04 | **supera a `028` completo** · repone `025` · cierra `027` punto 3 · ⛓️ pendiente del externo |
 
 **Los tres sellos que existen.** `FIRMADA` y `PENDIENTE` son el caso normal; **`CERRADA` es un tercer
 sello legítimo** y `015` es su único caso: un **paraguas** que no se decide, se cierra delegando en
