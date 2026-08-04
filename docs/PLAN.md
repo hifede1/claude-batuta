@@ -803,6 +803,86 @@ faltante, y que la parte (b) de `033` no la decide el agente.
 
 ---
 
+## S20 — Cablear el tracker HTML: la vista que ningún chequeo mira, y que ya se atrasó dos veces
+
+🎯 **Planteamiento.** `docs/audits/batuta-tracker.html` es una **vista derivada** del artefacto de
+estado, y **ningún chequeo la mira**: los seis de `coherencia-contrato.sh` anclan en `FICHA.md` y en
+el JSON. Estado medido el **2026-08-04**, antes de abrir esta sesión:
+
+| Campo | JSON (fuente) | HTML (tracker) | Delta |
+|---|---|---|---|
+| `LAST_AUDIT` | `2026-08-04` | `2026-08-02` | **2 días** |
+| `CLOSED_COUNT` | 88 | 80 | **8 cierres** |
+| bloques | 22 | 18 | **4 bloques** |
+
+**Y esto ya había pasado, con la misma causa.** La deuda del 2026-08-02 registra un drift idéntico
+—HTML en `LAST_AUDIT 2026-07-30` / `CLOSED_COUNT 68` contra un JSON en 2026-08-02 / 80— y al saldarlo
+**a mano** dejó escrita esta línea:
+
+> *«Lo que NO se cerró: SIGUE SIN CABLE. Los cinco chequeos miran `FICHA.md` y este JSON; el HTML no
+> está cableado, así que **puede volver a atrasarse en silencio mañana**.»*
+
+**Se atrasó en silencio dos días después.** La deuda predijo su propia repetición y acertó, y eso es
+el argumento entero de esta sesión: **corregir la vista a mano no arregla la ausencia del control que
+la vigila.** Es el mismo enunciado que esa deuda le aplicaba al chequeo 5, ahora aplicado a ella.
+
+Agravante ya registrado: los commits `0754963` y `b8bdce3` se titulan literalmente «docs(tracker):
+cerrar S17» y «docs(tracker): cerrar S18» y **no tocaron el HTML** — movieron el JSON. Un commit que
+dice *tracker* y deja el tracker quieto es exactamente la clase de afirmación que `030` vino a cazar,
+aplicada a la vista que nadie mira.
+
+**Por qué ahora y no antes.** S16 instaló el cable, S17 cerró la frescura de las dos vistas cableadas,
+S18 midió el mundo y S19 cerró `references/`. Esta es **la última superficie sin control** de la
+familia: la que se corrige a mano y por eso vuelve.
+
+🛠️ **Método.** Cable + siembra. Cero decisión nueva: `030` ya decidió que las vistas se verifican
+mecánicamente.
+
+1. **Ver el cable FALLAR primero, contra el drift real.** Disciplina de S17, re-ejercida por el
+   chequeo 6 en S19/H1. Acá el drift **ya existe**: no hay que sembrarlo, está servido. La salida del
+   rojo va pegada al PR.
+2. **Chequeo 7** en `.github/scripts/coherencia-contrato.sh`: el tracker HTML no quedó atrás del JSON.
+   Comparaciones mecánicas y anclables: `LAST_AUDIT` == `last_audit` · `CLOSED_COUNT` ==
+   `closed_count` · cantidad de bloques · cantidad de ADRs.
+3. **Anclar donde vive la verdad, no donde aparece la palabra** (`030` §3): las constantes del HTML
+   son literales JS (`LAST_AUDIT = '…'`, `CLOSED_COUNT = …`) y se leen como tales, jamás con un grep
+   de la palabra suelta. Este taller ya se cobró tres veces esa distinción.
+4. **Sembrar los escenarios** en `bateria-sembrada.sh`: el cable prueba que **DETECTA**, no que pasa.
+5. **Cerrar la deuda de verificación del chequeo 6** — S19/H1 lo dejó **sin escenario sembrado**. Se
+   incluye acá porque esta sesión toca **esa misma batería**: tocarla y dejar el 6 sin sembrar sería
+   pasar al lado del problema con la herramienta en la mano.
+6. **Declarar el límite.** El chequeo 7 mira **frescura y cardinalidad**, no CONTENIDO: que los textos
+   del HTML digan la verdad no es mecanizable, igual que en los chequeos 4 y 5. Un límite callado es
+   el cartel de siempre.
+
+✅ **Criterios de aceptación.**
+- [ ] El chequeo 7 se **vio FALLAR** contra el drift real antes de corregirlo *(verificación: salida del rojo pegada en el PR, citando `LAST_AUDIT`/`CLOSED_COUNT` divergentes)*
+- [ ] El chequeo 7 compara **las cuatro dimensiones** y ancla en los literales JS *(verificación: inspección del script — cero grep de palabra suelta)*
+- [ ] El tracker HTML queda **al día** con el JSON *(verificación: `coherencia-contrato.sh` en verde, chequeo 7 incluido)*
+- [ ] Los escenarios del chequeo 7 están **sembrados** en `bateria-sembrada.sh` *(verificación: la batería falla si se rompe la detección — se prueba rompiéndola a propósito)*
+- [ ] El **chequeo 6 queda sembrado** *(verificación: escenario propio en la batería; hoy sólo se lo vio fallar a mano)*
+- [ ] El límite del chequeo 7 está **escrito en el propio script** *(verificación: inspección — dice qué NO mira y por qué)*
+
+📚 **Referencias.** [`references/audit-tracker.md`](references/) 🟢 · `decisiones/030` (fuente única y
+verificación mecánica) · `docs/audits/s16-cable-2026-07-30.md` y `s17-frescura-2026-08-01.md` (los dos
+precedentes de esta familia)
+
+⛓️ **Prerrequisitos.** Ninguno. El drift está medido, la batería existe y `030` ya autorizó la
+infraestructura de verificación.
+
+**Estimación: S** — el cable es corto y el drift ya está servido. Lo que pesa es sembrar bien: un
+escenario que no rompe la detección certifica un arreglo que no está hecho, y esta batería **ya cometió
+esa clase de error dos veces** (el número del ADR sembrado, y la asignación que borraba los pendientes
+reales).
+
+> **Lo que S20 NO hace, declarado.** No cablea la **estampa de `ALCANCE.md`** —la otra candidata que
+> S19 declaró—, que sigue sin control y queda para **S21**. No verifica el **contenido** del tracker,
+> sólo su frescura y su cardinalidad. No incorpora al plano los tramos sin asiento (eso lo firma el
+> dueño). Y no toca el **chequeo 5**, que sigue vigilando atraso y no justificación — deuda declarada
+> el 2026-08-02 y todavía abierta.
+
+---
+
 ## Resumen
 
 > ⚠️ **Esta tabla es una VISTA DERIVADA** (`decisiones/030`). La columna *Bloqueada por decisión*
@@ -831,6 +911,7 @@ faltante, y que la parte (b) de `033` no la decide el agente.
 | **S17** | **La frescura de las vistas: el cuarto y quinto chequeo** *(mantenimiento)* | **S** | — *(`030` ya firmada; extiende su alcance precisado)* |
 | **S18** | **La frontera de los delegados: medir los tres `BLOQUEA` y reasentarlos** *(mantenimiento)* | **S** | — *(el motivo que sobrevive es `007`, corte de versiones)* |
 | **S19** | **Evidencia limpia sobre la identidad del agente** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 4/6, dos criterios retirados** (`035`) | **M** | `033` **partido**, su parte (a) ⏳ PENDIENTE · la (b) —sacar el FRENA— sigue siendo elección del dueño · §7 **NO MEDIBLE** |
+| **S20** | **Cablear el tracker HTML** *(mantenimiento)* — ⏳ **abierta** | **S** | — *(`030` ya autorizó la verificación mecánica)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 

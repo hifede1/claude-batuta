@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-04 (3) por Fede
+> Firmado: 2026-08-04 (4) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -202,6 +202,19 @@
 >     la referencia medía roto, con cable que lo vigila— y **no** el HECHO: cuál mecanismo aísla sigue
 >     sin saberse. **La sesión arregló el contrato, no el mundo.** Tercera ratificación del día, sufijo
 >     `(3)` (`023`). Encargo `#116`.*
+>
+> 24. ***2026-08-04 (4) · PR que abre S20** — se abre **S20: cablear el tracker HTML**, la última
+>     superficie sin control de la familia. No se abre por argumento sino por **medición**: al
+>     2026-08-04 el HTML declara `LAST_AUDIT 2026-08-02` y `CLOSED_COUNT 80` contra un JSON en
+>     `2026-08-04` y `88` — dos días y ocho cierres de atraso, más cuatro bloques faltantes. **Y ya
+>     había pasado idéntico el 2026-08-02**, cuando se lo saldó a mano y la deuda escribió que «puede
+>     volver a atrasarse en silencio mañana»: **se atrasó dos días después**. La deuda predijo su
+>     propia repetición y acertó, que es el argumento entero de la sesión — **corregir la vista a mano
+>     no arregla la ausencia del control que la vigila**. S20 incluye además cerrar la deuda de
+>     verificación que dejó S19/H1 (el **chequeo 6 sin escenario sembrado**), porque toca esa misma
+>     batería y dejarlo sería pasar al lado con la herramienta en la mano. **Sin ADR nuevo en este
+>     acto.** Cuarta ratificación del día, sufijo `(4)` (`023`). **La ratificación es el merge de este
+>     PR por el dueño** (`018`). Encargo `#118`.*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante
