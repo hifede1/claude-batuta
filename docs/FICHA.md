@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-04 (5) por Fede
+> Firmado: 2026-08-04 (6) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -234,6 +234,20 @@
 >     batería se puso roja en 9 escenarios. **Sin ADR nuevo en este acto.** Quinta ratificación del
 >     día, sufijo `(5)` (`023`). **La ratificación es el merge de este PR por el dueño** (`018`).
 >     Encargo `#120`.*
+>
+> 26. ***2026-08-04 (6) · PR que abre S21** — se abre **S21: cablear la estampa de `ALCANCE.md`**, la
+>     **última** vista sin control de la familia, declarada como hueco por S18 el 01-08 y vuelta a
+>     declarar por S19 sin tomar. Se abre por **medición**: `ALCANCE:3` dice «Ratifica FICHA §0 y §11»
+>     y su re-ratificación es del commit `26d604b`, pero `b37c162` **cambió §0 después** — huella
+>     `9ba10af9…` de lo ratificado contra `adcc7935…` de lo que FICHA dice hoy. **ALCANCE ratifica una
+>     versión de §0 que ya no existe.** El problema no era «falta un cable» sino **«¿contra qué
+>     reloj?»**: el dueño eligió entre tres, en sesión interactiva del 2026-08-04, **el CONTENIDO de
+>     §0 y §11** — los otros dos (reloj de ADRs, estampa de FICHA) eran más baratos y habrían nacido
+>     muertos, porque **hoy darían rojo por cinco estampas que no tocaron esas secciones**, y un cable
+>     ruidoso se ignora. El diseño que sale de ahí: **la huella vive en `ALCANCE.md` junto a su
+>     estampa**, así ratificar deja de ser una fecha suelta y pasa a declarar **qué versión exacta** se
+>     ratificó. **Sin ADR nuevo en este acto.** Sexta ratificación del día, sufijo `(6)` (`023`). **La
+>     ratificación es el merge de este PR por el dueño** (`018`). Encargo `#122`.*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante

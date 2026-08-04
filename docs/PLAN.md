@@ -891,6 +891,87 @@ reales).
 
 ---
 
+## S21 — Cablear la estampa de `ALCANCE.md`: ratificar deja de ser una fecha suelta
+
+🎯 **Planteamiento.** `docs/ALCANCE.md:3` declara: *«Firmado: 2026-07-19 · **Re-ratificado:
+2026-08-02** (`#97` y `#95`) · **Ratifica FICHA §0 y §11**»*. Esa re-ratificación corresponde al
+commit `26d604b`. **Después de ella**, `b37c162` (PR #106) **cambió FICHA §0**:
+
+```diff
+- BLOQUEA …: criterios→tests (falta verificador), publicar (falta publicador), …
++ BLOQUEA … ante un delegado que ALCANCE.md §«v0 NO hace» declara bloqueado
++ La lista concreta no se enumera acá: vive en una sola fuente
+```
+
+**§11 no se tocó; §0 sí.** Medido con hash de ambas secciones:
+
+| Qué | Huella (sha256, 16) |
+|---|---|
+| Lo que ALCANCE **ratificó** (`26d604b`) | `9ba10af9af14fdf1` |
+| Lo que FICHA **dice hoy** | `adcc79359491d2c2` |
+
+**ALCANCE ratifica una versión de §0 que ya no existe**, y ningún chequeo lo mira: el 5 ancla en
+`FICHA.md`, el 7 en el tracker. Es la **última** vista sin control de la familia — la que S18 declaró
+como hueco el 2026-08-01 y S19 volvió a declarar sin tomar.
+
+**Y el problema no era «falta un cable»: era «¿contra qué reloj?».** Se evaluaron tres y **el dueño
+eligió** en sesión interactiva del 2026-08-04:
+
+| Reloj | Por qué se descartó |
+|---|---|
+| El de los ADRs (como el chequeo 4) | cada ADR firmado obligaría a re-ratificar el alcance de v0 |
+| La estampa de FICHA (como el chequeo 5) | **hoy daría rojo por CINCO estampas** que no tocaron §0 ni §11 |
+| **El CONTENIDO de §0 y §11** ✅ | *(elegido)* — sin ruido, y hoy caza el drift real |
+
+**Un cable ruidoso se ignora, y un cable ignorado es peor que no tenerlo** (`030`). Los dos primeros
+eran más baratos de escribir y habrían nacido muertos.
+
+🛠️ **Método.** Huella declarada + cable + siembra.
+
+1. **La huella vive en `ALCANCE.md`, junto a su estampa.** La línea de ratificación deja de ser una
+   fecha suelta y declara **qué versión exacta** ratificó:
+   `Ratifica FICHA §0 y §11 · huella: <sha256>`. Eso convierte «ratifiqué» en una afirmación
+   **verificable**, que es el corazón de `030`.
+2. **Chequeo 8**: la huella declarada == el hash real de FICHA §0 y §11.
+3. **Verlo FALLAR primero** — y el drift **ya existe**: se escribe la huella con el valor de
+   `26d604b` (`9ba10af9…`), que es lo que ALCANCE efectivamente ratificó, y el cable tiene que
+   ponerse **rojo** contra el §0 de hoy.
+4. **Recién después, re-ratificar.** Mover la huella **es un acto de ratificación del dueño**: lo
+   propone el PR y **lo ratifica su merge** (`018`). El agente no re-ratifica por su cuenta.
+5. **Extraer las secciones ancladas en el encabezado** (`awk` desde `^## 0\.` hasta el próximo
+   `^## `), jamás por número de línea: los números se mueven, los encabezados no.
+6. **Sembrar con su espejo**: rojo si §0 cambia sin re-ratificar, y **verde** si cambia una sección
+   que ALCANCE **no** ratifica. Sin el segundo, el cable podría anclar en el archivo entero y nadie
+   lo notaría — es la lección que S20 pagó tres veces.
+7. **FRENAR** si falta la huella o las secciones no se pueden extraer: `exit 2` con motivo.
+
+✅ **Criterios de aceptación.**
+- [ ] La línea de ratificación de `ALCANCE.md` **declara una huella** de las secciones que ratifica *(verificación: inspección — la línea existe y la huella es un sha256)*
+- [ ] El chequeo 8 se **vio FALLAR** con la huella de `26d604b` contra el §0 de hoy *(verificación: salida del rojo pegada en el PR, con las dos huellas)*
+- [ ] El chequeo 8 **ancla en los encabezados**, no en números de línea *(verificación: inspección del script)*
+- [ ] El chequeo 8 **FRENA** (exit 2) si falta la huella o no puede extraer las secciones *(verificación: escenario sembrado)*
+- [ ] Los escenarios están sembrados **con su espejo** *(verificación: uno exige ROJO al cambiar §0; otro exige VERDE al cambiar una sección NO ratificada)*
+- [ ] `ALCANCE.md` queda **re-ratificado con la huella al día** *(verificación: `coherencia-contrato.sh` verde con los ocho chequeos; el merge del dueño es el acto)*
+- [ ] El límite del chequeo 8 está **escrito en el script** *(verificación: inspección — dice que detecta cambio, no si el cambio era sustantivo)*
+
+📚 **Referencias.** `decisiones/030` (fuente única y verificación mecánica) · `decisiones/011`
+(ratificación del plano) · `docs/audits/s17-frescura-2026-08-01.md` y el chequeo 7 de S20 como
+precedentes directos de esta familia.
+
+⛓️ **Prerrequisitos.** Ninguno para construir. **La re-ratificación final es acto del dueño** — se
+propone en el PR y su merge la ratifica.
+
+**Estimación: S** — el cable es corto y el drift está medido. Lo que pesa es el **espejo** de la
+siembra: S20 pagó tres supuestos falsos por no tenerlo, y todos devolvían números creíbles.
+
+> **Lo que S21 NO hace, declarado.** No juzga **si el cambio de §0 era sustantivo** — de hecho hizo
+> que §0 **remita** a ALCANCE en vez de contradecirlo, y eso es **juicio**, no mecánica: el chequeo 8
+> detecta que el contenido cambió y obliga a mirarlo, nada más. No cablea el **contenido** de ningún
+> documento (sigue sin ser mecanizable, igual que en los chequeos 4, 5 y 7). No incorpora al plano los
+> tramos sin asiento. Y no toca la parte (b) de `033`, que sigue siendo elección del dueño.
+
+---
+
 ## Resumen
 
 > ⚠️ **Esta tabla es una VISTA DERIVADA** (`decisiones/030`). La columna *Bloqueada por decisión*
@@ -920,6 +1001,7 @@ reales).
 | **S18** | **La frontera de los delegados: medir los tres `BLOQUEA` y reasentarlos** *(mantenimiento)* | **S** | — *(el motivo que sobrevive es `007`, corte de versiones)* |
 | **S19** | **Evidencia limpia sobre la identidad del agente** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 4/6, dos criterios retirados** (`035`) | **M** | `033` **partido**, su parte (a) ⏳ PENDIENTE · la (b) —sacar el FRENA— sigue siendo elección del dueño · §7 **NO MEDIBLE** |
 | **S20** | **Cablear el tracker HTML** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 6/6** | **S** | — *(`030` ya autorizó la verificación mecánica)* |
+| **S21** | **Cablear la estampa de `ALCANCE.md`** *(mantenimiento)* — ⏳ **abierta** | **S** | — *(reloj elegido por el dueño: el contenido de FICHA §0 y §11)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
