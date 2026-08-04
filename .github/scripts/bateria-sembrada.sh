@@ -250,6 +250,34 @@ s_trk_adr()     { printf -- '# 998 — prueba\n\n**Estado:** ✅ **FIRMADA** · 
                     "$SEMBRAR_EN/docs/FICHA.md"; }
 s_trk_ausente() { rm -f "$SEMBRAR_EN/$TRK"; }
 
+# ── SIEMBRA DEL CHEQUEO 8 · la estampa de ALCANCE (S21) ────────────────
+# `ALCANCE.md` declara «Ratifica FICHA §0 y §11» y una HUELLA de esas dos
+# secciones. Si cambian y nadie re-ratifica, la afirmación queda falsa.
+#
+# Los dos primeros escenarios rompen UNA sección cada uno: si uno solo
+# cubriera las dos, el día que el cable dejara de mirar §11 seguiría rojo
+# por §0 y nadie se enteraría.
+s_alcance_s0()  { printf '\n- línea sembrada en §0.\n' > /tmp/.s0 2>/dev/null
+                  awk '/^## 1\. Propósito/{print "- línea sembrada en §0."} {print}' \
+                    "$SEMBRAR_EN/docs/FICHA.md" > "$SEMBRAR_EN/docs/FICHA.tmp" \
+                  && mv "$SEMBRAR_EN/docs/FICHA.tmp" "$SEMBRAR_EN/docs/FICHA.md"; }
+s_alcance_s11() { awk '/^## 12\. Criterios de aceptación/{print "- línea sembrada en §11."} {print}' \
+                    "$SEMBRAR_EN/docs/FICHA.md" > "$SEMBRAR_EN/docs/FICHA.tmp" \
+                  && mv "$SEMBRAR_EN/docs/FICHA.tmp" "$SEMBRAR_EN/docs/FICHA.md"; }
+
+# EL ESPEJO, y es el escenario que más protege: cambiar una sección que
+# ALCANCE **NO** ratifica tiene que dar VERDE. Sin esto, un cable que
+# anclara en el archivo ENTERO —o en un rango de líneas en vez de en los
+# encabezados— pasaría inadvertido y se pondría rojo con cada edición de
+# FICHA, que es el ruido que el dueño descartó explícitamente al elegir el
+# reloj. S20 pagó tres supuestos falsos por no tener espejos.
+s_alcance_otra_seccion() {
+  awk '/^## 9\. Absorción/{print "- línea sembrada en §8, que ALCANCE no ratifica."} {print}' \
+    "$SEMBRAR_EN/docs/FICHA.md" > "$SEMBRAR_EN/docs/FICHA.tmp" \
+  && mv "$SEMBRAR_EN/docs/FICHA.tmp" "$SEMBRAR_EN/docs/FICHA.md"; }
+
+s_alcance_sin_huella() { edita 's/ · huella: `[0-9a-f]*`//' "$SEMBRAR_EN/docs/ALCANCE.md"; }
+
 s_ficha_prosa() { saca '^| \[' "$SEMBRAR_EN/docs/FICHA.md"; }
 s_mencion()     { printf '\n> nota: mientras esto siga ⏳ PENDIENTE rige la opción 1.\n' \
                     >> "$SEMBRAR_EN/docs/decisiones/001-mono-proyecto.md"; }
@@ -326,6 +354,8 @@ escenario "tracker: LAST_AUDIT atrasado"                 1 "LAST_AUDIT"         
 escenario "tracker: CLOSED_COUNT atrasado"               1 "CLOSED_COUNT"              s_trk_contador
 escenario "tracker: le falta un bloque de la fuente"     1 "bloques"                   s_trk_bloque
 escenario "tracker: le falta un ADR de la fuente"        1 "ADRs"                      s_trk_adr
+escenario "FICHA §0 cambia y ALCANCE no re-ratifica"     1 "YA NO EXISTE"              s_alcance_s0
+escenario "FICHA §11 cambia y ALCANCE no re-ratifica"    1 "YA NO EXISTE"              s_alcance_s11
 
 echo
 echo "el cable tiene que FRENAR, no dar verde (exit 2):"
@@ -336,6 +366,7 @@ escenario "last_audit con formato ilegible"          2 "FRENA" s_last_audit_ileg
 escenario "FICHA sin su línea de estampa"            2 "FRENA" s_sin_estampa
 escenario "la estampa sin fecha parseable"           2 "FRENA" s_estampa_ilegible
 escenario "no existe el tracker HTML"                2 "FRENA" s_trk_ausente
+escenario "ALCANCE sin su línea de huella"           2 "FRENA" s_alcance_sin_huella
 
 echo
 echo "y NO tiene que dar falso positivo:"
@@ -347,6 +378,7 @@ escenario "las dos vistas por delante del reloj"        0 "VERDE" s_vistas_al_di
 escenario "vistas y reloj en la MISMA fecha"            0 "VERDE" s_vistas_misma_fecha
 escenario "estampa al día con sufijo (N) de 023"        0 "VERDE" s_estampa_con_sufijo
 escenario "mecanismo NOMBRADO en prosa, no materializado" 0 "VERDE" s_mecanismo_en_prosa
+escenario "cambia una sección de FICHA que ALCANCE NO ratifica" 0 "VERDE" s_alcance_otra_seccion
 
 echo
 echo "y NO tiene que dar verde bajo un intérprete que no soporta:"
