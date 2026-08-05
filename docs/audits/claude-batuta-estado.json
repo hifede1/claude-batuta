@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "proyecto": "claude-batuta",
   "last_audit": "2026-08-04",
-  "closed_count": 94,
+  "closed_count": 101,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
     "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
@@ -210,6 +210,16 @@
       "pendientes": [
         "El chequeo 7 NO mira el CONTENIDO del tracker: que sus textos digan la verdad no es mecanizable, igual que en los chequeos 4 y 5. Declarado en el script. Lo cubre la re-auditoria, no el cable.",
         "sync_trk de la bateria no sincroniza la cantidad de BLOQUES del tracker: ningun escenario los mueve hoy salvo s_trk_bloque, que BUSCA el rojo. Declarado en vez de escribir codigo muerto que nadie ejercita — si mañana un escenario agrega bloques, hay que extenderlo."
+      ]
+    },
+    {
+      "id": "b24",
+      "nombre": "S21 · Cablear la estampa de ALCANCE — ratificar deja de ser una fecha suelta",
+      "zona": "Verificación — donde las reglas dejan de ser intenciones",
+      "estado": "hecho",
+      "resumen": "Cerrada 2026-08-04 (encargos #122 apertura y #124 ejecucion), 7 de 7. Nace el CHEQUEO 8: ALCANCE.md deja de ratificar a ciegas. EL PROBLEMA NO ERA «FALTA UN CABLE» SINO «CONTRA QUE RELOJ»: el dueño eligio entre tres opciones el contenido de FICHA §0 y §11. Los dos descartados —el reloj de los ADRs y la estampa de FICHA— eran mas baratos de escribir y habrian nacido muertos: ESE MISMO DIA habrian dado rojo por CINCO estampas que no tocaron esas secciones, y un cable ruidoso se ignora. El diseño que sale de ahi: LA HUELLA VIVE EN ALCANCE.md junto a su estampa, asi ratificar deja de ser una fecha suelta y pasa a declarar QUE VERSION EXACTA se ratifico — «ratifiqué» se vuelve verificable, que es el corazon de 030. El drift era real: la re-ratificacion del 2026-08-02 (26d604b, huella 9ba10af9) quedo invalida cuando b37c162 cambio §0 para que dejara de enumerar delegados y remitiera a ALCANCE; nadie lo noto en dos dias porque ningun chequeo miraba esa linea. Se lo vio FALLAR con la huella vieja antes de re-ratificar, y la re-ratificacion CONSERVA la anterior con su huella y su motivo: pisarla impediria saber sobre que se ratifico cada vez. DOS DEFECTOS PROPIOS destapados en la ejecucion, los dos silenciosos: (1) el contador del mensaje final quedo vacio —«ROJO ·  de 8»— asi que el cable reportaba falla sin decir cuantas; (2) la huella se calculaba con printf %s\n%s\n, que AGREGA UN SALTO entre secciones: mismo contenido, hash distinto del documentado. Una huella que depende de como se concateno no es funcion del contenido, y dos calculos igualmente correctos habrian acusado un drift inexistente. Quinta vez que el taller mide lo mismo desde b17. REGLA QUE QUEDA: un cable nuevo se verifica contra un valor calculado POR FUERA de el, no contra si mismo. Bateria 31 → 35, con el ESPEJO que exige VERDE al cambiar §8, una seccion que ALCANCE no ratifica — sin el, un cable que anclara en el archivo entero pasaria inadvertido. Probado rompiendo la deteccion a proposito: 2 escenarios en rojo. LIMITE DECLARADO: detecta que el contenido CAMBIO, no si el cambio era SUSTANTIVO — el de hoy hizo que §0 REMITA a ALCANCE en vez de contradecirlo, y eso es juicio, no mecanica.",
+      "pendientes": [
+        "El chequeo 8 detecta que §0/§11 cambiaron, NO si el cambio era sustantivo. El de 2026-08-04 hizo que §0 REMITA a ALCANCE en vez de contradecirlo — se puede argumentar que refuerza la ratificacion en vez de invalidarla. Es juicio: lo resuelven la re-auditoria y el dueño, no el cable."
       ]
     }
   ],

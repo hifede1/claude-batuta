@@ -945,14 +945,26 @@ eran más baratos de escribir y habrían nacido muertos.
    lo notaría — es la lección que S20 pagó tres veces.
 7. **FRENAR** si falta la huella o las secciones no se pueden extraer: `exit 2` con motivo.
 
-✅ **Criterios de aceptación.**
-- [ ] La línea de ratificación de `ALCANCE.md` **declara una huella** de las secciones que ratifica *(verificación: inspección — la línea existe y la huella es un sha256)*
-- [ ] El chequeo 8 se **vio FALLAR** con la huella de `26d604b` contra el §0 de hoy *(verificación: salida del rojo pegada en el PR, con las dos huellas)*
-- [ ] El chequeo 8 **ancla en los encabezados**, no en números de línea *(verificación: inspección del script)*
-- [ ] El chequeo 8 **FRENA** (exit 2) si falta la huella o no puede extraer las secciones *(verificación: escenario sembrado)*
-- [ ] Los escenarios están sembrados **con su espejo** *(verificación: uno exige ROJO al cambiar §0; otro exige VERDE al cambiar una sección NO ratificada)*
-- [ ] `ALCANCE.md` queda **re-ratificado con la huella al día** *(verificación: `coherencia-contrato.sh` verde con los ocho chequeos; el merge del dueño es el acto)*
-- [ ] El límite del chequeo 8 está **escrito en el script** *(verificación: inspección — dice que detecta cambio, no si el cambio era sustantivo)*
+✅ **Criterios de aceptación.** — **CERRADA 2026-08-04 (PR de S21), 7 de 7.**
+- [x] La línea de ratificación de `ALCANCE.md` **declara una huella** → **cumplido**: `huella: adcc7935…` (sha256 de §0+§11). Ratificar dejó de ser una fecha suelta.
+- [x] El chequeo 8 se **vio FALLAR** con la huella de `26d604b` contra el §0 de hoy → **cumplido**: `declarada 9ba10af9… · real hoy adcc7935…`. Salida del rojo en el PR.
+- [x] El chequeo 8 **ancla en los encabezados**, no en números de línea → **cumplido** (`awk` desde `^## 0\.` / `^## 11\.` hasta el próximo `^## `).
+- [x] El chequeo 8 **FRENA** (exit 2) si falta la huella o no puede extraer las secciones → **cumplido**, con escenario sembrado.
+- [x] Los escenarios están sembrados **con su espejo** → **cumplido**: ROJO al cambiar §0, ROJO al cambiar §11 —uno por sección, para que el día que el cable deje de mirar una el otro no lo tape— y **VERDE al cambiar §8, que ALCANCE no ratifica**. Batería 31 → **35**.
+- [x] `ALCANCE.md` queda **re-ratificado con la huella al día** → **cumplido**: `Re-ratificado: 2026-08-04 (S21, #124)`, conservando la anterior con su huella y su motivo. El merge del dueño es el acto (`018`).
+- [x] El límite del chequeo 8 está **escrito en el script** → **cumplido**: detecta que el contenido **cambió**, no si el cambio era **sustantivo**.
+
+> **Dos defectos propios que la ejecución destapó, los dos silenciosos.** (1) El mensaje final decía
+> `ROJO ·  de 8` — el contador quedó vacío al ampliar el texto, así que el cable reportaba una falla
+> **sin decir cuántas**. (2) La huella se calculaba con `printf '%s\n%s\n'`, que **agrega un salto de
+> línea entre las secciones**: mismo contenido, hash distinto del documentado. **Una huella que
+> depende de cómo se concatenó no es función del contenido**, y dos cálculos igualmente correctos
+> habrían acusado un drift inexistente. Se cambió a `{ seccion 0; seccion 11; }`.
+>
+> **Y el patrón vuelve a ser el mismo de S20:** ninguno de los dos rompía nada visible — uno imprimía
+> un mensaje casi bien, el otro un hash perfectamente válido. **Es la quinta vez que este taller lo
+> mide.** La regla que queda escrita: *un cable nuevo se verifica contra un valor calculado por fuera
+> de él*, no contra sí mismo.
 
 📚 **Referencias.** `decisiones/030` (fuente única y verificación mecánica) · `decisiones/011`
 (ratificación del plano) · `docs/audits/s17-frescura-2026-08-01.md` y el chequeo 7 de S20 como
@@ -1001,7 +1013,7 @@ siembra: S20 pagó tres supuestos falsos por no tenerlo, y todos devolvían núm
 | **S18** | **La frontera de los delegados: medir los tres `BLOQUEA` y reasentarlos** *(mantenimiento)* | **S** | — *(el motivo que sobrevive es `007`, corte de versiones)* |
 | **S19** | **Evidencia limpia sobre la identidad del agente** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 4/6, dos criterios retirados** (`035`) | **M** | `033` **partido**, su parte (a) ⏳ PENDIENTE · la (b) —sacar el FRENA— sigue siendo elección del dueño · §7 **NO MEDIBLE** |
 | **S20** | **Cablear el tracker HTML** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 6/6** | **S** | — *(`030` ya autorizó la verificación mecánica)* |
-| **S21** | **Cablear la estampa de `ALCANCE.md`** *(mantenimiento)* — ⏳ **abierta** | **S** | — *(reloj elegido por el dueño: el contenido de FICHA §0 y §11)* |
+| **S21** | **Cablear la estampa de `ALCANCE.md`** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 7/7** | **S** | — *(reloj elegido por el dueño: el contenido de FICHA §0 y §11)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 

@@ -473,10 +473,87 @@ else
   echo "✓ ($t_audit · $t_closed cierres · $t_bloques bloques · $t_adrs ADRs)"
 fi
 
+# ── CHEQUEO 8 · LA ESTAMPA DE ALCANCE, LA ÚLTIMA VISTA SIN CONTROL (S21) ─
+# `ALCANCE.md` declara «Ratifica FICHA §0 y §11». Esa afirmación no la
+# miraba nadie: el chequeo 5 ancla en la estampa de FICHA y el 7 en el
+# tracker. Y ya se había cobrado: su re-ratificación es del commit
+# `26d604b`, y `b37c162` cambió §0 DESPUÉS — ALCANCE ratificaba una versión
+# que ya no existía, sin que nada lo dijera.
+#
+# EL RELOJ NO ES UNA FECHA: ES EL CONTENIDO. La decisión la tomó el dueño
+# el 2026-08-04 entre tres opciones, y las dos descartadas eran más baratas
+# de escribir y habrían nacido muertas:
+#   · contra el reloj de los ADRs → cada ADR firmado obligaría a
+#     re-ratificar el alcance de v0, que casi nunca es lo correcto;
+#   · contra la estampa de FICHA → ESE MISMO DÍA habría dado rojo por CINCO
+#     estampas que no tocaron §0 ni §11.
+# Un cable ruidoso se ignora, y un cable ignorado es peor que no tenerlo
+# (`030`). Comparando CONTENIDO, el chequeo sólo habla cuando cambió lo que
+# ALCANCE dice ratificar.
+#
+# La huella vive EN `ALCANCE.md`, junto a su estampa, y eso es el diseño y
+# no un detalle: ratificar deja de ser una fecha suelta y pasa a declarar
+# QUÉ VERSIÓN EXACTA se ratificó. «Ratifiqué» se vuelve verificable.
+#
+# ANCLA: los ENCABEZADOS (`^## 0\.` y `^## 11\.`), jamás números de línea.
+# Los números se mueven con cada edición; los encabezados no.
+#
+# LÍMITE DECLARADO: detecta que el contenido CAMBIÓ, no si el cambio era
+# SUSTANTIVO. El de 2026-08-04, por ejemplo, hizo que §0 **remita** a
+# ALCANCE en vez de contradecirlo — se puede argumentar que refuerza la
+# ratificación en vez de invalidarla. Eso es JUICIO, y el juicio es de la
+# re-auditoría y del dueño. El cable obliga a MIRAR; no dictamina.
+printf '8· ALCANCE ratifica lo que hay hoy .. '
+ALCANCE="$REPO/docs/ALCANCE.md"
+if [ ! -f "$ALCANCE" ]; then
+  echo "⛔ FRENA"
+  echo "     no existe ${ALCANCE#$REPO/}"
+  echo "     Esto NO es un verde: el chequeo 8 no tuvo qué comparar."
+  exit 2
+fi
+a_huella=$(grep -m1 -oE 'huella: `[0-9a-f]{64}`' "$ALCANCE" | grep -oE '[0-9a-f]{64}')
+if [ -z "$a_huella" ]; then
+  echo "⛔ FRENA"
+  echo "     ${ALCANCE#$REPO/} no declara 'huella: \`<sha256>\`' en su línea de ratificación."
+  echo "     Esto NO es un verde: sin huella declarada no hay contra qué comparar."
+  exit 2
+fi
+# Las dos secciones que ALCANCE dice ratificar, extraídas por encabezado.
+seccion() { awk -v h="^## $1\\\\." 'BEGIN{f=0} $0~h{f=1;print;next} f&&/^## /{exit} f' "$FICHA"; }
+s0=$(seccion 0); s11=$(seccion 11)
+if [ -z "$s0" ] || [ -z "$s11" ]; then
+  echo "⛔ FRENA"
+  echo "     no pude extraer FICHA §0 y/o §11 (¿cambiaron los encabezados?)."
+  echo "     Esto NO es un verde: el chequeo 8 no pudo calcular la huella."
+  exit 2
+fi
+# `{ seccion 0; seccion 11; }` y NO `printf '%s\n%s\n' "$s0" "$s11"`: la
+# sustitución de comandos come el newline final de cada sección y el printf
+# se lo repone, pero **agrega uno de más entre ambas** — huella distinta
+# para el mismo contenido. La huella tiene que ser función del contenido y
+# de nada más; si depende de cómo se concatenó, dos cálculos correctos dan
+# resultados distintos y el cable acusa un drift que no existe.
+f_huella=$( { seccion 0; seccion 11; } | shasum -a 256 2>/dev/null | cut -d' ' -f1)
+if [ -z "$f_huella" ]; then
+  echo "⛔ FRENA · falta shasum — no se puede calcular la huella"
+  exit 2
+fi
+if [ "$a_huella" != "$f_huella" ]; then
+  echo "✗ FALLA"
+  echo "     ALCANCE.md ratifica una versión de FICHA §0/§11 que YA NO EXISTE:"
+  echo "       declarada · $a_huella"
+  echo "       real hoy  · $f_huella"
+  echo "     Ratificar es afirmar sobre un contenido concreto. Si el contenido cambió,"
+  echo "     la ratificación hay que rehacerla — y eso es acto del dueño, no del cable."
+  fallas=$((fallas + 1))
+else
+  echo "✓ (${a_huella:0:16}…)"
+fi
+
 echo
 if [ "$fallas" -eq 0 ]; then
   echo "VERDE · las vistas coinciden con la fuente y están al día"
   exit 0
 fi
-echo "ROJO · $fallas de 7 chequeos en falla"
+echo "ROJO · $fallas de 8 chequeos en falla"
 exit 1

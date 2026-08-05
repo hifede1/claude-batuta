@@ -1,6 +1,13 @@
 # Alcance — `batuta`
 
-> Firmado: 2026-07-19 por Fede · **Re-ratificado: 2026-08-02 (`#97` y `#95`)** · Ratifica FICHA §0 y §11 · Corte de versiones: `decisiones/007-corte-de-versiones.md`
+> Firmado: 2026-07-19 por Fede · **Re-ratificado: 2026-08-04 (S21, `#124`)** · Ratifica FICHA §0 y §11 · huella: `adcc79359491d2c2b6b7e746330d1c3f8ae690402b0fabde949001056a522352` · Corte de versiones: `decisiones/007-corte-de-versiones.md`
+>
+> *Re-ratificaciones anteriores: **2026-08-02** (`#97` y `#95`, huella `9ba10af9…`). Esa huella dejó de
+> coincidir cuando `b37c162` (PR `#106`) cambió **FICHA §0** para que dejara de enumerar delegados y
+> **remitiera a este documento**. Nadie lo notó durante dos días: ningún chequeo miraba esta línea —el
+> 5 ancla en la estampa de FICHA, el 7 en el tracker— y es exactamente el hueco que **S21** vino a
+> cerrar. Se conserva el historial en vez de pisarlo: una re-ratificación que borra la anterior
+> impide saber **sobre qué** se ratificó cada vez.*
 >
 > *La re-ratificación del 2026-08-01 toca **solo** la tabla «v0 NO hace» y su nota de precisión: los tres
 > `BLOQUEA` se apoyaban en un estado de delegados verificado el 2026-07-19 que dejó de ser cierto el 23-24

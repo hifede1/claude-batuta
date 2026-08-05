@@ -1,7 +1,7 @@
 # Ficha de diseño: batuta
 
 > **Estado: VIGENTE**
-> Firmado: 2026-08-04 (6) por Fede
+> Firmado: 2026-08-04 (7) por Fede
 > *Procedencia de la firma (`decisiones/018`) — historial consolidado de esta estampa. En **todos** los
 > actos la ratificación es **el merge del PR por el dueño**, autenticado por `merged_by` == dueño
 > anclado (`009`) — con la salvedad que `025` vino a cerrar: hasta su aplicación (acto 6) el agente
@@ -248,6 +248,22 @@
 >     estampa**, así ratificar deja de ser una fecha suelta y pasa a declarar **qué versión exacta** se
 >     ratificó. **Sin ADR nuevo en este acto.** Sexta ratificación del día, sufijo `(6)` (`023`). **La
 >     ratificación es el merge de este PR por el dueño** (`018`). Encargo `#122`.*
+>
+> 27. ***2026-08-04 (7) · PR que ejecuta S21** — **S21 cerrada 7/7**: nace el **chequeo 8** y
+>     `ALCANCE.md` deja de ratificar a ciegas. **Ratificar deja de ser una fecha suelta**: su línea
+>     ahora declara la **huella** de las secciones que dice ratificar, así que «ratifiqué» pasa a ser
+>     una afirmación **verificable** — el corazón de `030` aplicado a la última vista sin control.
+>     Se lo vio **FALLAR** con la huella de `26d604b` (`9ba10af9…`) contra el §0 de hoy
+>     (`adcc7935…`), y recién después se propuso la re-ratificación. **Se conserva la anterior con su
+>     huella y su motivo**: una re-ratificación que pisa a la previa impide saber sobre qué se
+>     ratificó cada vez. **Dos defectos propios destapados en la ejecución, los dos silenciosos:** el
+>     contador del mensaje final quedó vacío (`ROJO ·  de 8`), y la huella se calculaba con un
+>     `printf` que **agrega un salto entre secciones** — mismo contenido, hash distinto del
+>     documentado. **Una huella que depende de cómo se concatenó no es función del contenido.**
+>     Quinta vez que el taller mide lo mismo; la regla que queda: **un cable nuevo se verifica contra
+>     un valor calculado por fuera de él**, no contra sí mismo. Batería 31 → **35**, con el **espejo**
+>     que exige VERDE al cambiar una sección que ALCANCE no ratifica. **Sin ADR nuevo.** Séptima
+>     ratificación del día, sufijo `(7)` (`023`). Encargo `#124`.*
 >
 > ℹ️ *Versionado — **nota única, consolidada** (antes había una por ratificación y venían acumulándose
 > con residuos). Regla: `023`, la fecha es la versión y la segunda ratificación del día en adelante

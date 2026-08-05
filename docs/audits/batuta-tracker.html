@@ -385,7 +385,7 @@
    ========================================================================== */
 
 const LAST_AUDIT = '2026-08-04';
-const CLOSED_COUNT = 94;             // 41 de la obra v0 (S01–S09) + 2 S10 + 2 S11 + 3 S12 + 4 S13 + 2 S14 + 7 S15 + 7 S16 + 7 S17 + 5 S18. OJO S14: cerró con 2 de 3 — su tercer criterio se RETIRÓ por decisión del dueño (027 revirtió su precondición), así que no se cuenta. OJO S15: nació FUERA del plano firmado (hallazgo de una corrida, no una sesión prevista) — se cuenta porque la obra existe y está mergeada, pero incorporarla a docs/PLAN.md lo firma el dueño. OJO S16: 7 de 7, y el 4º (el chequeo corre sin que nadie lo pida) es el único de toda la serie que NO se pudo cerrar por inspección — se cerró con la corrida real de CI, run 30525370199 sobre main. Las sesiones de mantenimiento se abren y cierran entre auditorías, por eso nunca figuran como pendientes ámbar
+const CLOSED_COUNT = 101;             // 41 de la obra v0 (S01–S09) + 2 S10 + 2 S11 + 3 S12 + 4 S13 + 2 S14 + 7 S15 + 7 S16 + 7 S17 + 5 S18. OJO S14: cerró con 2 de 3 — su tercer criterio se RETIRÓ por decisión del dueño (027 revirtió su precondición), así que no se cuenta. OJO S15: nació FUERA del plano firmado (hallazgo de una corrida, no una sesión prevista) — se cuenta porque la obra existe y está mergeada, pero incorporarla a docs/PLAN.md lo firma el dueño. OJO S16: 7 de 7, y el 4º (el chequeo corre sin que nadie lo pida) es el único de toda la serie que NO se pudo cerrar por inspección — se cerró con la corrida real de CI, run 30525370199 sobre main. Las sesiones de mantenimiento se abren y cierran entre auditorías, por eso nunca figuran como pendientes ámbar
 const REPO = 'hifede1/claude-batuta';
 
 /* Estimación ratificada: talle S / M / L por pendiente. */
@@ -743,6 +743,21 @@ const DATA = [
       pend:[
         {id:'p-s20-contenido', t:'El chequeo 7 <b>no mira el CONTENIDO</b> del tracker: que sus textos digan la verdad no es mecanizable. Declarado en el script; lo cubre la re-auditoría.'},
         {id:'p-s20-sync-bloques', t:'<code>sync_trk</code> de la batería <b>no sincroniza la cantidad de BLOQUES</b>: ningún escenario los mueve hoy salvo el que BUSCA el rojo. Declarado en vez de escribir código muerto — si mañana un escenario agrega bloques, hay que extenderlo.'}
+      ],
+      refs:[], prereq:[]
+    },{
+      id:'b24', titulo:'S21 · Cablear la estampa de ALCANCE — ratificar deja de ser una fecha suelta', estado:'hecho',
+      sesion:'S21', talle:'S', issue:124, trat:'directo',
+      planteamiento:'✅ <b>Cerrada 2026-08-04 · encargos <code>#122</code> (apertura) y <code>#124</code> (ejecución), 7 de 7.</b> Nace el <b>chequeo 8</b> y <code>ALCANCE.md</code> deja de ratificar a ciegas. <b>El drift era real:</b> su re-ratificación del 02-08 (huella <code>9ba10af9…</code>) quedó inválida cuando <code>b37c162</code> cambió <b>FICHA §0</b> para que dejara de enumerar delegados y <b>remitiera a ALCANCE</b>. Nadie lo notó en dos días: <b>ningún chequeo miraba esa línea</b> — el 5 ancla en la estampa de FICHA, el 7 en el tracker.',
+      hallazgo:'<b>El problema no era «falta un cable» sino «¿contra qué reloj?»</b>, y esa era decisión del dueño. Los dos relojes obvios —el de los ADRs y la estampa de FICHA— eran <b>más baratos de escribir y habrían nacido muertos</b>: ese mismo día habrían dado rojo por <b>CINCO estampas</b> que no tocaron §0 ni §11, y <b>un cable ruidoso se ignora</b>. Eligió el <b>CONTENIDO</b>, y de ahí sale el diseño: <b>la huella vive en <code>ALCANCE.md</code> junto a su estampa</b>, así ratificar deja de ser una fecha suelta y pasa a declarar <b>qué versión exacta</b> se ratificó. <b>Y la ejecución destapó DOS defectos propios, los dos silenciosos:</b> el contador del mensaje final quedó vacío (<code>ROJO ·  de 8</code>), y la huella se calculaba con un <code>printf</code> que <b>agrega un salto entre secciones</b> — mismo contenido, hash distinto del documentado. <b>Una huella que depende de cómo se concatenó no es función del contenido.</b> Quinta vez que el taller mide lo mismo desde <code>b17</code>. <b>Regla que queda: un cable nuevo se verifica contra un valor calculado POR FUERA de él, no contra sí mismo.</b>',
+      metodo:[
+        '<b>Visto FALLAR con la huella vieja</b> antes de re-ratificar: <code>declarada 9ba10af9… · real hoy adcc7935…</code>.',
+        '<b>La re-ratificación CONSERVA la anterior</b> con su huella y su motivo. Pisarla impediría saber <b>sobre qué</b> se ratificó cada vez — y eso es justamente lo que el cable vino a hacer verificable.',
+        '<b>Sembrado con espejo:</b> ROJO al cambiar §0, ROJO al cambiar §11 —uno por sección, para que el día que el cable deje de mirar una el otro no lo tape— y <b>VERDE al cambiar §8</b>, que ALCANCE no ratifica. Batería 31 → <b>35</b>. Probado rompiendo la detección: 2 escenarios en rojo.',
+        '<b>Límite declarado:</b> detecta que el contenido <b>cambió</b>, no si el cambio era <b>sustantivo</b>. El de hoy hizo que §0 <b>remita</b> a ALCANCE en vez de contradecirlo — eso es juicio, y el juicio es de la re-auditoría y del dueño. El cable obliga a MIRAR; no dictamina.'
+      ],
+      pend:[
+        {id:'p-s21-sustantivo', t:'El chequeo 8 detecta <b>que</b> §0/§11 cambiaron, no <b>si el cambio era sustantivo</b>. Lo resuelven la re-auditoría y el dueño, no el cable.'}
       ],
       refs:[], prereq:[]
     }]
