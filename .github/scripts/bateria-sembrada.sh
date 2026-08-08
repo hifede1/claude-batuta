@@ -323,7 +323,17 @@ s_vistas_misma_fecha() { reloj=$(grep -h -m1 '^\*\*Estado:\*\*' "$SEMBRAR_EN"/do
                                  | grep -oE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' | sort | tail -1)
                          j=$(j_de "$SEMBRAR_EN")
                          jq --arg d "$reloj" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
-                         estampa "$reloj por Fede" "$SEMBRAR_EN"; }
+                         estampa "$reloj por Fede" "$SEMBRAR_EN"
+                         # `sync_trk` FALTABA acá, y el escenario pasaba por COINCIDENCIA:
+                         # mientras `LAST_AUDIT` del tracker fue igual al reloj de los ADRs,
+                         # el chequeo 7 cuadraba sin que nadie sincronizara nada. En cuanto una
+                         # re-auditoría de bookkeeping avanzó `LAST_AUDIT` SIN ADR nuevo —el caso
+                         # normal, no el raro— el anti-falso-positivo se puso ROJO. Su hermano
+                         # `s_vistas_al_dia` sí la llamaba: la omisión es de S20, cuando el
+                         # chequeo 7 sembró `sync_trk` en cuatro escenarios y se salteó el quinto.
+                         # El tracker ES una vista desde S20, así que «las vistas en la MISMA
+                         # fecha» tiene que incluirlo o el escenario no cumple su propia premisa.
+                         sync_trk; }
 
 # VERDE — y el sufijo `(N)` de `023` NO puede romper el parseo de la estampa.
 # La segunda ratificación del día lleva `(2)`; si el cable lee la fecha con el

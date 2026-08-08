@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "proyecto": "claude-batuta",
-  "last_audit": "2026-08-04",
-  "closed_count": 101,
+  "last_audit": "2026-08-08",
+  "closed_count": 97,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talle S/M/L por pendiente",
     "actores": "Fede + Claude, una máquina; dueño anclado = hifede1 (owner del repo)",
     "metodologia": "mixta — SDD completo en sesiones de diseño (S04-S07, S09), directo en las mecánicas (S01-S03, S08)",
-    "loop": "orquestado (despacho activo) — cola de issues #5–#13, hoy VACÍA"
+    "loop": "orquestado (despacho activo) — la cola vive en GitHub Issues. Al 2026-08-08: VACIA (0 issues, 0 PRs abiertos); S22 se publica en esta re-auditoria"
   },
   "bloques": [
     {
@@ -221,6 +221,19 @@
       "pendientes": [
         "El chequeo 8 detecta que §0/§11 cambiaron, NO si el cambio era sustantivo. El de 2026-08-04 hizo que §0 REMITA a ALCANCE en vez de contradecirlo — se puede argumentar que refuerza la ratificacion en vez de invalidarla. Es juicio: lo resuelven la re-auditoria y el dueño, no el cable."
       ]
+    },
+    {
+      "id": "b25",
+      "nombre": "S22 · Cablear la COMPLETITUD del tracker — el chequeo 7 mira los numeros, nadie mira el texto",
+      "estado": "pendiente",
+      "zona": "Verificación — donde las reglas dejan de ser intenciones",
+      "pendientes": [
+        "Generar docs/references/cables-bash-defensivo.md con triggers, fecha y citas — ANTES de escribir el chequeo 9. Van seis jornadas escribiendo bash de cables (1451 lineas, 50 escenarios sembrados) sin una sola referencia del tema.",
+        "Sub-chequeo (a): los gates declarados en TESTS del tracker == los .sh de .github/scripts/. Hoy 4 en disco, 2 declarados.",
+        "Sub-chequeo (b): si LAST_AUDIT avanza, el CHANGELOG tiene entrada con esa fecha (tolerando el sufijo (N) de 023).",
+        "Sub-chequeo (c): const PLAN del HTML y el campo plan de este artefacto cubren toda sesion que PLAN.md declare CERRADA. Tercera ocurrencia: ya se corrigio a mano dos veces.",
+        "Los tres sub-chequeos con escenario sembrado + anti-falso-positivo, VISTOS FALLAR contra el repo real antes de corregir nada (030)."
+      ]
     }
   ],
   "plan": [
@@ -363,6 +376,34 @@
       "estimacion": 1,
       "deps": [],
       "cierra": []
+    },
+    {
+      "sesion": "S19",
+      "titulo": "Evidencia limpia sobre la identidad del agente — CERRADA 4/6, dos criterios retirados",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
+    },
+    {
+      "sesion": "S20",
+      "titulo": "Cablear el tracker HTML: la vista que ningun chequeo mira — CERRADA 6/6, nace el chequeo 7",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
+    },
+    {
+      "sesion": "S21",
+      "titulo": "Cablear la estampa de ALCANCE: ratificar deja de ser una fecha suelta — CERRADA 7/7, nace el chequeo 8",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
+    },
+    {
+      "sesion": "S22",
+      "titulo": "Cablear la COMPLETITUD del tracker: el chequeo 7 mira los numeros, nadie mira el texto — ABIERTA 2026-08-08",
+      "estimacion": 1,
+      "deps": [],
+      "cierra": []
     }
   ],
   "decisiones_pendientes": [
@@ -384,7 +425,7 @@
     {
       "tema": "audit-tracker",
       "path": "docs/references/audit-tracker.md",
-      "frescura": "fresca",
+      "frescura": "refresco",
       "fecha": "2026-07-19"
     },
     {
@@ -397,10 +438,23 @@
       "tema": "perimetro-de-confianza",
       "path": "docs/references/perimetro-de-confianza.md",
       "frescura": "fresca",
-      "fecha": "2026-07-28"
+      "fecha": "2026-07-21"
     }
   ],
-  "referencias_faltantes": [],
+  "referencias_faltantes": [
+    {
+      "tema": "cables-bash-defensivo",
+      "path": "docs/references/cables-bash-defensivo.md",
+      "generar_antes_de": "S22 — el chequeo 9",
+      "motivo": "1451 lineas de bash en 4 cables y 50 escenarios sembrados, y el conocimiento duro (no usar set -e; exit 2 frena y no falla; bash 3.2 sin arrays asociativos; LC_ALL=C; anclar en el literal) vive SOLO en los comentarios de los propios scripts. Sin triggers no encuentra al encargo siguiente."
+    },
+    {
+      "tema": "cadenas-que-github-interpreta",
+      "path": "docs/references/cadenas-que-github-interpreta.md",
+      "generar_antes_de": "S22 — el PR que cierra el chequeo 9",
+      "motivo": "Tres incidentes medidos con control: la palabra de cierre en espanol no cierra el issue (la inglesa lo cerro un segundo despues del merge), y dos veces en dos jornadas un commit cito un marcador de omision de CI para explicarlo y GitHub lo leyo como orden. RESTRICCION: la referencia no puede contener las cadenas literales, y hay que medir antes como interactua con el chequeo 6."
+    }
+  ],
   "deuda": [
     "Una RESTAURACION de la cuenta activa NO es estable (medido 2026-07-28, S15): se restauro, se verifico en el acto, y volvio a cambiar sola en menos de 25 minutos con el config en disco apuntando otra vez a la cuenta ajena. LA CAUSA NO QUEDO DETERMINADA y no se le inventa una. Consecuencia: apoyarse en la restauracion para seguir operando es apoyarse en algo que puede haberse deshecho para cuando llegue la escritura; por eso la precondicion de S15 verifica al arrancar en vez de confiar en haber restaurado al cerrar.  ▸ CAUSA DETERMINADA 2026-08-01: no cambiaba sola. Doce sesiones de Claude Code comparten ~/.config/gh/hosts.yml y varias ejecutan `gh auth switch --user estebaproject`; el 2026-07-28 la sesion Developer-esteba corrio switch a las 18:39:19Z y 18:39:36Z, entre la restauracion (~18:30Z) y la re-verificacion (~18:55Z). claude-batuta es ademas el 2.o mayor emisor de switches del disco: victimario, no solo victima. La CONSECUENCIA no cambia -la precondicion sigue verificando al arrancar en vez de confiar en haber restaurado- pero el motivo deja de ser un misterio y pasa a ser una propiedad conocida del entorno.",
     "SALDADA 2026-07-28 (PR #81, asiento en la fuente): la decision del 2026-07-28 -ante discrepancia de identidad al arrancar, batuta FRENA y no restaura- es hoy decisiones/029, FIRMADA 2026-07-28. Era el candidato que esta misma entrada reservaba con ese numero. Queda como registro de una clase que el cable de 030 NO puede detectar: un ADR que FALTA no es un drift entre vistas, porque no hay dos vistas que comparar. Primer ADR del proyecto escrito DESPUES de que su regla ya rige.",
@@ -422,6 +476,17 @@
     "Cuatro decisiones-a-firmar abiertas en el canal al 2026-08-02, ninguna con requisito en docs/PLAN.md: #95 (editar plugins/ obliga a bumpear version por frontera.sh CHEQUEO 1, asi que corregir el comando y publicar no son tramos independientes), #96 (la tabla «Delegados que hoy BLOQUEAN» no tiene categoria de estado para expresar «terminado», «se reduce, no desaparece» y el estado de entorno: reescribirla es diseno, no propagacion), #97 (no existe mecanismo de versionado publicable: el marketplace sirve ref:main sin pin ni campo version, cero releases jamas, y el merge ES la distribucion), #98 (drift entre la descripcion del catalogo y la de plugin.json, que publicar.md:106 declara imposible «por construccion»). NO van al campo decisiones_pendientes: ese campo es la vista derivada de los sellos PENDIENTE de docs/decisiones/ y el chequeo 2 falla el PR si divergen. Son decisiones del bus, no ADRs.  ▸ CERRADAS 2026-08-02: las cuatro se firmaron y se materializaron el mismo dia, y esta entrada quedo FALSA en el acto. #97 y #95 en el commit 26d604b (el merge ES la publicacion; editar el producto es distribuirlo), #96 en 07439a1 y 79bf477 (una sola fuente de delegados bloqueados: el comando dejo de llevar su copia y remite a ALCANCE.md), y #98 sin drift vivo: la descripcion de plugin.json y la del catalogo fede-tools COINCIDEN literalmente, verificado contra marketplace.json. Al 2026-08-02 el unico issue abierto del repo es #101, el reporte de cierre de la corrida. El dato que importa no es que se cerraran sino CUANTO duro la mentira: horas, y aun asi alcanzo para que docs/OPERACION.md naciera con la fila vencida por copiar este campo en vez de cotejar el canal.",
     "El campo `plan` del artefacto lista S05-S16 y no incluye S17 ni S18, que estan cerradas como b18 y b19. Tampoco incluye S01-S04. Detectado 2026-08-02: el campo no se mantiene desde hace al menos dos sesiones y ningun cable lo mira. Menor comparado con el resto, pero es la misma familia — una vista que envejece sola.  ▸ SALDADO 2026-08-02: completado con S01-S04, S17 y S18. La misma correccion se aplico al array PLAN del tracker HTML, que arrastraba el hueco identico. Sigue sin cable, como el resto de las dos vistas.",
     "La corrida 2026-08-02-publicar-050-y-esqueletos-s17-s18 dejo SIETE hallazgos que viven SOLO en el registro local (fuera del repo) y no estan en el canal: N1 (la contradiccion de los BLOQUEA es a tres bandas y FICHA.md:119,133 —§0, plano firmado— es la tercera, mientras ALCANCE.md:3 dice «Ratifica FICHA §0» y la contradice palabra por palabra), N4, N6, N7, N8, N12 y N13. Se despacharon solo los cuatro independientes; el resto dependia de que rama se firmara en #94, y esa rama ya se firmo el 2026-08-02 — o sea que ahora son despachables y nadie los tiene a la vista en GitHub.  ▸ ACTUALIZADO 2026-08-02: son SEIS, no siete. N1 -la contradiccion a tres bandas de los BLOQUEA, con FICHA.md §0 como tercera banda- cerro con #105 y su materializacion #106: §0 dejo de enumerar el estado de los delegados y remite a ALCANCE.md. Siguen fuera del canal N4, N6, N7, N8, N12 y N13, y siguen viviendo SOLO en el registro local de la corrida, que no esta en el repo: despacharlos exige la maquina del dueno.",
-    "ABIERTO 2026-08-03 (S19/H1), HALLAZGO ESTRUCTURAL: abrir un ADR no es un archivo suelto — DISPARA cuatro chequeos del cable a la vez. Crear 033 con sello 2026-08-03 movio el reloj de la fuente y puso en rojo el 2 (decisiones_pendientes), el 3 (fila en FICHA §10), el 4 (last_audit atrasado) y el 5 (estampa atrasada). Tres son propagacion mecanica y se resolvieron en el mismo PR; el 4 NO: last_audit no es vista derivada, DECLARA cuando se auditó, y subirlo a mano habria afirmado una re-auditoria que no ocurrio — la clase exacta de afirmacion que 030 vino a cazar, cometida por el agente que la aplica. Se escalo al dueño, que eligio correr la re-auditoria de verdad. CONSECUENCIA que queda viva: este proyecto NO PUEDE ABRIR UN ADR sin que una re-auditoria ocurra en el mismo acto, y eso no esta escrito en ningun lado. Nunca se habia visto porque los chequeos 4 y 5 son de S17 (2026-08-01) y el ultimo ADR creado (032) es del 2026-08-01, el mismo dia que su auditoria: 033 es el PRIMER ADR que nace con los chequeos 4 y 5 vivos. Lo habia anticipado un cluster del pase adversarial de severidad MEDIA («crear 033 no es un archivo suelto: los cables de 030 lo acoplan a FICHA §10 y al estado») que quedo SIN VEREDICTO por la cota — declarado en #109, y es la parte que nadie miro la que mordio. Candidato a ADR o a chequeo propio: hoy es un gotcha que se descubre pagandolo.  ▸ SEGUNDA OCURRENCIA 2026-08-04, y esta vez ANTICIPADA en vez de descubierta: el ADR 034 disparo el chequeo 4 igual que 033, y el encargo #112 lo trajo escrito como requisito desde el despacho. Dos ADRs en dos dias, las dos veces el mismo acoplamiento: DEJA DE SER UN CASO RARO. Confirma que la consecuencia declarada es estructural y no anecdotica. Dato nuevo que la primera ocurrencia no revelo: la bateria-sembrada.sh HEREDA el estado del repo base, asi que mientras last_audit este atrasado los CINCO escenarios que esperan exit 0 fallan en bloque — no porque la deteccion este rota sino porque el repo base ya esta rojo. Es honesto, pero confunde el diagnostico: un lector ve 5 de 24 fallando y busca un bug en la bateria que no existe. Candidato a chequeo propio o ADR: hoy sigue siendo un gotcha que se paga cada vez que se abre un ADR."
+    "ABIERTO 2026-08-03 (S19/H1), HALLAZGO ESTRUCTURAL: abrir un ADR no es un archivo suelto — DISPARA cuatro chequeos del cable a la vez. Crear 033 con sello 2026-08-03 movio el reloj de la fuente y puso en rojo el 2 (decisiones_pendientes), el 3 (fila en FICHA §10), el 4 (last_audit atrasado) y el 5 (estampa atrasada). Tres son propagacion mecanica y se resolvieron en el mismo PR; el 4 NO: last_audit no es vista derivada, DECLARA cuando se auditó, y subirlo a mano habria afirmado una re-auditoria que no ocurrio — la clase exacta de afirmacion que 030 vino a cazar, cometida por el agente que la aplica. Se escalo al dueño, que eligio correr la re-auditoria de verdad. CONSECUENCIA que queda viva: este proyecto NO PUEDE ABRIR UN ADR sin que una re-auditoria ocurra en el mismo acto, y eso no esta escrito en ningun lado. Nunca se habia visto porque los chequeos 4 y 5 son de S17 (2026-08-01) y el ultimo ADR creado (032) es del 2026-08-01, el mismo dia que su auditoria: 033 es el PRIMER ADR que nace con los chequeos 4 y 5 vivos. Lo habia anticipado un cluster del pase adversarial de severidad MEDIA («crear 033 no es un archivo suelto: los cables de 030 lo acoplan a FICHA §10 y al estado») que quedo SIN VEREDICTO por la cota — declarado en #109, y es la parte que nadie miro la que mordio. Candidato a ADR o a chequeo propio: hoy es un gotcha que se descubre pagandolo.  ▸ SEGUNDA OCURRENCIA 2026-08-04, y esta vez ANTICIPADA en vez de descubierta: el ADR 034 disparo el chequeo 4 igual que 033, y el encargo #112 lo trajo escrito como requisito desde el despacho. Dos ADRs en dos dias, las dos veces el mismo acoplamiento: DEJA DE SER UN CASO RARO. Confirma que la consecuencia declarada es estructural y no anecdotica. Dato nuevo que la primera ocurrencia no revelo: la bateria-sembrada.sh HEREDA el estado del repo base, asi que mientras last_audit este atrasado los CINCO escenarios que esperan exit 0 fallan en bloque — no porque la deteccion este rota sino porque el repo base ya esta rojo. Es honesto, pero confunde el diagnostico: un lector ve 5 de 24 fallando y busca un bug en la bateria que no existe. Candidato a chequeo propio o ADR: hoy sigue siendo un gotcha que se paga cada vez que se abre un ADR.",
+    "CORREGIDO 2026-08-08 — EL CONTADOR MENTIA: closed_count decia 101 y la unidad que promete el tracker (criterios de aceptacion cerrados, retirados no cuentan) da 97. Sobraban 4, trazados commit por commit sobre este archivo (80 e461230 -> 83 145a651 -> 84 d765bb6 -> 88 1887552 -> 94 23e8997 -> 101 f1dfd85): (a) DOBLE CONTEO DE 3, los criterios del horizonte H1 de S19 se contaron al cerrarse H1 (b20, +3, sin tickear una sola casilla del plano) y OTRA VEZ al cerrarse S19 (b22, +4) — los cuatro [x] de PLAN.md:778-781 se atribuyen todos al mismo PR #111; (b) +1 SIN CRITERIO, d765bb6 sumo un cierre por la FIRMA de los ADR 034/035, que no es criterio de ninguna sesion y no toco PLAN.md. LA RAIZ: se sumo por bloque cerrado y la numeracion de bloques NO es 1:1 con sesiones (b17 es una jornada sin sesion; S19 tiene tres bloques). POR QUE EL CHEQUEO 7 DABA VERDE, y estaba en su derecho: compara HTML contra JSON y el error habia entrado por la FUENTE, asi que las dos vistas coincidian EN EL ERROR. Unidad elegida por el dueño el 2026-08-08.",
+    "ABIERTA 2026-08-08 — LA BASE HISTORICA DE v0 NO CUADRA CON EL PLANO: el contador arrastra 41 criterios para S01-S09 pero PLAN.md tiene 44, y 2 para S10 contra 4 casillas [x] en PLAN.md:278-281. No hay registro de criterios retirados que lo explique. Se CONSERVA la base de 80 (decision del dueño 2026-08-08) y la discrepancia queda declarada, no tapada. Agravante contable: PLAN.md declara CERRADAS a S01-S09, S11, S12 y S13 con TODAS sus casillas en [ ] sin tickear, asi que los ticks del plano no son fuente usable para esas sesiones. Destraba: acto del dueño, cambia la unidad de medida del progreso.",
+    "CORREGIDO 2026-08-08 — LAS DOS VISTAS DEL PLAN TERMINABAN EN S18, con S19/S20/S21 cerradas y con bloque propio (b20-b24). Este artefacto se declaraba a si mismo incoherente: 24 bloques y 18 sesiones de plan. TERCERA ocurrencia del mismo modo de falla: el 2026-08-02 el mismo campo terminaba en S16 y se corrigio a mano en 9edd971. Volvio a atrasarse, y peor (tres sesiones en vez de dos). Ningun chequeo lo mira: el 7 cuenta bloques y ADRs, nunca sesiones. Entra como sub-chequeo (c) de S22.",
+    "CORREGIDO 2026-08-08 — LA PESTAÑA TESTS DEL TRACKER DESCRIBIA UN REPO DE NUEVE DIAS ANTES: declaraba 3 chequeos (son 8), 28 ADRs (son 34) y 9 escenarios (son 35), y NO mencionaba frontera.sh ni bateria-frontera.sh — dos cables enteros (2 chequeos y 15 escenarios) ausentes de la vista que existe para exhibirlos. TESTS.contrato tenia filas hasta b16: faltaban S17-S21, o sea las sesiones con MAS criterios clavados por maquina. Causa medible: los commits 'docs(tracker): re-auditoria ...' se cortan el 2026-07-30 y despues el archivo solo lo tocaron los commits que CABLEARON los chequeos 7 y 8 — se actualizo hasta donde el cable obligaba a cuadrar y ni un campo mas. Lo cierra S22 (sub-chequeo a).",
+    "CORREGIDO 2026-08-08 — EL CHANGELOG DEL TRACKER NO TENIA ENTRADA PARA SU PROPIO LAST_AUDIT: LAST_AUDIT decia 2026-08-04 y la entrada mas nueva era del 2026-08-02. S19, S20 y S21 cerraron sin asiento en el historial de esa vista. Lo vuelve hallazgo y no olvido que el protocolo esta escrito EN LA CABECERA DE ESE MISMO ARCHIVO (:20-21): 'entrada fechada en CHANGELOG, actualizar TESTS y REFS'. Un protocolo escrito en el archivo que lo incumple es un cartel. Entra como sub-chequeo (b) de S22.",
+    "CORREGIDO 2026-08-08 — EST DEL TRACKER ESTABA VACIO declarando 'cero pendientes abiertos al 2026-07-25' mientras DATA ya tenia CINCO: se renderizaban con talle '?' y la carga estimada del bloque salia en blanco. Otra vista que envejecio sola, de las que ningun chequeo mira.",
+    "ABIERTA 2026-08-08 — LA FRESCURA DE references/ NO LA MIRA NADIE, y hay una referencia TRES MINORS atras: references/audit-tracker.md:15 declara version 1.11.1 y el plugin real va en 1.14.0, con el CI en verde. Sus fuentes cambiaron despues del destilado (1ed904c 27-07 sobre orquestar.md, ecc5ba9 28-07 sobre proximo-encargo.md) y no esta absorbido: el loop de /orquestar paso de 8 a 9 pasos (v1.13.0 obliga a destilar la leccion a references/ al cerrar un veto o escalada) y maquina/<nombre> dejo de ser opcional (v1.14.0, condicion de publicacion). VENCIDA POR SU PROPIO GATILLO, no por calendario: por el reloj de 3 meses le sobran 70 dias. Segundo hallazgo: perimetro-de-confianza declaraba fecha 2026-07-28 en el tracker contra 2026-07-21 en el frontmatter — corregido al valor del disco; su contenido se edito hasta el 2026-08-04, asi que el frontmatter tambien esta atras, pero moverlo es acto sobre la referencia. POR QUE NINGUN CABLE LO VE: el chequeo 6 mira mecanismos materializados, frontera mira catalogo==disco. Ninguno mira fechas. Agravante: PLAN.md:790 declaro esa referencia VERDE al cerrar S19 el 2026-08-04, seis dias despues de que cambiara la segunda de sus tres fuentes — un falso verde firmado. Destraba: candidato a S23; el cotejo puede exigir leer FUERA del repo y los cables corren offline por diseño, asi que es decision con ADR.",
+    "ABIERTA 2026-08-08 — OPERACION.md ES HOY LA UNICA VISTA DE ESTADO SIN CABLE: verificado contra los cuatro scripts y el workflow, ninguno lo menciona. Su §5 (triage de lo abierto, fechado 2026-08-02) ya vencio en varias filas: declara 'el unico issue abierto del repo es #101' (hoy hay CERO), declara abierto el atraso del tracker HTML (cerrado por el chequeo 7) y pide un 'sexto chequeo' para la estampa de ALCANCE (llego como el octavo). A SU FAVOR: §5 DECLARA su fecha de cotejo, que es la disciplina correcta, asi que no miente — esta fechada. Y §7 esta impecable: declara los cuatro cables, sus dos baterias y los tres codigos de salida. Destraba: candidato a S23; cotejar las filas contra el canal exige RED en CI y los cables corren offline por diseño.",
+    "SALDADA 2026-08-08 — EL PATRON DE DESPACHO SE REPARO: las deudas del 2026-07-30 y 2026-08-01 denunciaban dos jornadas consecutivas sin issue de encargo. S19, S20 y S21 abrieron TODAS el suyo (#109, #110, #112, #114, #116, #118, #120, #122, #124): tres jornadas seguidas con encargo. Se registra con la misma fuerza con que se registro el reproche.",
+    "CORREGIDO 2026-08-08 — UN ESCENARIO SEMBRADO PASABA POR COINCIDENCIA: al avanzar LAST_AUDIT a 2026-08-08 la bateria se puso ROJA 1 de 35, y el que fallo fue un ANTI-FALSO-POSITIVO ('vistas y reloj en la MISMA fecha'). Causa: s_vistas_misma_fecha sembraba last_audit y la estampa con el reloj de los ADRs pero NO llamaba a sync_trk, dejando el tracker HTML sin sincronizar. Solo pasaba porque LAST_AUDIT venia siendo igual al reloj de los ADRs — coincidencia, no garantia. En cuanto una re-auditoria de bookkeeping avanzo LAST_AUDIT sin ADR nuevo (el caso NORMAL de esta serie) se cayo. Su hermano s_vistas_al_dia si la llamaba: la omision es de S20, cuando el chequeo 7 sembro sync_trk en cuatro escenarios y se salteo el quinto. El tracker ES una vista desde S20, asi que sin sincronizarlo el escenario no cumplia su propia premisa. SEXTA vez que este taller mide lo mismo: un cable nuevo con un defecto silencioso que devuelve un resultado creible — aca el resultado creible era un VERDE. Lo delato la propia bateria.",
+    "ABIERTA 2026-08-08 — EL ARTIFACT PUBLICADO LLEVABA NUEVE DIAS Y 29 CIERRES DE ATRASO: la URL que el dueño abre declaraba LAST_AUDIT 2026-07-30 y CLOSED_COUNT 68 mientras el archivo fuente del repo iba en 2026-08-04 y 101. Las re-auditorias del 2026-08-02 y del 2026-08-04 escribieron el archivo, lo commitearon, lo mergearon y NUNCA lo redeployaron; su cabecera seguia anunciando la cola #5-#13 y no tenia los bloques de S17 a S21. PEOR QUE EL DRIFT INTERNO: el drift interno estaba en un archivo del repo que nadie lee a mano; esto estaba en la UNICA vista que se consume. MISMO PATRON, UNA VUELTA MAS AFUERA: los ocho chequeos comparan documentos DENTRO del repo y ninguno puede ver el artifact publicado, porque vive fuera y los cables corren offline por diseño. El paso 4 del protocolo escrito en la cabecera del propio tracker ('Redeploy A LA MISMA URL') es hoy el UNICO paso del protocolo que ningun cable puede verificar, y es el que se saltearon dos veces seguidas. Destraba: o el redeploy entra en el mismo acto que el commit, sin paso manual olvidable, o se acepta por escrito que la pagina publicada es best-effort y deja de presentarse como el tracker vivo. Decision del dueño: cablearlo exige red en CI y credencial de publicacion, o sea perimetro. Candidato fuerte a S23."
   ]
 }
