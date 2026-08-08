@@ -984,6 +984,114 @@ siembra: S20 pagó tres supuestos falsos por no tenerlo, y todos devolvían núm
 
 ---
 
+## S22 — Cablear la COMPLETITUD del tracker: el chequeo 7 mira los números, nadie mira el texto
+
+🎯 **Planteamiento.** S20 cableó el tracker HTML y S21 la estampa de `ALCANCE`. **Cuatro días
+después, el 2026-08-08, la re-auditoría encontró el tracker con sus cuatro números impecables y el
+texto describiendo un repo de nueve días antes.** No es una recaída del chequeo 7: es su **límite
+declarado**, cumpliéndose. El propio script lo dice en `coherencia-contrato.sh:408-414` — *«el
+chequeo 7 mide **frescura y cardinalidad, NO CONTENIDO** … un HTML con los cuatro números al día y un
+texto que miente pasa este chequeo»*.
+
+Lo que estaba mal el 2026-08-08, medido:
+
+| Vista | Decía | Era |
+|---|---|---|
+| `TESTS.gates` — cantidad de chequeos | «**tres** chequeos» | **ocho** |
+| `TESTS.gates` — ADRs | «los **28** ADRs» | **34** |
+| `TESTS.gates` — escenarios sembrados | «**9** escenarios» | **35** |
+| `TESTS.gates` — cables declarados | 2 (`coherencia` + su batería) | **4** (faltaban `frontera` y `bateria-frontera`: 2 chequeos y 15 escenarios) |
+| `CHANGELOG` — última entrada | `2026-08-02` | `LAST_AUDIT` iba en `2026-08-04` |
+| `const PLAN` y el campo `plan` del artefacto | terminaban en **S18** | S19, S20 y S21 cerradas, con bloque propio |
+| `EST` | «cero pendientes abiertos al 2026-07-25» | **cinco** pendientes vivos |
+| `CLOSED_COUNT` | **101** | **97** — sobraban 4 |
+
+**El contador es el caso más filoso, y no por el número.** Sobraban cuatro por dos vías trazadas
+commit por commit: **doble conteo de 3** —los criterios del horizonte H1 de S19 se contaron al
+cerrarse H1 (`b20`, `145a651`, **+3 sin tickear una sola casilla del plano**) y **otra vez** al
+cerrarse S19 (`b22`, `1887552`, +4), y los cuatro `[x]` de `PLAN.md:778-781` se atribuyen **todos al
+mismo PR #111**— y **+1 sin criterio detrás**, un cierre sumado por la **firma** de los ADR `034`/`035`,
+que no es criterio de ninguna sesión y **no tocó este archivo**. La raíz: se sumó **por bloque
+cerrado**, y la numeración de bloques **no es 1:1 con sesiones** (`b17` es una jornada sin sesión; S19
+tiene **tres** bloques).
+
+**Y el chequeo 7 le daba VERDE, con razón:** compara el HTML contra el JSON, y el error **había
+entrado por la fuente**, así que **las dos vistas coincidían en el error**. Un cable que garantiza
+igualdad entre vistas no garantiza que lo que dicen sea cierto.
+
+> **Por qué esto ES cableable, y no es «el contenido» que los chequeos 4, 5 y 7 declararon fuera de
+> alcance.** S17 trazó la línea: *«la frescura es mecanizable; el contenido es juicio»*. Entre las dos
+> quedaba un **tercer territorio: la COMPLETITUD**. Que la pestaña Tests declare «tres chequeos»
+> cuando el script tiene ocho no es una opinión ni una narración — **es un número que se puede contar
+> de los dos lados**. Igual que «¿hay entrada de CHANGELOG con la fecha de `LAST_AUDIT`?» y «¿está en
+> `PLAN` cada sesión que este archivo declara CERRADA?». **Tres preguntas contables, cero juicio.**
+
+**La causa es medible, no una teoría.** Los commits `docs(tracker): re-auditoria …` **se cortan el
+2026-07-30**. Después, el tracker solo lo tocaron `23e8997` y `f1dfd85` — los commits que
+**cablearon** los chequeos 7 y 8. **Se actualizó hasta donde el cable nuevo obligaba a cuadrar, y ni
+un campo más.** La deuda del tracker ya lo había escrito: *«lo que se corrige a mano se corrige hasta
+donde alguien miró»*. El chequeo 7 movió esa frontera y la dejó **adentro de la frescura, afuera de
+la completitud**.
+
+🛠️ **Método.**
+
+1. **PRIMERO la referencia, ANTES del cable.** Van **seis jornadas** escribiendo bash de cables
+   (**1.451 líneas** en cuatro scripts, **50 escenarios sembrados**) y el conocimiento duro vive
+   **solo en los comentarios de los propios scripts** — donde lo encuentra el que ya los está
+   leyendo, no el que va a repetir el error. Destilar `docs/references/cables-bash-defensivo.md` con
+   `triggers`, fecha y citas: no usar `set -e` (con su causa raíz medida) · `exit 2` FRENA ≠ FALLA ·
+   `bash` 3.2 de macOS sin arrays asociativos, con freno por `BASH_VERSINFO` · `LC_ALL=C` (el mismo
+   repo daba ROJO en `C` y VERDE en `en_US.UTF-8`) · anclar en el literal, no en la palabra · y los
+   tres supuestos falsos de S20 que devolvían números creíbles.
+2. **Sub-chequeo (a) — gates declarados == scripts en disco.** Contar los `.sh` de
+   `.github/scripts/` y exigir que cada uno aparezca en `TESTS.gates` del tracker.
+3. **Sub-chequeo (b) — el CHANGELOG acompaña a `LAST_AUDIT`.** Si `LAST_AUDIT` avanzó, la primera
+   entrada del `CHANGELOG` tiene que llevar esa fecha. **Tolerar el sufijo `(N)` de `023`**, que es
+   legítimo — fue el modo de falla que S17 ya pagó una vez.
+4. **Sub-chequeo (c) — las dos vistas del plan cubren lo cerrado.** `const PLAN` del HTML y el campo
+   `plan` del artefacto tienen que contener toda sesión que **este archivo** declare CERRADA.
+   **Tercera ocurrencia** del mismo modo de falla: el 2026-08-02 el campo terminaba en S16 y se
+   corrigió a mano; volvió a atrasarse, y peor.
+5. **Cada sub-chequeo con su escenario sembrado, y VISTO FALLAR contra el repo real antes de corregir
+   nada** (`030`: *«un chequeo que nunca se vio fallar es una intención con formato de comando»*).
+6. **Un anti-falso-positivo por sub-chequeo, obligatorio.** Un gate `na` legítimo —typecheck en un
+   repo markdown— **no** es un gate faltante · una entrada de CHANGELOG con sufijo `(N)` es válida ·
+   una sesión **abierta** puede faltar en `PLAN` sin ser drift. **Sin esto el cable es ruidoso, y un
+   cable ruidoso se ignora** — que es la lección que S21 dejó escrita.
+7. **FRENAR** (`exit 2`) si el tracker no existe o si no se pueden extraer las constantes.
+
+✅ **Criterios de aceptación.**
+- [ ] `docs/references/cables-bash-defensivo.md` existe, con `triggers`, fecha y citas a las fuentes *(verificación: inspección + el chequeo 2 de `frontera.sh` en verde con la fila nueva en el catálogo)*
+- [ ] El chequeo 9 **cuenta los `.sh` de `.github/scripts/`** y exige que cada uno esté declarado en `TESTS.gates` *(verificación: escenario sembrado — borrar un gate de la vista da ROJO nombrando cuál)*
+- [ ] El chequeo 9 exige **entrada de `CHANGELOG` con la fecha de `LAST_AUDIT`** *(verificación: escenario sembrado — avanzar `LAST_AUDIT` sin entrada da ROJO)*
+- [ ] El chequeo 9 exige que **`const PLAN` y el campo `plan`** cubran toda sesión CERRADA de este archivo *(verificación: escenario sembrado — cerrar una sesión sin agregarla da ROJO)*
+- [ ] Los tres sub-chequeos se **vieron FALLAR contra el repo real** antes de corregir nada *(verificación: la evidencia queda en `docs/audits/s22-*.md` con la salida cruda)*
+- [ ] Cada sub-chequeo tiene su **anti-falso-positivo** sembrado y en verde *(verificación: `bateria-sembrada.sh` — gate `na`, sufijo `(N)`, sesión abierta)*
+- [ ] El chequeo 9 **FRENA** (`exit 2`) con motivo si no puede evaluar *(verificación: escenario sembrado sin tracker)*
+- [ ] El **límite del chequeo 9 queda escrito en el script**: qué sigue siendo juicio y no cuenta *(verificación: inspección — el comentario existe y nombra lo que NO cubre)*
+
+📚 **Referencias.** [`references/cables-bash-defensivo.md`](references/) 🔴 **a generar en esta
+sesión, antes del cable** · [`references/cadenas-que-github-interpreta.md`](references/) 🔴 **a
+generar antes del PR** · `decisiones/030` (fuente única y verificación mecánica) · los chequeos 7 y 8
+(S20, S21) como precedentes directos de la familia.
+
+⛓️ **Prerrequisitos.** Ninguno para construir: los tres sub-chequeos se miden **dentro del repo** y
+**offline**, como los ocho anteriores. **Lo que NO entra acá, y es a propósito:** la frescura de
+`references/` (puede exigir leer **fuera** del repo) y `OPERACION.md` (cotejar su §5 contra el canal
+exige **red en CI**). Las dos son decisión con ADR propio, igual que *«nada coteja `ALCANCE` contra el
+mundo»* — **candidatas a S23**.
+
+**Estimación: M** — el cable son tres sub-chequeos y no uno, y cada uno necesita su espejo sembrado
+más su anti-falso-positivo. Lo que pesa no es escribirlos: es **no dejarlos ruidosos**.
+
+> **Lo que S22 NO hace, declarado.** No verifica que el **texto** de una nota sea cierto — eso sigue
+> siendo juicio y sigue siendo trabajo de la re-auditoría. No corrige la **base histórica de v0** (41
+> contra los 44 criterios de este archivo, y 2 contra 4 en S10): eso **cambia la unidad de medida del
+> progreso** y es acto del dueño, así que queda declarado como deuda. No cablea `OPERACION.md` ni la
+> frescura de `references/`. Y no toca la parte (b) de `033`.
+
+---
+
 ## Resumen
 
 > ⚠️ **Esta tabla es una VISTA DERIVADA** (`decisiones/030`). La columna *Bloqueada por decisión*
@@ -1014,6 +1122,7 @@ siembra: S20 pagó tres supuestos falsos por no tenerlo, y todos devolvían núm
 | **S19** | **Evidencia limpia sobre la identidad del agente** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 4/6, dos criterios retirados** (`035`) | **M** | `033` **partido**, su parte (a) ⏳ PENDIENTE · la (b) —sacar el FRENA— sigue siendo elección del dueño · §7 **NO MEDIBLE** |
 | **S20** | **Cablear el tracker HTML** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 6/6** | **S** | — *(`030` ya autorizó la verificación mecánica)* |
 | **S21** | **Cablear la estampa de `ALCANCE.md`** *(mantenimiento)* ✅ **cerrada 2026-08-04 · 7/7** | **S** | — *(reloj elegido por el dueño: el contenido de FICHA §0 y §11)* |
+| **S22** | **Cablear la COMPLETITUD del tracker** *(mantenimiento)* 🟠 **abierta 2026-08-08** — el chequeo 7 cableó los cuatro números y el texto se atrasó igual; nace el **chequeo 9** | **M** | — *(los tres sub-chequeos se miden dentro del repo y offline)* |
 
 **7 de las 9 sesiones de v0 estaban bloqueadas por una decisión pendiente.** No es un defecto del plan: es el plan diciéndote la verdad sobre dónde falta firma.
 
