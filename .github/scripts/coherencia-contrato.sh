@@ -550,10 +550,146 @@ else
   echo "✓ (${a_huella:0:16}…)"
 fi
 
+# ── CHEQUEO 9 · LA COMPLETITUD DEL TRACKER (S22) ────────────────────────
+# El chequeo 7 cableó los CUATRO NÚMEROS del tracker y la vista se atrasó
+# igual, en el TEXTO. El 2026-08-08 tenía `LAST_AUDIT` y `CLOSED_COUNT`
+# impecables y:
+#   · `TESTS.gates` declaraba «tres chequeos» (eran OCHO), «28 ADRs» (eran 34)
+#     y «9 escenarios» (eran 35), y NO mencionaba `frontera.sh` ni su batería:
+#     DOS CABLES ENTEROS ausentes de la vista que existe para exhibirlos.
+#   · el `CHANGELOG` no tenía entrada para su propio `LAST_AUDIT`.
+#   · `const PLAN` terminaba en S18 con S19, S20 y S21 ya cerradas.
+#
+# Y la causa quedó medida, no supuesta: los commits «docs(tracker):
+# re-auditoria …» se cortan el 2026-07-30, y después el archivo solo lo
+# tocaron los commits que CABLEARON los chequeos 7 y 8. Se actualizó hasta
+# donde el cable obligaba a cuadrar, y ni un campo más. La deuda del propio
+# tracker lo había escrito: «lo que se corrige a mano se corrige hasta donde
+# alguien miró». El chequeo 7 movió esa frontera y la dejó ADENTRO de la
+# frescura y AFUERA de la completitud.
+#
+# POR QUÉ ESTO ES CABLEABLE y no es «el contenido» que los chequeos 4, 5 y 7
+# declararon fuera de alcance. S17 trazó la línea: «la frescura es
+# mecanizable; el contenido es juicio». En el medio quedaba un TERCER
+# territorio: la COMPLETITUD. Que la vista diga «tres chequeos» cuando el
+# script tiene ocho no es una opinión ni una narración — es UN NÚMERO QUE SE
+# CUENTA DE LOS DOS LADOS. Tres preguntas contables, cero juicio.
+#
+# LAS TRES DIRECCIONES SON ÚNICAS, y en eso está el anti-falso-positivo:
+#   (a) disco → vista. Un gate `na` legítimo (typecheck en un repo markdown,
+#       `decisiones/006`) está en la vista y NO tiene `.sh`: eso NO es falla.
+#       Solo se exige que todo `.sh` que corre esté declarado.
+#   (b) `LAST_AUDIT` → CHANGELOG. Se compara la FECHA, y el sufijo `(N)` de
+#       `023` se ignora por construcción: el regex extrae la fecha, no la
+#       línea. Fue el modo de falla que S17 ya pagó una vez.
+#   (c) plano → vistas. S15 está en las dos vistas y NO tiene sección en el
+#       plano (nació fuera, como hallazgo de corrida): una vista puede tener
+#       MÁS de lo que el plano define y eso NO es drift.
+#
+# ANCLA DE (c) — y acá se corrigió la premisa de la ficha, medida antes de
+# escribir una línea. La ficha pedía «toda sesión que PLAN.md declare
+# CERRADA», y ese marcador NO EXISTE de forma uniforme: de 21 sesiones, solo
+# 5 llevan `— **CERRADA <fecha>**` (S10, S14, S19, S20, S21); S16-S18 dicen
+# «N de N cumplidos»; y S01-S09, S11, S12 y S13 no dicen nada — su estado
+# vive solo en la tabla resumen, que SE DECLARA A SÍ MISMA vista derivada
+# (`PLAN.md`: «la obra la pinta la re-auditoría, no este documento»).
+# PLAN.md no es fuente del ESTADO de una sesión; sí es fuente de QUÉ
+# SESIONES EXISTEN. Por eso se ancla en `^## S<NN>`. Anclar en «CERRADA»
+# habría exigido inventar el marcador y estamparlo en 16 sesiones, o sea
+# TOCAR EL PLANO FIRMADO para que el cable pudiera correr: el mismo error por
+# el que `frontera.sh` retiró su tercer chequeo — un cable que necesita crear
+# el dato para compararlo está resolviendo el problema al revés.
+#
+# LÍMITE DECLARADO, porque un límite callado es el cartel de siempre: este
+# chequeo mide COMPLETITUD, no VERACIDAD. Que un gate esté declarado no
+# significa que su nota diga la verdad; que haya entrada de CHANGELOG no
+# significa que describa lo que pasó; que una sesión figure en `PLAN` no
+# significa que su estado sea el real. Eso es juicio y es de la re-auditoría.
+# Lo que este chequeo vuelve imposible es el ATRASO EN SILENCIO por OMISIÓN.
+printf '9· completitud del tracker .......... '
+PLANMD="$REPO/docs/PLAN.md"
+if [ ! -f "$PLANMD" ]; then
+  echo "⛔ FRENA"
+  echo "     no existe ${PLANMD#$REPO/}"
+  echo "     Esto NO es un verde: el chequeo 9 no tuvo plano contra el que contar."
+  exit 2
+fi
+
+# ── (a) todo `.sh` que corre en CI está declarado en la vista ────────────
+c9=""
+g_disco=0
+for sh9 in "$REPO"/.github/scripts/*.sh; do
+  [ -f "$sh9" ] || continue
+  g_disco=$((g_disco + 1))
+  b9=$(basename "$sh9")
+  grep -q "scripts/$b9" "$TRACKER" || \
+    c9="$c9\n     (a) $b9 · corre en CI · el tracker NO lo declara en TESTS.gates"
+done
+if [ "$g_disco" -eq 0 ]; then
+  echo "⛔ FRENA"
+  echo "     no hay ningún .sh en .github/scripts/"
+  echo "     Esto NO es un verde: el chequeo 9 no pudo contar gates."
+  exit 2
+fi
+
+# ── (b) el CHANGELOG acompaña a LAST_AUDIT ──────────────────────────────
+# La PRIMERA entrada es la línea siguiente a la apertura del array: el
+# CHANGELOG se mantiene en orden inverso por contrato. `sed` con `n;p` es
+# portable (BSD y GNU) y no depende de `-A` de grep.
+# ANCLA EN EL CAMPO `f:'…'`, NO EN LA LÍNEA. La primera versión hacía grep de
+# la fecha sobre la línea entera y el ESCENARIO SEMBRADO la cazó antes de
+# mergear: al romper la fecha del campo, el grep se comía una fecha del TEXTO
+# de la entrada —la narración del 2026-08-08 menciona el 2026-07-30— y el
+# chequeo devolvía ROJO donde debía FRENAR. Es el pecado que `030` §3 nombra y
+# que este taller ya se cobró varias veces: anclar donde APARECE la palabra en
+# vez de donde VIVE la verdad. Séptima vez, y la primera que la caza la siembra.
+chg9=$(sed -n "/^const CHANGELOG = \[/{n;p;}" "$TRACKER" \
+       | grep -oE "\{f:[[:space:]]*'[^']*'" | head -1 \
+       | grep -oE "20[0-9]{2}-[0-9]{2}-[0-9]{2}" | head -1)
+if [ -z "$chg9" ]; then
+  echo "⛔ FRENA"
+  echo "     no pude leer la fecha de la primera entrada del CHANGELOG del tracker."
+  echo "     Esto NO es un verde: el chequeo 9 no pudo evaluar (b)."
+  exit 2
+fi
+[ "$chg9" != "$t_audit" ] && \
+  c9="$c9\n     (b) CHANGELOG · última entrada $chg9 · LAST_AUDIT $t_audit — la auditoría no dejó asiento"
+
+# ── (c) las dos vistas del plan cubren lo que el plano define ───────────
+ses9=$(grep -oE "^## S[0-9]+" "$PLANMD" | grep -oE "S[0-9]+" | sort -u)
+if [ -z "$ses9" ]; then
+  echo "⛔ FRENA"
+  echo "     ${PLANMD#$REPO/} no expone encabezados '## S<NN>'."
+  echo "     Esto NO es un verde: el chequeo 9 no pudo enumerar las sesiones del plano."
+  exit 2
+fi
+# `{s:[[:space:]]*'` y no `{s:'`: la lección de `id: 'b01'` del chequeo 7 —
+# las dos formas son legítimas y anclar en la estrecha cuenta de menos.
+n9=0
+for s9 in $ses9; do
+  n9=$((n9 + 1))
+  grep -qE "\{s:[[:space:]]*'$s9'" "$TRACKER" || \
+    c9="$c9\n     (c) $s9 · está en PLAN.md · falta en const PLAN del tracker"
+  jq -e --arg s "$s9" '.plan // [] | map(.sesion) | index($s) != null' \
+    "$ESTADO" >/dev/null 2>&1 || \
+    c9="$c9\n     (c) $s9 · está en PLAN.md · falta en el campo plan del artefacto"
+done
+
+if [ -n "$c9" ]; then
+  echo "✗ FALLA"
+  echo "     el tracker está incompleto — los números pueden estar al día y el texto no:"
+  printf '%b\n' "${c9#\\n}"
+  echo "     Corregirlo a mano no cierra esto: el cable existe para que la vista no"
+  echo "     se actualice solo hasta donde otro cable la obliga a cuadrar."
+  fallas=$((fallas + 1))
+else
+  echo "✓ ($g_disco gates · CHANGELOG en $chg9 · $n9 sesiones del plano en las 2 vistas)"
+fi
+
 echo
 if [ "$fallas" -eq 0 ]; then
   echo "VERDE · las vistas coinciden con la fuente y están al día"
   exit 0
 fi
-echo "ROJO · $fallas de 8 chequeos en falla"
+echo "ROJO · $fallas de 9 chequeos en falla"
 exit 1
