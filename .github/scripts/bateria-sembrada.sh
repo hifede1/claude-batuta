@@ -45,6 +45,14 @@ escenario() {
   rm -rf "$caja"; mkdir -p "$caja"
   cp -R "$REPO/docs" "$caja/docs"
   mkdir -p "$caja/.github/scripts"
+  # TODOS los `.sh`, no solo el cable. Hasta S22 la caja copiaba únicamente
+  # `$CABLE`, y con un solo script en el directorio el sub-chequeo (a) del
+  # chequeo 9 —«todo .sh que corre está declarado en TESTS.gates»— quedaba
+  # INERTE: pasaba sin ejercitar nada porque el cable sí está declarado.
+  # Un escenario que no reproduce el estado del mundo que su chequeo mide es
+  # un sembrado en falso, el mismo defecto que `s_vistas_misma_fecha` tuvo
+  # hasta el 2026-08-08. La caja tiene que cumplir la premisa del chequeo.
+  cp "$REPO"/.github/scripts/*.sh "$caja/.github/scripts/" 2>/dev/null || true
   cp "$CABLE" "$caja/.github/scripts/"
 
   SEMBRAR_EN="$caja" "$@"          # el sembrador planta el defecto
@@ -210,6 +218,15 @@ sync_trk() {
   [ -f "$j" ] || return 0
   edita "s/^const LAST_AUDIT = '[^']*';/const LAST_AUDIT = '$(jq -r '.last_audit // empty' "$j")';/" "$t"
   edita "s/^const CLOSED_COUNT = [0-9]*;/const CLOSED_COUNT = $(jq -r '.closed_count // empty' "$j");/" "$t"
+  # Y la fecha de la PRIMERA entrada del CHANGELOG, que desde S22 también es
+  # parte de estar «al día»: el sub-chequeo (b) del chequeo 9 exige que una
+  # auditoría que avanza `LAST_AUDIT` deje su asiento. Sin esta línea, los
+  # tres escenarios que mueven la fecha —`s_vistas_al_dia`,
+  # `s_vistas_misma_fecha` y `s_estampa_con_sufijo`— daban ROJO por (b), y el
+  # rojo era CORRECTO: el defecto estaba en la siembra, que dejaba el tracker
+  # a medio sincronizar. Se sustituye SOLO la fecha, así que el sufijo `(N)`
+  # de `023` sobrevive donde estaba — que es justo lo que prueba uno de ellos.
+  edita "/^const CHANGELOG = \[/{n;s/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/$(jq -r '.last_audit // empty' "$j")/;}" "$t"
   # Una entrada dummy por cada ADR que la fuente tenga de más.
   local want have
   want=$(ls "$SEMBRAR_EN"/docs/decisiones/[0-9][0-9][0-9]-*.md 2>/dev/null | wc -l | tr -d ' ')
@@ -343,6 +360,76 @@ s_estampa_con_sufijo() { j=$(j_de "$SEMBRAR_EN")
                          jq --arg d "$NUEVA" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
                          estampa "$NUEVA (3) por Fede" "$SEMBRAR_EN"
   sync_trk; }
+# ── SIEMBRA DEL CHEQUEO 9 · LA COMPLETITUD (S22) ─────────────────────────
+# Tres dimensiones, tres rojos, y cada una con su anti-falso-positivo. La
+# caja copia TODOS los `.sh` (ver `escenario`) porque (a) mide el directorio
+# de scripts: sin eso el escenario no cumpliría su premisa.
+
+# (a) ROJO — un cable que corre en CI y la vista no declara. Es el defecto
+# EXACTO del 2026-08-08: `frontera.sh` y su batería llevaban una semana
+# corriendo en cada PR sin figurar en la pestaña que existe para exhibirlos.
+s_trk_gate_faltante() { saca 'scripts/frontera\.sh' "$SEMBRAR_EN/$TRK"; }
+
+# (b) ROJO — la auditoría avanza y no deja asiento. NO se usa `sync_trk`
+# porque desde S22 ésa también sincroniza el CHANGELOG: acá se mueven a mano
+# SOLO los dos escalares, que es precisamente el estado que el chequeo 7
+# aprueba y el 9 tiene que rechazar. Es el drift que vivió del 04-08 al 08-08.
+s_trk_sin_asiento() { j=$(j_de "$SEMBRAR_EN")
+                      jq --arg d "$NUEVA" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
+                      estampa "$NUEVA por Fede" "$SEMBRAR_EN"
+                      edita "s/^const LAST_AUDIT = '[^']*';/const LAST_AUDIT = '$NUEVA';/" \
+                        "$SEMBRAR_EN/$TRK"; }
+
+# (c) ROJO — el plano define una sesión y las vistas no la tienen. Es el
+# drift que dejó a `const PLAN` y al campo `plan` terminando en S18 con S19,
+# S20 y S21 ya cerradas, por TERCERA vez en el mismo campo.
+s_trk_sesion_sin_vista() { printf '\n## S98 — sesion sembrada por la bateria\n' \
+                             >> "$SEMBRAR_EN/docs/PLAN.md"; }
+
+# FRENA — sin plano no hay contra qué contar las sesiones.
+s_sin_planmd() { rm -f "$SEMBRAR_EN/docs/PLAN.md"; }
+
+# FRENA — el plano existe pero no expone encabezados de sesión. Un `## S<NN>`
+# renombrado dejaría al chequeo enumerando cero, y cero no es un verde.
+s_planmd_sin_sesiones() { edita 's/^## S\([0-9]\)/## Sesion \1/' "$SEMBRAR_EN/docs/PLAN.md"; }
+
+# FRENA — la primera entrada del CHANGELOG sin fecha parseable. Mismo
+# criterio que `s_last_audit_ilegible`: ilegible es FRENA, no ROJO.
+s_changelog_ilegible() { edita "/^const CHANGELOG = \[/{n;s/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/sin-fecha/;}" \
+                           "$SEMBRAR_EN/$TRK"; }
+
+# ANTI-FALSO-POSITIVO (a) — un gate `na` LEGÍTIMO en la vista sin `.sh` en
+# disco. `decisiones/006` deja este repo sin toolchain, así que typecheck,
+# tests unitarios y lint viven declarados como `na` y NO son gates faltantes.
+# El chequeo va en UNA dirección —disco → vista— y esto lo clava.
+s_gate_na_extra() { edita "/^  gates: \[/a\\
+    {n:'Linter de YAML', cmd:'—', est:'na', nota:'No hay linter de YAML configurado. Candidato futuro.'},
+" "$SEMBRAR_EN/$TRK"; }
+
+# ANTI-FALSO-POSITIVO (b) — la entrada del CHANGELOG con el sufijo `(N)` de
+# `023`. La segunda re-auditoría del día es legítima y su asiento lleva `(2)`;
+# si el chequeo leyera la fecha con el sufijo pegado, un asiento correcto
+# quedaría ilegible y el cable FRENARÍA POR HACER LAS COSAS BIEN. Ése fue el
+# modo de falla que S17 ya pagó una vez con la estampa de FICHA.
+s_changelog_sufijo() { j=$(j_de "$SEMBRAR_EN")
+                       jq --arg d "$NUEVA" '.last_audit = $d' "$j" > "$j.x" && mv "$j.x" "$j"
+                       estampa "$NUEVA por Fede" "$SEMBRAR_EN"
+                       sync_trk
+                       edita "/^const CHANGELOG = \[/{n;s/'$NUEVA'/'$NUEVA (2)'/;}" \
+                         "$SEMBRAR_EN/$TRK"; }
+
+# ANTI-FALSO-POSITIVO (c) — una sesión en las vistas que el plano NO define.
+# No es hipotético: S15 está así HOY, porque nació como hallazgo de corrida y
+# el plano nunca la incorporó (incorporarla la firma el dueño). Una vista con
+# MÁS de lo que el plano define no es drift, y por eso (c) va en una sola
+# dirección: plano → vistas, jamás al revés.
+s_sesion_fuera_del_plano() { j=$(j_de "$SEMBRAR_EN")
+                             jq '.plan += [{"sesion":"S97","titulo":"nacida fuera del plano","estimacion":1,"deps":[],"cierra":[]}]' \
+                               "$j" > "$j.x" && mv "$j.x" "$j"
+                             edita "/^const PLAN = \[/a\\
+  {s:'S97', o:'nacida fuera del plano', b:'b01', talle:'S', trat:'directo', pre:'sembrada'},
+" "$SEMBRAR_EN/$TRK"; }
+
 echo "═══ Batería sembrada — ¿el cable DETECTA? ═══"
 echo
 echo "control (el repo sano tiene que pasar):"
@@ -366,6 +453,9 @@ escenario "tracker: le falta un bloque de la fuente"     1 "bloques"            
 escenario "tracker: le falta un ADR de la fuente"        1 "ADRs"                      s_trk_adr
 escenario "FICHA §0 cambia y ALCANCE no re-ratifica"     1 "YA NO EXISTE"              s_alcance_s0
 escenario "FICHA §11 cambia y ALCANCE no re-ratifica"    1 "YA NO EXISTE"              s_alcance_s11
+escenario "tracker: un gate de CI que la vista no declara" 1 "(a) frontera.sh"         s_trk_gate_faltante
+escenario "tracker: LAST_AUDIT avanza sin asiento en CHANGELOG" 1 "(b) CHANGELOG"      s_trk_sin_asiento
+escenario "tracker: el plano define una sesión que las vistas no tienen" 1 "(c) S98"   s_trk_sesion_sin_vista
 
 echo
 echo "el cable tiene que FRENAR, no dar verde (exit 2):"
@@ -377,6 +467,9 @@ escenario "FICHA sin su línea de estampa"            2 "FRENA" s_sin_estampa
 escenario "la estampa sin fecha parseable"           2 "FRENA" s_estampa_ilegible
 escenario "no existe el tracker HTML"                2 "FRENA" s_trk_ausente
 escenario "ALCANCE sin su línea de huella"           2 "FRENA" s_alcance_sin_huella
+escenario "no existe el plano (PLAN.md)"             2 "FRENA" s_sin_planmd
+escenario "el plano sin encabezados de sesión"       2 "FRENA" s_planmd_sin_sesiones
+escenario "CHANGELOG con fecha ilegible"             2 "FRENA" s_changelog_ilegible
 
 echo
 echo "y NO tiene que dar falso positivo:"
@@ -389,6 +482,9 @@ escenario "vistas y reloj en la MISMA fecha"            0 "VERDE" s_vistas_misma
 escenario "estampa al día con sufijo (N) de 023"        0 "VERDE" s_estampa_con_sufijo
 escenario "mecanismo NOMBRADO en prosa, no materializado" 0 "VERDE" s_mecanismo_en_prosa
 escenario "cambia una sección de FICHA que ALCANCE NO ratifica" 0 "VERDE" s_alcance_otra_seccion
+escenario 'un gate na legítimo, sin .sh en disco'     0 "VERDE" s_gate_na_extra
+escenario "asiento de CHANGELOG con sufijo (N) de 023" 0 "VERDE" s_changelog_sufijo
+escenario "sesión en las vistas que el plano no define" 0 "VERDE" s_sesion_fuera_del_plano
 
 echo
 echo "y NO tiene que dar verde bajo un intérprete que no soporta:"
