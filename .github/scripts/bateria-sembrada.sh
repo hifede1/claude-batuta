@@ -430,6 +430,52 @@ s_sesion_fuera_del_plano() { j=$(j_de "$SEMBRAR_EN")
   {s:'S97', o:'nacida fuera del plano', b:'b01', talle:'S', trat:'directo', pre:'sembrada'},
 " "$SEMBRAR_EN/$TRK"; }
 
+# ── EL CONTADOR DEL VEREDICTO (deuda declarada 2026-08-09, S22) ─────────
+# «ROJO · $fallas de 9 chequeos en falla» lleva el 9 escrito a mano en
+# `coherencia-contrato.sh`. El chequeo 9(a) cuenta `.sh` en disco, no los
+# chequeos internos de ESE MISMO script: agregar un décimo chequeo ahí y
+# olvidar actualizar el 9 no pone nada en rojo.
+#
+# NO se cablea agregando un chequeo 10 DENTRO de `coherencia-contrato.sh`:
+# un chequeo que contara los chequeos del propio script se verificaría
+# CONTRA SÍ MISMO, y eso es exactamente lo que la regla de S21 prohíbe —
+# «un cable nuevo se verifica contra un valor calculado POR FUERA de él».
+#
+# El valor de afuera: se CORRE el cable y se cuentan, en SU PROPIA SALIDA,
+# cuántas líneas de veredicto `N· ` aparecieron — una por cada chequeo que
+# de verdad ejecutó, sin volver a mirar su código fuente — y se compara
+# contra el número que el propio mensaje final promete. Quien mide es ESTE
+# script, un proceso distinto, después de que el cable ya corrió y terminó.
+contador_del_mensaje() { grep -oE 'de [0-9]+ chequeos en falla' | grep -oE '[0-9]+'; }
+chequeos_en_la_salida() { grep -cE '^[0-9]+· '; }
+
+# `verifica_contador <nombre> <cable> <repo> <coincide|desincronizado>`
+# — el mismo contrato de dos resultados que ya usa `escenario()`, pero éste
+# no compara un exit code: compara dos números sacados de la SALIDA.
+verifica_contador() {
+  local nombre="$1" cable="$2" repo="$3" esperado="$4"
+  corridos=$((corridos + 1))
+  local salida m e
+  salida=$("$cable" "$repo" 2>&1)
+  m=$(printf '%s\n' "$salida" | contador_del_mensaje)
+  e=$(printf '%s\n' "$salida" | chequeos_en_la_salida)
+  printf '  %-46s ' "$nombre"
+  if [ -z "$m" ]; then
+    echo "✗ el cable no llegó a imprimir «de N chequeos en falla» (¿VERDE o FRENA?)"
+    fallas=$((fallas + 1)); return
+  fi
+  case "$esperado" in
+    coincide)
+      if [ "$m" = "$e" ]; then echo "✓ ($m == $e chequeos corridos)"
+      else echo "✗ el mensaje dice $m · corrieron $e — tenían que coincidir"
+           fallas=$((fallas + 1)); fi ;;
+    desincronizado)
+      if [ "$m" != "$e" ]; then echo "✓ detectado ($m ≠ $e chequeos corridos)"
+      else echo "✗ no detectó el desvío sembrado ($m == $e)"
+           fallas=$((fallas + 1)); fi ;;
+  esac
+}
+
 echo "═══ Batería sembrada — ¿el cable DETECTA? ═══"
 echo
 echo "control (el repo sano tiene que pasar):"
@@ -485,6 +531,28 @@ escenario "cambia una sección de FICHA que ALCANCE NO ratifica" 0 "VERDE" s_alc
 escenario 'un gate na legítimo, sin .sh en disco'     0 "VERDE" s_gate_na_extra
 escenario "asiento de CHANGELOG con sufijo (N) de 023" 0 "VERDE" s_changelog_sufijo
 escenario "sesión en las vistas que el plano no define" 0 "VERDE" s_sesion_fuera_del_plano
+
+echo
+echo "el contador del veredicto tiene que coincidir con los chequeos que corrieron:"
+# Caja forzada a ROJO sin FRENAR: se reusa `s_sin_sello` (el chequeo 1 falla,
+# los demás siguen) para que el cable llegue completo hasta el mensaje final
+# y la salida tenga las 9 líneas de veredicto reales para contar.
+caja_c="$TMP/caja-contador"; rm -rf "$caja_c"; mkdir -p "$caja_c/.github/scripts"
+cp -R "$REPO/docs" "$caja_c/docs"
+cp "$REPO"/.github/scripts/*.sh "$caja_c/.github/scripts/" 2>/dev/null || true
+SEMBRAR_EN="$caja_c" s_sin_sello
+verifica_contador "el cable real: el mensaje coincide con lo corrido" \
+  "$caja_c/.github/scripts/coherencia-contrato.sh" "$caja_c" coincide
+
+# Sembrado: se desincroniza el TEXTO del mensaje del número real de chequeos
+# que corren — la reproducción fiel de «se agregó/quitó un chequeo y nadie
+# tocó la línea final», sin necesitar que el cable tenga de verdad un
+# chequeo de más o de menos.
+caja_d="$TMP/caja-contador-roto"; rm -rf "$caja_d"; cp -R "$caja_c" "$caja_d"
+edita "s/de 9 chequeos en falla/de 8 chequeos en falla/" \
+  "$caja_d/.github/scripts/coherencia-contrato.sh"
+verifica_contador "detecta cuando el mensaje se desincroniza" \
+  "$caja_d/.github/scripts/coherencia-contrato.sh" "$caja_d" desincronizado
 
 echo
 echo "y NO tiene que dar verde bajo un intérprete que no soporta:"
